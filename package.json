@@ -14,7 +14,11 @@
     "@nuxt/ui": "^2.18.7",
     "@nuxtjs/tailwindcss": "^6.12.2",
     "nuxt": "^3.13.2",
+    "nuxt-mapbox": "^1.6.1",
     "vue": "latest",
     "vue-router": "latest"
+  },
+  "devDependencies": {
+    "mapbox-gl": "^3.7.0"
   }
 }
