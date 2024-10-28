@@ -1,33 +1,26 @@
 <!-- SidebarMenu.vue -->
 <template>
-	<USidebar
-		:open="open"
-		class="bg-secondary"
-		@close="$emit('close')">
-		<UList>
-			<UListItem @click="$emit('go-to', 'setup')">
-				<UIcon
-					name="settings"
-					class="text-white" /> Setup
-			</UListItem>
-			<UListItem @click="$emit('go-to', 'profile')">
-				<UIcon
-					name="person"
-					class="text-white" /> Profile
-			</UListItem>
-			<UListItem @click="$emit('go-to', 'help')">
-				<UIcon
-					name="help_circle"
-					class="text-white" /> Help
-			</UListItem>
-		</UList>
-	</USidebar>
+	<UVerticalNavigation
+		:links="links"
+		class="bg-secondary" />
 </template>
 
-<script setup>
-import { defineProps } from "vue";
+<script setup lang="ts">
+defineEmits(["close"]);
+const links = [{
+	label: "Profile",
+	avatar: {
+		src: "https://avatars.githubusercontent.com/u/739984?v=4",
+	},
+	badge: 100,
+}, {
+	label: "settings",
+	icon: "i-heroicons-settings",
+	to: "/settings",
+}, {
+	label: "help",
+	icon: "i-heroicons-help-circle",
+	to: "/help",
 
-const props = defineProps({
-	open: Boolean,
-});
+}];
 </script>
