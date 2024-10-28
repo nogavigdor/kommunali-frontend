@@ -1,42 +1,32 @@
 <!-- BottomNavigation.vue -->
 <template>
-	<UAppBar
-		class="bottom-0 fixed w-full flex justify-between bg-primary text-white">
-		<button
-			class="flex-1 flex justify-center items-center"
-			@click="$emit('go-to', 'messages')">
-			<UIcon
-				name="mail"
-				class="text-xl text-white" />
-			<UTooltip>Account</UTooltip>
-		</button>
-		<button
-			class="flex-1 flex justify-center items-center"
-			@click="$emit('go-to', 'myStore')">
-			<UIcon
-				name="storefront"
-				class="text-xl text-white" />
-			<UTooltip>My Store</UTooltip>
-		</button>
-		<button
-			class="flex-1 flex justify-center items-center"
-			@click="$emit('go-to', 'wishlist')">
-			<UIcon
-				name="heart"
-				class="text-xl text-white" />
-			<UTooltip>Wishlist</UTooltip>
-		</button>
-		<button
-			class="flex-1 flex justify-center items-center"
-			@click="$emit('go-to', 'requests')">
-			<UIcon
-				name="mail"
-				class="text-xl text-white" />
-			<UTooltip>Requests</UTooltip>
-		</button>
-	</UAppBar>
+	<UHorizontalNavigation
+		:links="links"
+		class="border-b border-gray-200 dark:border-gray-800" />
 </template>
 
-<script setup>
-
+<script setup lang="ts">
+const links = [
+	{
+		label: "Home",
+		icon: "i-heroicons-home",
+		to: "/",
+	},
+	{
+		label: "Messages",
+		icon: "i-heroicons-envelope",
+		to: "/messages",
+	}, {
+		label: "wishlist",
+		icon: "i-heroicons-wishlist",
+		to: "/wishlist",
+	}, {
+		label: "requests",
+		icon: "i-heroicons-clipboard-list",
+		to: "/requests",
+	}, {
+		label: "My Store",
+		icon: "i-heroicons-store",
+		to: "/my-store",
+	}];
 </script>
