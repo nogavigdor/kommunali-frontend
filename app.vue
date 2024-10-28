@@ -1,17 +1,22 @@
 <template>
-  <div class="flex flex-col min-h-screen bg-primary">
-    <!-- Top Navbar -->
-    <TopNavbar @toggle-menu="toggleMenu" />
+	<div class="flex flex-col min-h-screen bg-primary">
+		<!-- Top Navbar -->
+		<TopNavBar
+			:open="menuOpen"
+			@toggle-menu="toggleMenu" />
 
-    <!-- Sidebar Menu -->
-    <SidebarMenu :open="menuOpen" @close="menuOpen = false" @go-to="goTo" />
+		<!-- Sidebar Menu -->
+		<SidebarMenu
+			v-show="menuOpen"
+			@close="menuOpen = false" />
 
-    <!-- Map Container -->
-    <MapContainer />
+		<NuxtPage />
+		<!-- Map Container -->
+		<MapContainer />
 
-    <!-- Bottom Navigation -->
-    <BottomNavigation @go-to="goTo" />
-  </div>
+		<!-- Bottom Navigation -->
+		<BottomNavigation @go-to="goTo" />
+	</div>
 </template>
 
 <script setup>
@@ -20,11 +25,11 @@ import { useRouter } from "vue-router";
 
 const menuOpen = ref(false);
 const toggleMenu = () => {
-  menuOpen.value = !menuOpen.value;
+	menuOpen.value = !menuOpen.value;
 };
 
 const router = useRouter();
 const goTo = (path) => {
-  router.push(path);
+	router.push(path);
 };
 </script>

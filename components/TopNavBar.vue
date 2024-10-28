@@ -1,22 +1,29 @@
 <!-- TopNavbar.vue -->
 <template>
-  <UAppBar class="bg-primary text-white">
-    <div class="flex justify-between items-center w-full">
-      <!-- Left Side - Menu Icon -->
-      <button class="ml-4" @click="$emit('toggle-menu')">
-        <UIcon name="menu" class="text-xl text-white" />
-      </button>
-      <!-- Right Side - Search Icon -->
-      <button class="mr-4">
-        <UIcon name="search" class="text-xl text-white" />
-        <UTooltip>Search</UTooltip>
-      </button>
-    </div>
-  </UAppBar>
+	<nav class="bg-primary text-white">
+		<div class="flex justify-between items-center w-full">
+			<!-- Left Side - Menu Icon -->
+			<button
+				class="ml-4"
+				@click="$emit('toggle-menu')">
+				<UIcon
+					:name="open?'i-heroicons-x-mark':'i-heroicons-bars-3'"
+					class="text-xl text-white" />
+			</button>
+			<!-- Right Side - Search Icon -->
+			<button class="mr-4">
+				<UIcon
+					name="i-heroicons-magnifying-glass"
+					class="text-xl text-white" />
+				<UTooltip>Search</UTooltip>
+			</button>
+		</div>
+	</nav>
 </template>
 
-<script setup>
-import { UAppBar, UIcon, UTooltip } from "@nuxt/ui";
-
-const _emit = defineEmits(["toggle-menu"]);
+<script setup lang="ts">
+defineProps({
+	open: Boolean,
+});
+defineEmits(["toggle-menu"]);
 </script>
