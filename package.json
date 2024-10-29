@@ -15,7 +15,8 @@
     "@nuxtjs/tailwindcss": "^6.12.2",
     "nuxt": "^3.13.2",
     "nuxt-mapbox": "^1.6.1",
-    "vue": "latest",
+    "pinia": "^2.2.5",
+    "vue": "^3.5.12",
     "vue-router": "latest"
   },
   "devDependencies": {
