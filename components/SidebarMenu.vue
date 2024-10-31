@@ -2,7 +2,7 @@
 <template>
 	<UVerticalNavigation
 		:links="links"
-		class="bg-secondary" />
+		class="absolute z-10 bg-secondary min-h-screen w-72 p-12 " />
 </template>
 
 <script setup lang="ts">
