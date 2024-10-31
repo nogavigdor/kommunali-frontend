@@ -8,7 +8,7 @@
 				@click="$emit('toggle-menu')">
 				<UIcon
 					:name="open?'i-heroicons-x-mark':'i-heroicons-bars-3'"
-					class="text-xl text-white" />
+					class="absolute text-xl z-20 top-5 left-5 text-white" />
 			</button>
 			<!-- Right Side - Search Icon -->
 			<button class="mr-4">
