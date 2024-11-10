@@ -6,9 +6,16 @@
 			@toggle-menu="toggleMenu" />
 
 		<!-- Sidebar Menu -->
-		<SidebarMenu
-			v-show="menuOpen"
-			@close="menuOpen = false" />
+		<transition
+			enter-active-class="transition-transform duration-500 ease-in-out"
+			leave-active-class="transition-transform duration-500 ease-in-out"
+			enter-from-class="-translate-x-full"
+			enter-to-class="translate-x-0"
+			leave-from-class="translate-x-0"
+			leave-to-class="-translate-x-full">
+			<SidebarMenu
+				v-if="menuOpen" />
+		</transition>
 
 		<NuxtPage />
 		<!-- Map Container -->
