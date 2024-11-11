@@ -18,6 +18,9 @@
 		</transition>
 
 		<NuxtPage />
+		<client-only>
+			<UserLocation />
+		</client-only>
 		<!-- Map Container -->
 		<MapContainer />
 
