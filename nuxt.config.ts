@@ -2,6 +2,12 @@
 export default defineNuxtConfig({
 	modules: ["@nuxt/eslint", "@nuxt/ui", "nuxt-mapbox"],
 	devtools: { enabled: true },
+	runtimeConfig: {
+		public: {
+			apiBaseUrl: process.env.API_BASE_URL,
+			// mapboxToken: process.env.MAPBOX_ACCESS_TOKEN,
+		},
+	},
 	compatibilityDate: "2024-04-03",
 	eslint: {
 		config: {
