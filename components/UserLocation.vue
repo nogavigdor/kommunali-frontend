@@ -13,7 +13,6 @@ import { MapboxAddressAutofill } from "@mapbox/search-js-web";
 
 const config = useRuntimeConfig();
 
-
 onMounted(() => {
 // instantiate a <mapbox-address-autofill> element using the MapboxAddressAutofill class
 	const autofillElement = new MapboxAddressAutofill();
@@ -31,8 +30,12 @@ onMounted(() => {
 	console.log(the_form);
 
 	// append the <input> to <mapbox-address-autofill>
-	autofillElement.appendChild(the_input);
+	if (the_input) {
+		autofillElement.appendChild(the_input);
+	}
 	// append <mapbox-address-autofill> to the <form>
-	the_form.appendChild(autofillElement);
+	if (the_form) {
+		the_form.appendChild(autofillElement);
+	}
 });
 </script>
