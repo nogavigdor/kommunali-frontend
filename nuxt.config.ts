@@ -6,7 +6,7 @@ export default defineNuxtConfig({
 		public: {
 			apiBaseUrl: process.env.API_BASE_URL,
 			googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
-			// mapboxToken: process.env.MAPBOX_ACCESS_TOKEN,
+			mapboxApiKey: process.env.MAPBOX_ACCESS_TOKEN,
 		},
 	},
 	compatibilityDate: "2024-04-03",
