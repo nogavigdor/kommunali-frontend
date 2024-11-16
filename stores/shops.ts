@@ -1,6 +1,7 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { IShop } from "@/types/shop";
+import type { ILocationQuery } from "~/types/locationQuery";
 
 export const useShopsStore = defineStore("shops", () => {
 	const config = useRuntimeConfig();
@@ -8,18 +9,16 @@ export const useShopsStore = defineStore("shops", () => {
 	const userLocation = ref<[number, number]>([0, 0]);
 
 	// Fetch shops within bounds based on user location
-	async function getShops() {
+	async function getShops(bounds: ILocationQuery) {
 		try {
+			console.log("Fetching shops with bounds:", bounds);
 			const response = await $fetch(`${config.public.apiBaseUrl}/api/stores/stores-in-bounds`,
 				{
 					headers: {
 						"Content-Type": "application/json",
 					},
 					method: "POST",
-					body: {
-						bottomLeft: [userLocation.value[0] - 0.01, userLocation.value[1] - 0.01],
-						topRight: [userLocation.value[0] + 0.01, userLocation.value[1] + 0.01],
-					},
+					body: bounds,
 				},
 			);
 
