@@ -7,12 +7,12 @@
 				type="text"
 				name="address"
 				placeholder="Please enter an address"
-				autocomplete="off"
-				@input="fetchSuggestions">
+				autocomplete="street-address"
+				@input.once="fetchSuggestions">
 			<button
 				v-if="showMapButton"
 				class="bg-primary text-white px-4 py-2 rounded"
-				@click.prevent="showMap">
+				@click.prevent="$emit('change-address', autofillData)">
 				Show Map
 			</button>
 		</form>
@@ -31,9 +31,10 @@
 </template>
 
 <script setup lang="ts">
-import { MapboxAddressAutofill, getAutofillSearchText } from "@mapbox/search-js-web";
-import { debounce } from "lodash";
+import { MapboxAddressAutofill } from "@mapbox/search-js-web";
 import { useShopsStore } from "@/stores/shops";
+
+defineEmits(["change-address"]);
 
 const config = useRuntimeConfig();
 const query = ref("");
@@ -41,12 +42,12 @@ const suggestions = ref<string[]>([]);
 const savedAddresses = ref<string[]>([]);
 const showMapButton = ref(false);
 const shopsStore = useShopsStore();
+const autofillData = ref({});
 
 const isLoggedIn = ref(false);
 
 onMounted(async () => {
 	if (isLoggedIn.value) {
-		await shopsStore.getShops(); // Fetch all shops
 		savedAddresses.value = shopsStore.shops.map(
 			shop => `${shop.address.street} ${shop.address.houseNumber}, ${shop.address.city}`,
 		);
@@ -54,69 +55,33 @@ onMounted(async () => {
 });
 
 // Fetch address suggestions from Mapbox
-const fetchSuggestions = debounce(async () => {
+const fetchSuggestions = () => {
 	const autofillElement = new MapboxAddressAutofill();
+	autofillElement.accessToken = config.public.mapboxApiKey;
+	autofillElement.browserAutofillEnabled = false;
 
 	const inputElement = document.getElementById("address-input") as HTMLInputElement;
+	const formElement = inputElement.parentElement as HTMLFormElement;
+
 	if (inputElement) {
 		// Attach autofill functionality to the input
 		autofillElement.appendChild(inputElement);
+		formElement.appendChild(autofillElement);
 
 		// Listen for autofill events
 		inputElement.addEventListener("input", () => {
 			console.log("User is typing: ", inputElement.value);
 		});
 
-		inputElement.addEventListener("autofill", (event: Event) => {
+		autofillElement.addEventListener("retrieve", (event: Event) => {
+			console.log("Retrieve event");
 			const customEvent = event as CustomEvent;
-			const autofillData = customEvent.detail;
+			autofillData.value = customEvent.detail;
 			console.log("Selected Address Data: ", autofillData);
+			showMapButton.value = true;
 
 			// Use the address data for further processing (e.g., parsing coordinates)
 		});
 	}
-}, 3000,
-);
-// Select a saved address
-const selectSavedAddress = (address: string) => {
-	query.value = address;
-	showMapButton.value = true;
-
-	// Update the user location based on the selected address
-	parseAddressToCoordinates(address).then((coordinates) => {
-		shopsStore.userLocation = coordinates;
-	});
 };
-
-// Select a new address
-const selectAddress = (address: string) => {
-	query.value = address;
-	showMapButton.value = true;
-};
-
-// Show the map with all stores
-const showMap = async () => {
-	const coordinates = await parseAddressToCoordinates(query.value);
-	shopsStore.userLocation = coordinates;
-	await shopsStore.getShops(); // Fetch shops within the boundaries
-};
-
-// Parse an address into coordinates
-async function parseAddressToCoordinates(address: string): Promise<[number, number]> {
-	try {
-		const response: { features: { center: [number, number] }[] } = await $fetch(
-			`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json`,
-			{
-				params: {
-					access_token: config.public.mapboxApiKey,
-				},
-			},
-		);
-		return response.features[0].center; // [longitude, latitude]
-	}
-	catch (error) {
-		console.error("Error parsing address:", error);
-		return [0, 0];
-	}
-}
 </script>
