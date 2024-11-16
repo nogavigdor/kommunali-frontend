@@ -1,81 +1,122 @@
 <template>
-	<form>
-		<input
-			id="address-input"
-			type="text"
-			name="address"
-			autocomplete="shipping street-address">
-	</form>
+	<div class="max-w-md mx-auto p-4">
+		<form>
+			<input
+				id="address-input"
+				v-model="query"
+				type="text"
+				name="address"
+				placeholder="Please enter an address"
+				autocomplete="off"
+				@input="fetchSuggestions">
+			<button
+				v-if="showMapButton"
+				class="bg-primary text-white px-4 py-2 rounded"
+				@click.prevent="showMap">
+				Show Map
+			</button>
+		</form>
+		<ul
+			v-if="suggestions.length"
+			class="mt-2 border border-secondary-light rounded-md shadow bg-white max-h-40 overflow-y-auto">
+			<li
+				v-for="(suggestion, index) in suggestions"
+				:key="index"
+				class="px-4 py-2 cursor-pointer hover:bg-secondary-light transition-colors"
+				@click="selectAddress(suggestion)">
+				{{ suggestion }}
+			</li>
+		</ul>
+	</div>
 </template>
 
 <script setup lang="ts">
-import { MapboxAddressAutofill } from "@mapbox/search-js-web";
+import { MapboxAddressAutofill, getAutofillSearchText } from "@mapbox/search-js-web";
+import { debounce } from "lodash";
+import { useShopsStore } from "@/stores/shops";
 
 const config = useRuntimeConfig();
+const query = ref("");
+const suggestions = ref<string[]>([]);
+const savedAddresses = ref<string[]>([]);
+const showMapButton = ref(false);
+const shopsStore = useShopsStore();
 
-onMounted(() => {
-// instantiate a <mapbox-address-autofill> element using the MapboxAddressAutofill class
+const isLoggedIn = ref(false);
+
+onMounted(async () => {
+	if (isLoggedIn.value) {
+		await shopsStore.getShops(); // Fetch all shops
+		savedAddresses.value = shopsStore.shops.map(
+			shop => `${shop.address.street} ${shop.address.houseNumber}, ${shop.address.city}`,
+		);
+	}
+});
+
+// Fetch address suggestions from Mapbox
+const fetchSuggestions = debounce(async () => {
 	const autofillElement = new MapboxAddressAutofill();
 
-	autofillElement.accessToken = config.public.mapbox.accessToken;
+	const inputElement = document.getElementById("address-input") as HTMLInputElement;
+	if (inputElement) {
+		// Attach autofill functionality to the input
+		autofillElement.appendChild(inputElement);
 
-	// set the <mapbox-address-autofill> element's options
-	autofillElement.options = {
-		country: "dk",
-	};
+		// Listen for autofill events
+		inputElement.addEventListener("input", () => {
+			console.log("User is typing: ", inputElement.value);
+		});
 
-	const the_input = document.getElementById("address-input") as HTMLInputElement;
-	console.log(the_input);
-	const the_form = the_input?.parentElement;
-	console.log(the_form);
+		inputElement.addEventListener("autofill", (event: Event) => {
+			const customEvent = event as CustomEvent;
+			const autofillData = customEvent.detail;
+			console.log("Selected Address Data: ", autofillData);
 
-	// append the <input> to <mapbox-address-autofill>
-	if (the_input) {
-		autofillElement.appendChild(the_input);
+			// Use the address data for further processing (e.g., parsing coordinates)
+		});
 	}
-	// append <mapbox-address-autofill> to the <form>
-	if (the_form) {
-		the_form.appendChild(autofillElement);
-	}
+}, 3000,
+);
+// Select a saved address
+const selectSavedAddress = (address: string) => {
+	query.value = address;
+	showMapButton.value = true;
 
-	// Define an interface for the custom autofill event detail
-	interface AutofillEventDetail {
-		features: {
-			place_name: string;
-			context: Array<{
-				id: string;
-				text: string;
-			}>;
-		}[];
-	}
-
-	// Add an event listener for the autofill completion
-	(autofillElement as EventTarget).addEventListener("autofill", (event: Event) => {
-		const customEvent = event as CustomEvent<AutofillEventDetail>;
-		const feature = customEvent.detail.features[0];
-
-		// Initialize parts of the address
-		const street = feature.place_name;
-		let city = "";
-		let postalCode = "";
-
-		// Iterate over the context array to find city and postal code
-		for (const context of feature.context) {
-			if (context.id.includes("place")) {
-				city = context.text;
-			}
-			if (context.id.includes("postcode")) {
-				postalCode = context.text;
-			}
-		}
-
-		// Construct the full address
-		const fullAddress = `${street}, ${postalCode} ${city}`;
-
-		// Set the input field's value to the full address
-		if (the_input) {
-			the_input.value = fullAddress;
-		}
+	// Update the user location based on the selected address
+	parseAddressToCoordinates(address).then((coordinates) => {
+		shopsStore.userLocation = coordinates;
 	});
-});
+};
+
+// Select a new address
+const selectAddress = (address: string) => {
+	query.value = address;
+	showMapButton.value = true;
+};
+
+// Show the map with all stores
+const showMap = async () => {
+	const coordinates = await parseAddressToCoordinates(query.value);
+	shopsStore.userLocation = coordinates;
+	await shopsStore.getShops(); // Fetch shops within the boundaries
+};
+
+// Parse an address into coordinates
+async function parseAddressToCoordinates(address: string): Promise<[number, number]> {
+	try {
+		const response: { features: { center: [number, number] }[] } = await $fetch(
+			`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json`,
+			{
+				params: {
+					access_token: config.public.mapboxApiKey,
+				},
+			},
+		);
+		return response.features[0].center; // [longitude, latitude]
+	}
+	catch (error) {
+		console.error("Error parsing address:", error);
+		return [0, 0];
+	}
+}
 </script>
