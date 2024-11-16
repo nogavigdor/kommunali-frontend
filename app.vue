@@ -19,7 +19,7 @@
 
 		<NuxtPage />
 		<client-only>
-			<GoogleUserLocation />
+			<UserLocation />
 		</client-only>
 		<!-- Map Container -->
 		<MapContainer />
