@@ -2,20 +2,21 @@
 <template>
 	<div
 		id="map"
-		class="flex-grow h-full w-full" />
+		class="flex-grow h-full w-full">
+		fd
+	</div>
 </template>
 
 <script setup lang="ts">
 import mapboxgl from "mapbox-gl";
+import { storeToRefs } from "pinia";
 import { useShopsStore } from "@/stores/shops";
 import type { IShop } from "@/types/shop";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 const shopsStore = useShopsStore();
-
-const userLocation = computed(() => shopsStore.userLocation);
-
-// Computed property to get the shops from the store
-const shops = computed(() => shopsStore.shops);
+// const { shops } = useShopsStore(); // non-reactive
+const { shops, userLocation } = storeToRefs(shopsStore);
 
 let currentMarkers: mapboxgl.Marker[] = [];
 
@@ -34,6 +35,7 @@ const mapRef = ref<mapboxgl.Map | null>(null) as Ref<mapboxgl.Map | null>;
 
 // Watch for changes in userLocation and update the map center
 watch(userLocation, async (newLocation) => {
+	console.log("userLocation watcher");
 	if (mapRef.value) {
 		mapRef.value.setCenter(newLocation);
 		console.log("userLocation updated, fetching new shops");
@@ -64,7 +66,7 @@ function updateMarkers(shops: IShop[]) {
 		console.log("Popup created for marker: ", popup);
 
 		// Create a marker for each shop
-		const marker = new mapboxgl.Marker(el)
+		const marker = new mapboxgl.Marker()
 			.setLngLat(shop.location.coordinates)
 			.setPopup(popup) // Attach popup to marker
 			.addTo(mapRef.value as mapboxgl.Map);
