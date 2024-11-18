@@ -2,6 +2,12 @@
 export default defineNuxtConfig({
 	modules: ["@nuxt/eslint", "@nuxt/ui", "nuxt-mapbox"],
 	devtools: { enabled: true },
+	ui: {
+		safelistColors: ["brandPrimary", "brandGray"],
+	},
+	// css: [
+	//	"~/assets/css/tailwind.css",
+	// ],
 	runtimeConfig: {
 		public: {
 			apiBaseUrl: process.env.API_BASE_URL,
