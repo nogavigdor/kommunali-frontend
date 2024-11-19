@@ -3,7 +3,11 @@
 	<div
 		id="map"
 		class="flex-grow h-full w-full">
-		fd
+		<!-- Shop Details Overlay -->
+		<ShopDetails
+			v-if="showShopDetails"
+			:shop="selectedShop || {}"
+			@close="closeShopDetails" />
 	</div>
 </template>
 
@@ -13,12 +17,17 @@ import { storeToRefs } from "pinia";
 import { useShopsStore } from "@/stores/shops";
 import type { IShop } from "@/types/shop";
 import "mapbox-gl/dist/mapbox-gl.css";
+import markerImage from "@/assets/images/marker-image.png";
 
 const shopsStore = useShopsStore();
 // const { shops } = useShopsStore(); // non-reactive
 const { shops, userLocation } = storeToRefs(shopsStore);
 
 let currentMarkers: mapboxgl.Marker[] = [];
+
+const showShopDetails = ref(false);
+
+const selectedShop = ref<IShop | null>(null);
 
 // Now you can watch `shops` or use it in your template, and it will stay up-to-date.
 watch(shops, (newShops) => {
@@ -58,6 +67,38 @@ function updateMarkers(shops: IShop[]) {
 		const el = document.createElement("div");
 		el.className = "marker";
 
+		// Apply the styles using Object.assign
+		/*
+		el.className = "marker mapbox-marker";
+		el.style.backgroundColor = "#7B1FA2";
+		el.style.width = "50px";
+		el.style.height = "50px";
+		el.style.borderRadius = "50%";
+		el.style.cursor = "pointer";
+		el.style.border = "2px solid black";
+		el.style.zIndex = "9999"; */
+		const markerStyle = {
+			backgroundImage: `url(${markerImage})`,
+			backgroundSize: "cover",
+			//	backgroundColor: "#7B1FA2",
+			width: "30px",
+			height: "30px",
+			// borderRadius: "50%",
+			cursor: "pointer",
+			// border: "2px solid black",
+			zIndex: "9999",
+		};
+		// applying the marker styles to the marker element
+		Object.assign(el.style, markerStyle);
+
+		// Handle marker click event
+		el.addEventListener("click", () => {
+			console.log("Shop clicked:", shop);
+			showShopDetails.value = true;
+
+			selectedShop.value = shop; // Set the selected shop
+		});
+
 		// Create a popup for additional shop info
 		const popup = new mapboxgl.Popup({ offset: 25 }).setText(
 			`${shop.name} - ${shop.address.street} ${shop.address.houseNumber}, ${shop.address.city}`,
@@ -66,11 +107,11 @@ function updateMarkers(shops: IShop[]) {
 		console.log("Popup created for marker: ", popup);
 
 		// Create a marker for each shop
-		const marker = new mapboxgl.Marker()
+		const marker = new mapboxgl.Marker(el)
 			.setLngLat(shop.location.coordinates)
 			.setPopup(popup) // Attach popup to marker
 			.addTo(mapRef.value as mapboxgl.Map);
-
+		//	el.className = "marker mapbox-marker";
 		console.log("Created marker:", marker);
 
 		currentMarkers.push(marker); // Keep track of the markers
@@ -149,12 +190,19 @@ const setupMapListeners = () => {
 		});
 	}
 };
+
+// Close shop details
+const closeShopDetails = () => {
+	showShopDetails.value = false;
+	selectedShop.value = null;
+};
 </script>
 
 <style scoped>
-.marker {
+.marker .mapboxgl-marker {
 	background-image: url('https://docs.mapbox.com/demos/custom-markers-gl-js/mapbox-icon.png');
   background-size: cover;
+  background-color:#7B1FA2;
   width: 50px;
   height: 50px;
   border-radius: 50%;
