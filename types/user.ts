@@ -19,3 +19,10 @@ export interface IUser {
 	requested_products: RequestedProduct[]; // Array of requested products with store references
 	updatedAt: Date;
 }
+
+export interface IRegisterUser {
+	email: string;
+	password: string;
+	firstName: string;
+	lastName: string;
+}
