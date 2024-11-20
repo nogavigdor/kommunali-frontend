@@ -47,17 +47,17 @@ export default {
           900: '#1A1A1A',
           950: '#0E0E0E'
         },
-        brandSecondary: {
+        secondary: {
           light: "#FFF59D", // Soft Yellow for backgrounds or highlights
           DEFAULT: "#FFEB3B", // Bright Yellow for calls-to-action
           dark: "#FBC02D", // Deeper Yellow for better readability
         },
-        brandAccent: {
+        accent: {
           light: "#F48FB1", // Soft Pink for subtle highlights
           DEFAULT: "#EC407A", // Bright Magenta for strong accents
           dark: "#D81B60", // Dark Magenta for contrast and emphasis
         },
-        brandNeutral: {
+        neutral: {
           light: "#F5F5F5", // Light Gray for backgrounds
           DEFAULT: "#CFD8DC", // Medium Gray for borders or cards
           dark: "#424242", // Dark Charcoal for text
