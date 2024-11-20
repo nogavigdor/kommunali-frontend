@@ -1,16 +1,15 @@
 <!-- MapContainer.vue -->
 <template>
+	<!-- Shop Details Overlay -->
+	<ShopDetails
+		v-if="showShopDetails"
+		:shop="selectedShop || {}"
+		:style="shopDetailsStyle"
+		@close="
+			closeShopDetails" />
 	<div
 		id="map"
-		class="flex-grow h-full w-full">
-		<!-- Shop Details Overlay -->
-		<ShopDetails
-			v-if="showShopDetails"
-			:shop="selectedShop || {}"
-			:style="shopDetailsStyle"
-			@close="
-				closeShopDetails" />
-	</div>
+		class="flex-grow h-full w-full" />
 </template>
 
 <script setup lang="ts">
@@ -80,7 +79,7 @@ function updateMarkers(shops: IShop[]) {
 		el.style.borderRadius = "50%";
 		el.style.cursor = "pointer";
 		el.style.border = "2px solid black";
-		el.style.zIndex = "9999"; */
+		el.style.zIndex = "9999";
 		const markerStyle = {
 			backgroundImage: `url(${markerImage})`,
 			backgroundSize: "cover",
@@ -93,7 +92,7 @@ function updateMarkers(shops: IShop[]) {
 			zIndex: "9999",
 		};
 		// applying the marker styles to the marker element
-		Object.assign(el.style, markerStyle);
+		Object.assign(el.style, markerStyle); */
 
 		// Handle marker click event
 		el.addEventListener("click", () => {
@@ -212,8 +211,8 @@ const closeShopDetails = () => {
 };
 </script>
 
-<style scoped>
-.marker .mapboxgl-marker {
+<style>
+.marker.mapboxgl-marker {
 	background-image: url('https://docs.mapbox.com/demos/custom-markers-gl-js/mapbox-icon.png');
   background-size: cover;
   background-color:#7B1FA2;
@@ -221,6 +220,6 @@ const closeShopDetails = () => {
   height: 50px;
   border-radius: 50%;
   cursor: pointer;
-	z-index: 9999;
+	z-index: 10;
 }
 </style>
