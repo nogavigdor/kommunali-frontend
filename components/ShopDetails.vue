@@ -1,6 +1,8 @@
 <!-- ShopDetails.vue -->
 <template>
-	<div class="absolute bottom-0 left-0 w-full bg-white p-4 shadow-medium rounded-t-2xl">
+	<div
+		class="absolute bottom-0 left-0 w-300 h-60 bg-white p-4 shadow-medium rounded-t-2xl z-20"
+		:style="style">
 		<div class="flex items-center justify-between">
 			<h2 class="text-2xl font-heading text-brandPrimary-700">
 				{{ shop.name }}
@@ -18,7 +20,7 @@
 			<div
 				v-for="product in shop.products"
 				:key="product._id"
-				class="absolute top-20 left-20 min-w-[200px] border border-brandNeutral-dark rounded-lg p-2 shadow-soft">
+				class=" min-w-[50px] border border-brandNeutral-dark rounded-lg p-2 shadow-soft">
 				<img
 					:src="placeholderImage"
 					alt="Product Image"
