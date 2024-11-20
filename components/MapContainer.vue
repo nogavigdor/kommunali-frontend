@@ -7,7 +7,9 @@
 		<ShopDetails
 			v-if="showShopDetails"
 			:shop="selectedShop || {}"
-			@close="closeShopDetails" />
+			:style="shopDetailsStyle"
+			@close="
+				closeShopDetails" />
 	</div>
 </template>
 
@@ -26,6 +28,8 @@ const { shops, userLocation } = storeToRefs(shopsStore);
 let currentMarkers: mapboxgl.Marker[] = [];
 
 const showShopDetails = ref(false);
+
+const shopDetailsStyle = ref({ top: "0", left: "0" });
 
 const selectedShop = ref<IShop | null>(null);
 
@@ -97,6 +101,16 @@ function updateMarkers(shops: IShop[]) {
 			showShopDetails.value = true;
 
 			selectedShop.value = shop; // Set the selected shop
+
+			// Calculate the position of the clicked marker on the screen
+			const mapBoxPoint = mapRef.value?.project(shop.location.coordinates);
+			if (mapBoxPoint) {
+				// Set the shop details overlay position to be near the marker position
+				shopDetailsStyle.value = {
+					top: `${mapBoxPoint.y}px`,
+					left: `${mapBoxPoint.x}px`,
+				};
+			}
 		});
 
 		// Create a popup for additional shop info

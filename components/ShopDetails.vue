@@ -20,7 +20,7 @@
 				:key="product._id"
 				class="absolute top-20 left-20 min-w-[200px] border border-brandNeutral-dark rounded-lg p-2 shadow-soft">
 				<img
-					:src="product.imageUrl || imagePlaceholder"
+					:src="placeholderImage"
 					alt="Product Image"
 					class="w-full h-32 object-cover rounded-lg">
 				<h3 class="text-lg font-heading mt-2">
