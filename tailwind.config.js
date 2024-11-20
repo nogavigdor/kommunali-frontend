@@ -15,8 +15,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Rubik", "Helvetica", "Arial", "sans-serif"], // Default font for the whole app
-        heading: ["Playfair Display", "serif"], // Font for headings
+      //  sans: ["Rubik", "Helvetica", "Arial", "sans-serif"], // Default font for the whole app
+      //  heading: ["Playfair Display", "serif"], // Font for headings
+      sans : ['atma', ...defaultTheme.fontFamily.sans],
+      heading : [ 'karla', ...defaultTheme.fontFamily.sans],
       },
       colors: {
         brandPrimary: { // Changed from "primary" to avoid conflict with Nuxt UI
