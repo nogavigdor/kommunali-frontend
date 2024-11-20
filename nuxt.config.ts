@@ -2,6 +2,15 @@
 export default defineNuxtConfig({
 	modules: ["@nuxt/eslint", "@nuxt/ui", "nuxt-mapbox"],
 	devtools: { enabled: true },
+	app: {
+		head: {
+			link: [
+				{ rel: "preconnect", href: "https://fonts.googleapis.com" },
+				{ rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" },
+				{ href: "https://fonts.googleapis.com/css2?family=Atma:wght@300;400;500;600;700&display=swap", rel: "stylesheet" },
+			],
+		},
+	},
 	ui: {
 		safelistColors: ["brandPrimary", "brandGray"],
 	},
