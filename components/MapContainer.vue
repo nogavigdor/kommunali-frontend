@@ -18,7 +18,7 @@ import { storeToRefs } from "pinia";
 import { useShopsStore } from "@/stores/shops";
 import type { IShop } from "@/types/shop";
 import "mapbox-gl/dist/mapbox-gl.css";
-import markerImage from "@/assets/images/marker-image.png";
+// import markerImage from "@/assets/images/marker-image.png";
 
 const shopsStore = useShopsStore();
 // const { shops } = useShopsStore(); // non-reactive
@@ -113,16 +113,16 @@ function updateMarkers(shops: IShop[]) {
 		});
 
 		// Create a popup for additional shop info
-		const popup = new mapboxgl.Popup({ offset: 25 }).setText(
-			`${shop.name} - ${shop.address.street} ${shop.address.houseNumber}, ${shop.address.city}`,
-		);
+		// const popup = new mapboxgl.Popup({ offset: 25 }).setText(
+		//	`${shop.name} - ${shop.address.street} ${shop.address.houseNumber}, ${shop.address.city}`,
+		// );
 
-		console.log("Popup created for marker: ", popup);
+		// console.log("Popup created for marker: ", popup);
 
 		// Create a marker for each shop
 		const marker = new mapboxgl.Marker(el)
 			.setLngLat(shop.location.coordinates)
-			.setPopup(popup) // Attach popup to marker
+			// .setPopup(popup) // Attach popup to marker
 			.addTo(mapRef.value as mapboxgl.Map);
 		//	el.className = "marker mapbox-marker";
 		console.log("Created marker:", marker);
@@ -201,6 +201,28 @@ const setupMapListeners = () => {
 			console.log("Map zoomed, updating shops on map");
 			await updateShopsOnMap();
 		});
+
+		// Attach event listeners to keep shop details aligned with marker position
+		mapRef.value.on("move", updateShopDetailsPosition);
+		mapRef.value.on("zoom", updateShopDetailsPosition);
+	}
+};
+
+// Function to keep the ShopDetails window updated with marker position
+const updateShopDetailsPosition = () => {
+	if (selectedShop.value && mapRef.value) {
+		const shopLocation = selectedShop.value.location.coordinates;
+
+		if (shopLocation) {
+			const mapBoxPoint = mapRef.value.project(shopLocation);
+
+			if (mapBoxPoint) {
+				shopDetailsStyle.value = {
+					top: `${mapBoxPoint.y}px`,
+					left: `${mapBoxPoint.x}px`,
+				};
+			}
+		}
 	}
 };
 
@@ -213,12 +235,10 @@ const closeShopDetails = () => {
 
 <style>
 .marker.mapboxgl-marker {
-	background-image: url('https://docs.mapbox.com/demos/custom-markers-gl-js/mapbox-icon.png');
+	background-image: url('@/assets/images/marker-image.png');
   background-size: cover;
-  background-color:#7B1FA2;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
 	z-index: 10;
 }
