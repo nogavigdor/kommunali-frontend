@@ -7,7 +7,8 @@ export default defineNuxtConfig({
 			link: [
 				{ rel: "preconnect", href: "https://fonts.googleapis.com" },
 				{ rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" },
-				{ href: "https://fonts.googleapis.com/css2?family=Atma:wght@300;400;500;600;700&display=swap", rel: "stylesheet" },
+				{ href: "https://fonts.googleapis.com/css2?family=Atma:wght@300;400;500;600;700&family=Karla:ital,wght@0,200..800;1,200..800&display=swap", rel: "stylesheet" },
+
 			],
 		},
 	},
