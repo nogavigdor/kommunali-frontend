@@ -1,7 +1,7 @@
 <!-- ShopDetails.vue -->
 <template>
 	<div
-		class="absolute bottom-0 left-0 w-300 h-60 bg-white p-4 shadow-medium rounded-t-2xl z-20"
+		class="absolute bottom-0 left-0 w-96 h-96 bg-white p-4 shadow-medium rounded-2xl z-20"
 		:style="style">
 		<div class="flex items-center justify-between">
 			<h2 class="text-2xl font-heading text-brandPrimary-700">
@@ -16,11 +16,15 @@
 		<p class="text-brandNeutral-dark">
 			{{ shop.description }}
 		</p>
-		<div class="overflow-x-auto flex gap-4 mt-4">
-			<div
+		<swiper
+			:slides-per-view="1.5"
+			space-between="10"
+			:grab-cursor="true"
+			class="mt-4 pb-4">
+			<swiper-slide
 				v-for="product in shop.products"
 				:key="product._id"
-				class=" min-w-[50px] border border-brandNeutral-dark rounded-lg p-2 shadow-soft">
+				class=" min-w-[150px] max-w-xs  border border-neutral-dark rounded-lg p-2 shadow-soft">
 				<img
 					:src="placeholderImage"
 					alt="Product Image"
@@ -31,13 +35,15 @@
 				<p class="text-brandSecondary-dark">
 					{{ product.price }} DKK
 				</p>
-			</div>
-		</div>
+			</swiper-slide>
+		</swiper>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { defineProps, defineEmits } from "vue";
+import { Swiper, SwiperSlide } from "swiper/vue";
+import "swiper/swiper-bundle.css"; // Import Swiper styles
 import imagePlaceholder from "@/assets/images/image-placeholder.webp";
 
 const _props = defineProps({
@@ -56,5 +62,8 @@ const placeholderImage = imagePlaceholder;
 </script>
 
   <style scoped>
-
+    .overflow-x-auto {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch; /* Enables smooth scrolling on iOS devices */
+}
   </style>

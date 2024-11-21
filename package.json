@@ -17,6 +17,7 @@
     "nuxt": "^3.13.2",
     "nuxt-mapbox": "^1.6.1",
     "pinia": "^2.2.5",
+    "swiper": "^11.1.15",
     "vue": "^3.5.12",
     "vue-router": "latest"
   },
