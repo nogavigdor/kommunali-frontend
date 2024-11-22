@@ -1,10 +1,12 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
+import type { MapboxAddressAutofill } from "@mapbox/search-js-web";
 import type { IUser, RequestedProduct, IRegisterUser } from "@/types/user";
 import { UserRole } from "@/types/user";
 
 export const useUserStore = defineStore("user", () => {
 	const config = useRuntimeConfig();
+	const userLocation = ref<[number, number]>([0, 0]);
 	const user = ref<IUser>({
 		firebaseUserId: "",
 		role: UserRole.USER,
@@ -46,6 +48,7 @@ export const useUserStore = defineStore("user", () => {
 
 	return {
 		user,
+		userLocation,
 		registerUser,
 		updateUser,
 		addRequestedProduct,

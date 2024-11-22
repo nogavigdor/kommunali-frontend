@@ -6,7 +6,6 @@ import type { ILocationQuery } from "~/types/locationQuery";
 export const useShopsStore = defineStore("shops", () => {
 	const config = useRuntimeConfig();
 	const shops = ref<IShop[]>([]);
-	const userLocation = ref<[number, number]>([0, 0]);
 
 	// Fetch shops within bounds based on user location
 	async function getShops(bounds: ILocationQuery) {
@@ -35,7 +34,6 @@ export const useShopsStore = defineStore("shops", () => {
 
 	return {
 		shops,
-		userLocation,
 		getShops,
 		shopCount,
 	};
