@@ -13,7 +13,7 @@
 				v-if="showMapButton"
 				class="btn-primary"
 				@click.prevent="$emit('change-address', autofillData)">
-				Show Map
+				Find your community
 			</button>
 		</form>
 		<ul
@@ -54,6 +54,15 @@ onMounted(async () => {
 		);
 	}
 });
+
+// Scroll method to bring input into focus
+const scrollToInput = () => {
+	const inputElement = document.getElementById("address-input");
+	if (inputElement) {
+		inputElement.scrollIntoView({ behavior: "smooth" });
+		inputElement.focus(); // Optional: To focus on the input field
+	}
+};
 
 // Fetch address suggestions from Mapbox
 const fetchSuggestions = () => {
