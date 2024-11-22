@@ -16,13 +16,15 @@
 			<SidebarMenu
 				v-if="menuOpen" />
 		</transition>
-
-		<NuxtPage />
 		<client-only>
 			<UserLocation
 				v-if="showUserLocation"
 				@change-address="changeAddressHandler" />
 		</client-only>
+		<div v-if="showPage">
+			<NuxtPage />
+		</div>
+
 		<!-- Map Container -->
 		<MapContainer v-if="showMap" />
 
@@ -47,6 +49,8 @@ const showUserLocation = ref(true);
 
 const isMobile = ref(false);
 
+const showPage = ref(true);
+
 // Detect if the view is on mobile
 const detectMobile = () => {
 	isMobile.value = window.innerWidth <= 768;
@@ -66,6 +70,7 @@ const changeAddressHandler = (mapboxAddressObject) => {
 	userStore.userLocation = mapboxAddressObject.features[0].geometry.coordinates;
 	console.log("The user location is:", userStore.userLocation);
 	showMap.value = true; // Trigger the map to be displayed
+	showPage.value = false; // Hide the homepage content
 };
 
 // Watch the route to determine if it's the homepage or another page
@@ -76,13 +81,14 @@ watch(
 		if (isMobile.value && newPath !== "/") {
 			showMap.value = false;
 			showUserLocation.value = false;
+			showPage.value = true;
 		}
 		else {
 			showMap.value = true; // Show the map if on homepage
 			showUserLocation.value = true; // Show the user location if on homepage
+			showPage.value = true; // Hide the homepage content if on another page
 		}
 	},
-	{ immediate: true }, // Execute this logic on initial load as well
 );
 onMounted(() => {
 	detectMobile();
