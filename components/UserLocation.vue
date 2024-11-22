@@ -1,6 +1,6 @@
 <template>
 	<div class="flex max-w-md mx-auto  p-4">
-		<form class="flex gap-x-4">
+		<form class="flex flex-row-reverse gap-x-4">
 			<input
 				id="address-input"
 				v-model="query"
@@ -32,6 +32,7 @@
 
 <script setup lang="ts">
 import { MapboxAddressAutofill } from "@mapbox/search-js-web";
+import type { IShop } from "@/types/shop";
 import { useShopsStore } from "@/stores/shops";
 
 defineEmits(["change-address"]);
@@ -49,7 +50,7 @@ const isLoggedIn = ref(false);
 onMounted(async () => {
 	if (isLoggedIn.value) {
 		savedAddresses.value = shopsStore.shops.map(
-			shop => `${shop.address.street} ${shop.address.houseNumber}, ${shop.address.city}`,
+			(shop: IShop) => `${shop.address.street} ${shop.address.houseNumber}, ${shop.address.city}`,
 		);
 	}
 });
