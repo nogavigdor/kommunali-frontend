@@ -16,13 +16,16 @@
 import mapboxgl from "mapbox-gl";
 import { storeToRefs } from "pinia";
 import { useShopsStore } from "@/stores/shops";
+import { useUserStore } from "@/stores/user";
 import type { IShop } from "@/types/shop";
 import "mapbox-gl/dist/mapbox-gl.css";
 // import markerImage from "@/assets/images/marker-image.png";
 
 const shopsStore = useShopsStore();
+const userStore = useUserStore();
 // const { shops } = useShopsStore(); // non-reactive
-const { shops, userLocation } = storeToRefs(shopsStore);
+const { shops } = storeToRefs(shopsStore);
+const { userLocation } = storeToRefs(userStore);
 
 let currentMarkers: mapboxgl.Marker[] = [];
 
@@ -170,7 +173,7 @@ onMounted(() => {
 		mapRef.value = new mapboxgl.Map({
 			container: "map",
 			style: "mapbox://styles/mapbox/light-v11",
-			center: shopsStore.userLocation || [12.568337, 55.676098], // Default location
+			center: userLocation.value || [12.568337, 55.676098], // Default location
 			zoom: 12,
 			minZoom: 12, // Prevent zooming out too much (adjust to suit your needs)
 			maxZoom: 18, // Allow zooming in closely
