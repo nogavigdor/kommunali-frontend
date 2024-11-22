@@ -19,14 +19,13 @@
 		<client-only>
 			<UserLocation
 				v-if="showUserLocation"
+				ref="userLocationRef"
 				@change-address="changeAddressHandler" />
 		</client-only>
-		<div v-if="showPage">
-			<NuxtPage />
-		</div>
+		<NuxtPage />
 
 		<!-- Map Container -->
-		<MapContainer v-if="showMap" />
+		<MapContainer :is-hidden="!showMap" />
 
 		<!-- Bottom Navigation -->
 		<BottomNavigation @go-to="goTo" />
@@ -46,6 +45,8 @@ const toggleMenu = () => {
 const showMap = ref(false);
 
 const showUserLocation = ref(true);
+
+const userLocationRef = ref(null); // Add reference to UserLocation component
 
 const isMobile = ref(false);
 
@@ -93,5 +94,12 @@ watch(
 onMounted(() => {
 	detectMobile();
 	window.addEventListener("resize", detectMobile);
+
+	// Function to scroll to the input in UserLocation
+	const scrollToUserLocationInput = () => {
+		if (userLocationRef.value) {
+			userLocationRef.value.scrollToInput(); // Call the function from UserLocation
+		}
+	};
 });
 </script>
