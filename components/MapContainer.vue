@@ -9,7 +9,8 @@
 			closeShopDetails" />
 	<div
 		id="map"
-		class="flex-grow h-full w-full" />
+		class="flex-grow h-full w-full"
+		:class="isHidden ? 'hidden' : ''" />
 </template>
 
 <script setup lang="ts">
@@ -20,6 +21,10 @@ import { useUserStore } from "@/stores/user";
 import type { IShop } from "@/types/shop";
 import "mapbox-gl/dist/mapbox-gl.css";
 // import markerImage from "@/assets/images/marker-image.png";
+
+defineProps({
+	isHidden: Boolean,
+});
 
 const shopsStore = useShopsStore();
 const userStore = useUserStore();
