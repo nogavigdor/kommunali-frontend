@@ -1,5 +1,7 @@
 <template>
-	<div class="relative min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-brandPrimary-500 to-brandPrimary-800 text-white overflow-hidden">
+	<div
+		v-if="showPage"
+		class="relative min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-brandPrimary-500 to-brandPrimary-800 text-white overflow-hidden">
 		<!-- Main Content -->
 		<div class="relative z-10 text-center px-6 max-w-2xl animate-slide-in-down">
 			<h1 class="text-6xl font-heading mb-6">
@@ -27,10 +29,17 @@
 </template>
 
 <script lang="ts" setup>
+import { useUserStore } from "@/stores/user";
+
+const userStore = useUserStore();
+
+const showPage = computed(() => userStore.userLocation.every(value => value === 0));
+
 const scrollToLocationInput = () => {
-	const locationInputSection = document.getElementById("user-location-input");
-	if (locationInputSection) {
-		locationInputSection.scrollIntoView({ behavior: "smooth" });
+	const appComponent = document.getElementById("app");
+	if (appComponent) {
+		const scrollEvent = new CustomEvent("scrollToInput");
+		appComponent.dispatchEvent(scrollEvent);
 	}
 };
 </script>
