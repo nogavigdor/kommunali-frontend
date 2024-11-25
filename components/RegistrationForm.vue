@@ -22,10 +22,18 @@
 				<UFormGroup
 					label="Password"
 					name="password">
-					<UInput
-						v-model="state.password"
-						placeholder="Password"
-						type="password" />
+					<div class="relative">
+						<UInput
+							v-model="state.password"
+							placeholder="Password"
+							:type="passwordFieldType" />
+						<button
+							type="button"
+							class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-600"
+							@click="togglePasswordVisibility">
+							<UIcon :name="passwordVisible ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'" />
+						</button>
+					</div>
 				</UFormGroup>
 
 				<div class="pt-4">
@@ -41,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import type { FormSubmitEvent } from "#ui/types";
 import { useUserStore } from "@/stores/user";
 
@@ -51,6 +59,14 @@ const state = reactive({
 	email: "",
 	password: "",
 });
+
+const passwordVisible = ref(false);
+
+const passwordFieldType = computed(() => (passwordVisible.value ? "text" : "password"));
+
+function togglePasswordVisibility() {
+	passwordVisible.value = !passwordVisible.value;
+}
 
 async function onSubmit(event: FormSubmitEvent<typeof state>) {
 	try {
