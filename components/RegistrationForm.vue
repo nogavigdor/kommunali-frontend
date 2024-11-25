@@ -54,6 +54,7 @@ import type { FormSubmitEvent } from "#ui/types";
 import { useUserStore } from "@/stores/user";
 
 const userStore = useUserStore();
+const router = useRouter();
 
 const state = reactive({
 	email: "",
@@ -75,6 +76,9 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
 			password: event.data.password,
 		};
 		userStore.registerUser(newUser);
+
+		// Redirect to login page after successful registration
+		router.push("/login");
 	}
 	catch (error) {
 		console.error("Error during registration:", error);
