@@ -63,6 +63,21 @@ export default {
           dark: "#424242", // Dark Charcoal for text
         },
       },
+      success: {
+        light: "#C8E6C9", // Light green for backgrounds
+        DEFAULT: "#66BB6A", // Default green for success messages
+        dark: "#388E3C" // Darker green for emphasis
+      },
+      error: {
+        light: "#FFCDD2", // Light red for backgrounds
+        DEFAULT: "#E57373", // Default red for error messages
+        dark: "#D32F2F" // Darker red for emphasis
+      },
+      alert: {
+        light: "#FFE0B2", // Light orange for warning backgrounds
+        DEFAULT: "#FFB74D", // Default orange for alert messages
+        dark: "#F57C00" // Darker orange for emphasis
+      },
       spacing: {
         128: "32rem", // Useful for larger sections like hero areas
         144: "36rem",
