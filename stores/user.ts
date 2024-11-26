@@ -1,10 +1,14 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { MapboxAddressAutofill } from "@mapbox/search-js-web";
+import { useFirebaseAuth } from "vuefire";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import type { IUser, RequestedProduct, IRegisterUser } from "@/types/user";
 import { UserRole } from "@/types/user";
 
 export const useUserStore = defineStore("user", () => {
+	const firebaseUserId = ref<string>("");
+	const auth = useFirebaseAuth()!;
 	const config = useRuntimeConfig();
 	const userLocation = ref<[number, number]>([0, 0]);
 	const user = ref<IUser>({
@@ -15,9 +19,10 @@ export const useUserStore = defineStore("user", () => {
 		lastName: "",
 		stores: [],
 		requested_products: [],
+		lastCoordinates: [0, 0],
 		updatedAt: new Date(),
 	});
-	const authToken = ref<string | null>(null);
+	// const authToken = ref<string | null>(null);
 	const loggedIn = ref<boolean>(false);
 
 	function registerUser(newUser: IRegisterUser) {
@@ -38,23 +43,20 @@ export const useUserStore = defineStore("user", () => {
 			);
 	}
 
+	// Sign in user with email and password utilizing Firebase Auth
 	async function loginUser(credentials: { email: string; password: string }) {
 		try {
-			const response = await $fetch<{
-				user: IUser;
-				token: string;
-			}>(`${config.public.apiBaseUrl}/api/users/login`, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(credentials),
-			});
-
-			// Store the auth token and update the user state
-			authToken.value = response.token;
+			console.log("auth: ", auth);
+			const response = await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
+			console.log("auth: ", auth);
+			console.log("User logged in:", response);
 			loggedIn.value = true;
-			updateUser(response.user);
+			// userLocation.value = [response.user.lastCoordinates[0], response.user.lastCoordinates[1]];
+			// updateUser(response.user);
+			firebaseUserId.value = response.user.uid;
+			// get the user from mongodb according to the firebaseUserId
+			const userResponse: IUser = await getUser(firebaseUserId.value);
+			updateUser(userResponse);
 		}
 		catch (error) {
 			console.error("Error logging in user:", error);
@@ -62,7 +64,27 @@ export const useUserStore = defineStore("user", () => {
 		}
 	}
 
-	function logOutUser() {
+	// Gets the user from mongodb database according to the firebaseUserId
+	async function getUser(firebaseUserId: string) {
+		if (!auth.currentUser) {
+			throw new Error("No authenticated user found");
+		}
+
+		const token = await auth.currentUser.getIdToken(); // Fetch the fresh token
+		console.log("Token being sent:", token);
+		const response = await $fetch<IUser>(`${config.public.apiBaseUrl}/api/users/${firebaseUserId}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${token}`, // Send the valid token
+			},
+		});
+
+		return response;
+	}
+
+	async function logOutUser() {
+		await signOut(auth); // Log out from Firebase
 		user.value = {
 			firebaseUserId: "",
 			role: UserRole.USER,
@@ -70,9 +92,11 @@ export const useUserStore = defineStore("user", () => {
 			firstName: "",
 			lastName: "",
 			stores: [],
+			lastCoordinates: [0, 0],
 			requested_products: [],
 			updatedAt: new Date(),
 		};
+
 		loggedIn.value = false;
 		// Optionally, clear auth token from storage as well
 		localStorage.removeItem("authToken");
@@ -91,7 +115,7 @@ export const useUserStore = defineStore("user", () => {
 	return {
 		user,
 		userLocation,
-		authToken,
+		auth,
 		loggedIn,
 		logOutUser,
 		registerUser,
