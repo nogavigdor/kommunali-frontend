@@ -62,7 +62,7 @@ export const useUserStore = defineStore("user", () => {
 		}
 	}
 
-	function logOut() {
+	function logOutUser() {
 		user.value = {
 			firebaseUserId: "",
 			role: UserRole.USER,
@@ -93,7 +93,7 @@ export const useUserStore = defineStore("user", () => {
 		userLocation,
 		authToken,
 		loggedIn,
-		logOut,
+		logOutUser,
 		registerUser,
 		loginUser,
 		updateUser,
