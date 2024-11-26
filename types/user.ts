@@ -15,6 +15,7 @@ export interface IUser {
 	email: string;
 	firstName: string;
 	lastName: string;
+	lastCoordinates: [number, number]; // [latitude, longitude]
 	stores: string[]; // Array of store IDs
 	requested_products: RequestedProduct[]; // Array of requested products with store references
 	updatedAt: Date;
