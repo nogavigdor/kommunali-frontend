@@ -150,6 +150,7 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
 		// Attempt to log in
 		await userStore.loginUser(credentials);
 
+		console.log("The current user is:", userStore.user);
 		// Trigger success feedback after successful login
 		backendFeedback.value = "You are now logged in.";
 		feedbackType.value = "success";
