@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-	modules: ["@nuxt/eslint", "@nuxt/ui", "nuxt-mapbox"],
+	modules: ["@nuxt/eslint", "@nuxt/ui", "nuxt-mapbox", "nuxt-vuefire"],
 	devtools: { enabled: true },
 	app: {
 		head: {
@@ -37,5 +37,16 @@ export default defineNuxtConfig({
 	},
 	mapbox: {
 		accessToken: "pk.eyJ1Ijoibm9nYXZpZyIsImEiOiJjbTB4bTBleHUwYnhuMmtzZmFsZ3ZsYW9rIn0.uj1O94f_PYARWEcJZ2y46Q",
+	},
+	vuefire: {
+		config: {
+			apiKey: process.env.FIREBASE_API_KEY,
+			authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+			projectId: process.env.FIREBASE_PROJECT_ID,
+			appId: process.env.FIREBASE_APP_ID,
+		},
+		auth: {
+			enabled: true,
+		},
 	},
 });
