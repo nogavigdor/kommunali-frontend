@@ -16,6 +16,11 @@
 						v-model="state.email"
 						placeholder="Email Address"
 						type="email" />
+					<p
+						v-if="validationErrors.email"
+						class="text-alert-500 text-sm">
+						{{ validationErrors.email }}
+					</p>
 				</UFormGroup>
 
 				<!-- Password -->
@@ -34,6 +39,11 @@
 							<UIcon :name="passwordVisible ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'" />
 						</button>
 					</div>
+					<p
+						v-if="validationErrors.password"
+						class="text-alert-500 text-sm">
+						{{ validationErrors.password }}
+					</p>
 				</UFormGroup>
 
 				<div class="pt-4">
@@ -50,10 +60,14 @@
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
 import type { FormSubmitEvent } from "#ui/types";
 import { useUserStore } from "@/stores/user";
+import { useFeedbackStore } from "@/stores/feedback";
+import type { FeedbackType } from "@/types/feedback";
 
 const userStore = useUserStore();
+const feedbackStore = useFeedbackStore();
 const router = useRouter();
 
 const state = reactive({
@@ -62,6 +76,9 @@ const state = reactive({
 });
 
 const passwordVisible = ref(false);
+const validationErrors = reactive<{ email?: string; password?: string }>({});
+const backendError = ref<string | null>(null);
+const feedbackType = ref<FeedbackType | null>(null);
 
 const passwordFieldType = computed(() => (passwordVisible.value ? "text" : "password"));
 
@@ -69,19 +86,72 @@ function togglePasswordVisibility() {
 	passwordVisible.value = !passwordVisible.value;
 }
 
+// Live validation using watchers
+watch(
+	() => state.email,
+	(newEmail) => {
+		if (!newEmail) {
+			validationErrors.email = "Email is required";
+		}
+		else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+			validationErrors.email = "Invalid email format";
+		}
+		else {
+			validationErrors.email = undefined;
+		}
+	},
+);
+
+watch(
+	() => state.password,
+	(newPassword) => {
+		if (!newPassword) {
+			validationErrors.password = "Password is required";
+		}
+		else if (newPassword.length < 8) {
+			validationErrors.password = "Password must be at least 8 characters";
+		}
+		else {
+			validationErrors.password = undefined;
+		}
+	},
+);
+
 async function onSubmit(event: FormSubmitEvent<typeof state>) {
 	try {
 		const newUser = {
 			email: event.data.email,
 			password: event.data.password,
 		};
-		userStore.registerUser(newUser);
 
-		// Redirect to login page after successful registration
+		// Clear any previous backend error messages
+		backendError.value = null;
+
+		await userStore.registerUser(newUser);
+
+		// Trigger success feedback after successfull registration  and redirect to login page
+		feedbackStore.setFeedback("You have been successfully registered.", "success");
 		router.push("/login");
 	}
 	catch (error) {
 		console.error("Error during registration:", error);
+		feedbackType.value = "error";
+		if (error.response && error.response.data && error.response.data.errors) {
+			error.response.data.errors.forEach((err: any) => {
+				if (err.message.includes("email")) {
+					validationErrors.email = err.message;
+				}
+				else if (err.message.includes("password")) {
+					validationErrors.password = err.message;
+				}
+				else {
+					backendError.value = err.message;
+				}
+			});
+		}
+		else {
+			feedbackStore.Feedback("Registration failed due to technical issues. Please try again.", "error");
+		}
 	}
 }
 </script>
