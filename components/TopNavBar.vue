@@ -32,12 +32,12 @@
 				</button>
 			</div>
 			<div
-				v-else="userLogOut"
+				v-else
 				class="flex-grow text-center">
 				<button
 					class="btn-secondary"
-					@click="goToLoginPage">
-					Login
+					@click="userLogOut">
+					Logout
 				</button>
 			</div>
 
