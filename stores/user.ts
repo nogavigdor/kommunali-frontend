@@ -56,7 +56,8 @@ export const useUserStore = defineStore("user", () => {
 			firebaseUserId.value = response.user.uid;
 			// get the user from mongodb according to the firebaseUserId
 			const userResponse: IUser = await getUser(firebaseUserId.value);
-			updateUser(userResponse);
+			user.value = userResponse;
+			userLocation.value = userResponse.lastCoordinates;
 		}
 		catch (error) {
 			console.error("Error logging in user:", error);
@@ -98,13 +99,29 @@ export const useUserStore = defineStore("user", () => {
 		};
 
 		loggedIn.value = false;
-		// Optionally, clear auth token from storage as well
-		localStorage.removeItem("authToken");
+		window.location.reload();
 	}
 
-	// Mutation to update the user object
-	function updateUser(newUser: IUser) {
-		user.value = newUser;
+	async function updateUser(updatedUser: Partial<IUser>) {
+		if (!auth.currentUser) {
+			throw new Error("No authenticated user found");
+		}
+		const token = await auth.currentUser.getIdToken(); // Fetch the fresh token
+		await $fetch<IUser>(`${config.public.apiBaseUrl}/api/users/${firebaseUserId.value}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${token}`, // Send the valid token
+
+			},
+			body: JSON.stringify(updatedUser),
+		})
+			.then((response) => {
+				user.value = response;
+			})
+			.catch((error) => {
+				console.error("Error updating user:", error);
+			});
 	}
 
 	// Mutation to add a requested product to the user
