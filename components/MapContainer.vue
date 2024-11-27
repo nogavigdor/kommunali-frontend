@@ -9,7 +9,7 @@
 			closeShopDetails" />
 	<div
 		id="map"
-		class="flex-grow h-full w-full"
+		class="relative flex-grow h-full w-full"
 		:class="isHidden ? 'hidden' : ''" />
 </template>
 
@@ -31,6 +31,7 @@ const userStore = useUserStore();
 // const { shops } = useShopsStore(); // non-reactive
 const { shops } = storeToRefs(shopsStore);
 const { userLocation } = storeToRefs(userStore);
+const user = computed(() => userStore.user);
 
 let currentMarkers: mapboxgl.Marker[] = [];
 
@@ -56,6 +57,7 @@ const mapRef = ref<mapboxgl.Map | null>(null) as Ref<mapboxgl.Map | null>;
 // Watch for changes in userLocation and update the map center
 watch(userLocation, async (newLocation) => {
 	console.log("userLocation watcher");
+	console.log("New user location:", newLocation);
 	if (mapRef.value) {
 		mapRef.value.setCenter(newLocation);
 		console.log("userLocation updated, fetching new shops");
@@ -172,6 +174,8 @@ onMounted(() => {
 	mapboxgl.accessToken = config.public.mapboxApiKey;
 	console.log("onMounted called - initializing map");
 
+	// Initialize the map instance with default coordinates or user's last known coordinates
+	const initialCoordinates = user.value?.lastCoordinates || [12.568337, 55.676098]; // Default to Copenhagen
 	// Initialize the map instance
 	if (!mapRef.value) {
 		console.log("Creating new Map instance");
@@ -203,6 +207,8 @@ const setupMapListeners = () => {
 		mapRef.value?.on("moveend", async () => {
 			console.log("Map moved, updating shops on map");
 			await updateShopsOnMap();
+			const { lng, lat } = mapRef.value!.getCenter();
+			userStore.updateUser({ lastCoordinates: [lng, lat] });
 		});
 
 		mapRef.value?.on("zoomend", async () => {
