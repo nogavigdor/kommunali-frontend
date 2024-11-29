@@ -32,6 +32,7 @@ const userStore = useUserStore();
 const { shops } = storeToRefs(shopsStore);
 const { userLocation } = storeToRefs(userStore);
 const user = computed(() => userStore.user);
+const userLoggedIn = computed(() => userStore.loggedIn);
 
 let currentMarkers: mapboxgl.Marker[] = [];
 
@@ -208,6 +209,9 @@ const setupMapListeners = () => {
 			console.log("Map moved, updating shops on map");
 			await updateShopsOnMap();
 			const { lng, lat } = mapRef.value!.getCenter();
+			// Update the user's last known coordinates if they are logged in
+			if (userLoggedIn.value)
+				console.log("Updating user last coordinates:", lng, lat);
 			userStore.updateUser({ lastCoordinates: [lng, lat] });
 		});
 
