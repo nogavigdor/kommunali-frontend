@@ -24,6 +24,7 @@ export const useUserStore = defineStore("user", () => {
 	});
 	// const authToken = ref<string | null>(null);
 	const loggedIn = ref<boolean>(false);
+	const hasShop = ref<boolean>(false);
 
 	function registerUser(newUser: IRegisterUser) {
 		$fetch<IUser>(`${config.public.apiBaseUrl}/api/users/register`, {
@@ -56,6 +57,11 @@ export const useUserStore = defineStore("user", () => {
 			firebaseUserId.value = response.user.uid;
 			// get the user from mongodb according to the firebaseUserId
 			const userResponse: IUser = await getUser(firebaseUserId.value);
+			// its important to notice that shop is the same as store
+			// if the user has a shop, then hasShop is set to true
+			if (userResponse.stores.length > 0) {
+				hasShop.value = true;
+			}
 			user.value = userResponse;
 			userLocation.value = userResponse.lastCoordinates;
 		}
@@ -131,6 +137,7 @@ export const useUserStore = defineStore("user", () => {
 
 	return {
 		user,
+		hasShop,
 		userLocation,
 		auth,
 		loggedIn,
