@@ -14,7 +14,7 @@ import { computed } from "vue";
 import { useUserStore } from "@/stores/user";
 
 const userStore = useUserStore();
-const userHasShop = computed(() => userStore.user.stores.length > 0);
+const userHasShop = computed(() => userStore.hasShop);
 
 // define a close emit event to close the sidebar
 defineEmits(["close"]);
@@ -39,11 +39,11 @@ const links = computed(() => {
 	}];
 
 	// Add shop link if user has no shop
-	if (!userHasShop.value) {
+	if (!userHasShop.value && userStore.loggedIn) {
 		baseLinks.push({
 			label: "Add Shop",
 			icon: "i-heroicons-plus-circle",
-			to: "/shop/new",
+			to: "/shop",
 		});
 	}
 
