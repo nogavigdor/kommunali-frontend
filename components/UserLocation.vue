@@ -43,7 +43,28 @@ const suggestions = ref<string[]>([]);
 const savedAddresses = ref<string[]>([]);
 const showMapButton = ref(false);
 const shopsStore = useShopsStore();
-const autofillData = ref({});
+const addressData = ref({
+	street: "",
+	city: "",
+	state: "",
+	postalCode: "",
+	country: "",
+});
+const fullAddressLine = ref("");
+interface AutofillData {
+	features: Array<{
+		properties: {
+			address: string;
+			street: string;
+			city: string;
+			state: string;
+			postalCode: string;
+			country: string;
+		};
+	}>;
+}
+
+const autofillData = ref<AutofillData>({ features: [] });
 
 const isLoggedIn = ref(false);
 
@@ -87,7 +108,21 @@ const fetchSuggestions = () => {
 			console.log("Retrieve event");
 			const customEvent = event as CustomEvent;
 			autofillData.value = customEvent.detail;
+
+			// Ensure all address components are captured
+			addressData.value = {
+				street: autofillData.value.features[0].properties.street,
+				city: autofillData.value.features[0].properties.city,
+				state: autofillData.value.features[0].properties.state,
+				postalCode: autofillData.value.features[0].properties.postalCode,
+				country: autofillData.value.features[0].properties.country,
+			};
+
+			fullAddressLine.value = `${autofillData.value.features[0].properties.street}, ${autofillData.value.features[0].properties.city}, ${autofillData.value.features[0].properties.state}, ${autofillData.value.features[0].properties.postalCode}, ${autofillData.value.features[0].properties.country}`;
+			query.value = fullAddressLine.value;
+
 			console.log("Selected Address Data: ", autofillData);
+			console.log("Full Address Line: ", fullAddressLine.value);
 			showMapButton.value = true;
 
 			// Use the address data for further processing (e.g., parsing coordinates)
