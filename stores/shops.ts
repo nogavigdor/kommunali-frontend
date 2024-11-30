@@ -92,11 +92,35 @@ export const useShopsStore = defineStore("shops", () => {
 				},
 				body: updatedShop,
 			});
-			const index = shops.value.findIndex(shop => shop._id === response._id);
+			const index = shops.value.findIndex(shop => shop._id === (response as IShop)._id);
 			shops.value[index] = response as IShop;
 		}
 		catch (error) {
 			console.error("Failed to update shop:", error);
+		}
+	}
+
+	async function updatProduct(updatedProduct: IProduct) {
+		try {
+			const user = auth?.currentUser;
+			if (!user) throw new Error("User not authenticated");
+
+			const token = await user.getIdToken();
+			const response = await $fetch(`/api/stores/${userShop.value?._id}/products/${updatedProduct._id}`, {
+				method: "PUT",
+				headers: {
+					"Authorization": `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+				body: updatedProduct,
+			});
+			const index = userShop.value?.products.findIndex(product => product._id === (response as IProduct)._id);
+			if (index !== undefined && index !== -1) {
+				userShop.value!.products[index] = response as IProduct;
+			}
+		}
+		catch (error) {
+			console.error("Failed to update product:", error);
 		}
 	}
 
@@ -128,6 +152,7 @@ export const useShopsStore = defineStore("shops", () => {
 		getShops,
 		getUserShop,
 		addProduct,
+		updatProduct,
 		updateShop,
 		deleteProduct,
 		userShop,
