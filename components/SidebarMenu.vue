@@ -15,38 +15,50 @@ import { useUserStore } from "@/stores/user";
 
 const userStore = useUserStore();
 const userHasShop = computed(() => userStore.hasShop);
+const loggedIn = computed(() => userStore.loggedIn);
 
 // define a close emit event to close the sidebar
-defineEmits(["close"]);
+const emit = defineEmits(["close"]);
+
+function click() {
+	emit("close");
+}
+
+const profile = {
+	label: "Profile",
+	avatar: {
+		src: "https://avatars.githubusercontent.com/u/739984?v=4",
+	},
+	badge: 100,
+	click,
+};
+
+const help = {
+	label: "help",
+	icon: "i-heroicons-help-circle",
+	to: "/help",
+	click,
+};
+
+const settings = {
+	label: "settings",
+	icon: "i-heroicons-settings",
+	to: "/settings",
+	click,
+};
+
+const shop = computed(() => ({
+	label: userHasShop.value ? "My Shop" : "Add Shop",
+	icon: userHasShop.value ? "i-heroicons-circle" : "i-heroicons-plus-circle",
+	to: "/shop",
+	click,
+}));
 
 // Sidebar menu links
-const links = computed(() => {
-	const baseLinks = [{
-		label: "Profile",
-		avatar: {
-			src: "https://avatars.githubusercontent.com/u/739984?v=4",
-		},
-		badge: 100,
-	}, {
-		label: "settings",
-		icon: "i-heroicons-settings",
-		to: "/settings",
-	}, {
-		label: "help",
-		icon: "i-heroicons-help-circle",
-		to: "/help",
+const links = computed(() =>
+	loggedIn.value
+		? [profile, help, settings, shop.value]
+		: [help],
 
-	}];
-
-	// Add shop link if user has  shop
-	if (userStore.loggedIn) {
-		baseLinks.push({
-			label: userHasShop.value ? "Shop" : "Add Shop",
-			icon: userHasShop.value ? "i-heroicons-circle" : "i-heroicons-plus-circle",
-			to: "/shop",
-		});
-	}
-
-	return baseLinks;
-});
+);
 </script>
