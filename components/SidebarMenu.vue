@@ -38,11 +38,11 @@ const links = computed(() => {
 
 	}];
 
-	// Add shop link if user has no shop
-	if (!userHasShop.value && userStore.loggedIn) {
+	// Add shop link if user has  shop
+	if (userStore.loggedIn) {
 		baseLinks.push({
-			label: "Add Shop",
-			icon: "i-heroicons-plus-circle",
+			label: userHasShop.value ? "Shop" : "Add Shop",
+			icon: userHasShop.value ? "i-heroicons-circle" : "i-heroicons-plus-circle",
 			to: "/shop",
 		});
 	}
