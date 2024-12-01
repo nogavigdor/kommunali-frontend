@@ -35,14 +35,14 @@ export const useShopsStore = defineStore("shops", () => {
 
 	async function getUserShop(shopId: string) {
 		try {
-			if (!auth) throw new Error("Firebase Auth not initialized");
-			const user = auth.currentUser;
-			if (!user) throw new Error("User not authenticated");
-
-			const token = await user.getIdToken();
-			const response = await $fetch(`/api/stores/${shopId}`, {
+			if (!auth || !auth.currentUser) {
+				throw new Error("No authenticated user found");
+			}
+			const token = await auth.currentUser.getIdToken();
+			const response = await $fetch(`${config.public.apiBaseUrl}/api/stores/${shopId}`, {
+				method: "GET",
 				headers: {
-					"method": "GET",
+
 					"Authorization": `Bearer ${token}`,
 					"Content-Type": "application/json",
 				},
@@ -56,6 +56,28 @@ export const useShopsStore = defineStore("shops", () => {
 		}
 	}
 
+	async function createShop(newShop: IShop) {
+		try {
+			const user = auth?.currentUser;
+			if (!user) throw new Error("User not authenticated");
+
+			const token = await user.getIdToken();
+			const response = await $fetch(`${config.public.apiBaseUrl}/api/stores`, {
+				method: "POST",
+				headers: {
+					"Authorization": `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+				body: newShop,
+			});
+			shops.value.push(response as IShop);
+			userShop.value = response as IShop;
+		}
+		catch (error) {
+			console.error("Failed to add shop:", error);
+		}
+	}
+
 	async function addProduct(newProduct: IProduct) {
 		try {
 			if (!auth) throw new Error("Firebase Auth not initialized");
@@ -63,7 +85,7 @@ export const useShopsStore = defineStore("shops", () => {
 			if (!user) throw new Error("User not authenticated");
 
 			const token = await user.getIdToken();
-			const response = await $fetch(`/api/stores/${userShop.value?._id}/products`, {
+			const response = await $fetch(`${config.public.apiBaseUrl}/api/stores/${userShop.value?._id}/products`, {
 				method: "POST",
 				headers: {
 					"Authorization": `Bearer ${token}`,
@@ -84,7 +106,7 @@ export const useShopsStore = defineStore("shops", () => {
 			if (!user) throw new Error("User not authenticated");
 
 			const token = await user.getIdToken();
-			const response = await $fetch(`/api/stores/${updatedShop._id}`, {
+			const response = await $fetch(`${config.public.apiBaseUrl}/api/stores/${updatedShop._id}`, {
 				method: "PUT",
 				headers: {
 					"Authorization": `Bearer ${token}`,
@@ -106,7 +128,7 @@ export const useShopsStore = defineStore("shops", () => {
 			if (!user) throw new Error("User not authenticated");
 
 			const token = await user.getIdToken();
-			const response = await $fetch(`/api/stores/${userShop.value?._id}/products/${updatedProduct._id}`, {
+			const response = await $fetch(`${config.public.apiBaseUrl}/api/stores/${userShop.value?._id}/products/${updatedProduct._id}`, {
 				method: "PUT",
 				headers: {
 					"Authorization": `Bearer ${token}`,
@@ -130,7 +152,7 @@ export const useShopsStore = defineStore("shops", () => {
 			if (!user) throw new Error("User not authenticated");
 
 			const token = await user.getIdToken();
-			await $fetch(`/api/stores/${userShop.value?._id}/products/${productId}`, {
+			await $fetch(`${config.public.apiBaseUrl}/api/stores/${userShop.value?._id}/products/${productId}`, {
 				method: "DELETE",
 				headers: {
 					"Authorization": `Bearer ${token}`,
@@ -151,6 +173,7 @@ export const useShopsStore = defineStore("shops", () => {
 		shops,
 		getShops,
 		getUserShop,
+		createShop,
 		addProduct,
 		updatProduct,
 		updateShop,
