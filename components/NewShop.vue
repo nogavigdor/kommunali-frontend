@@ -22,8 +22,7 @@
 				<textarea
 					id="shop-description"
 					v-model="newShop.description"
-					class="mt-1 block w-full border border-neutral-300 rounded-md shadow-sm focus:ring-brandPrimary-500 focus:border-brandPrimary-500 sm:text-sm"
-					required />
+					class="mt-1 block w-full border border-neutral-300 rounded-md shadow-sm focus:ring-brandPrimary-500 focus:border-brandPrimary-500 sm:text-sm" />
 			</div>
 			<div class="mb-4">
 				<label
@@ -103,6 +102,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import type { IShop } from "@/types/shop";
+import { useShopsStore } from "@/stores/shops";
+
+const shopStore = useShopsStore();
 
 const emit = defineEmits(["shop-created"]);
 
@@ -127,8 +129,22 @@ const newShop = ref<IShop>({
 });
 
 const submitForm = () => {
-	console.log("New Shop Details:", newShop.value);
-	emit("shop-created", newShop.value);
+	try {
+		console.log("New Shop Details:", newShop.value);
+		// Validate the form data
+		if (!newShop.value.name || !newShop.value.address.street || !newShop.value.address.houseNumber || !newShop.value.address.postalCode || !newShop.value.address.city || newShop.value.location.coordinates.length !== 2
+			|| isNaN(newShop.value.location.coordinates[0])
+			|| isNaN(newShop.value.location.coordinates[1])) {
+			alert("Please fill in all required fields.");
+			return;
+		}
+		shopStore.createShop(newShop.value);
+		console.log("New Shop Details:", newShop.value);
+		emit("shop-created", newShop.value);
+	}
+	catch (error) {
+		console.error("There was an error creating the shop, please try later", error);
+	}
 };
 </script>
 
