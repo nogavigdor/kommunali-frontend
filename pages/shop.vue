@@ -21,17 +21,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useUserStore } from "@/stores/user";
+import { ref, computed, onMounted } from "vue";
+import { useUserStore } from "../stores/user";
+import { useShopsStore } from "../stores/shops";
 
 const userStore = useUserStore();
+const shopStore = useShopsStore();
 
 const hasShop = computed(() => userStore.hasShop);
 const loggedIn = computed(() => userStore.loggedIn);
 const showNewShopForm = ref(false);
 
 const handleShopCreated = () => {
+	// Update the user store with the new shop details
+	shopStore.getUserShop(userStore.user.stores[0]);
 	userStore.hasShop = true;
+	console.log("The shop details are: ", userStore.shop);
 	showNewShopForm.value = false;
 };
 </script>
