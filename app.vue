@@ -14,7 +14,8 @@
 			leave-from-class="translate-x-0"
 			leave-to-class="-translate-x-full">
 			<SidebarMenu
-				v-if="menuOpen" />
+				v-if="menuOpen"
+				@close="menuOpen = false" />
 		</transition>
 		<client-only>
 			<UserLocation
@@ -33,15 +34,21 @@
 	</div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { onAuthStateChanged } from "firebase/auth";
+import { useFirebaseAuth } from "vuefire";
+import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/user";
+import type { IUser } from "@/types/user";
 
 const menuOpen = ref(false);
 const toggleMenu = () => {
 	menuOpen.value = !menuOpen.value;
 };
+
+const auth = useFirebaseAuth()!;
 
 const showMap = ref(false);
 
@@ -67,6 +74,7 @@ const goTo = (path) => {
 };
 
 const userStore = useUserStore();
+const { user, userLocation, loggedIn, firebaseUserId, hasShop } = storeToRefs(userStore);
 const changeAddressHandler = (mapboxAddressObject) => {
 	console.log("The selected address is:", mapboxAddressObject);
 	userStore.userLocation = mapboxAddressObject.features[0].geometry.coordinates;
@@ -93,6 +101,29 @@ watch(
 	},
 );
 onMounted(() => {
+	// check if user still is logged in firbase authentication and update the user store accordingly
+	onAuthStateChanged(auth, async (firebaseUser) => {
+		if (firebaseUser) {
+			console.log("User detected on page load:", firebaseUser);
+			loggedIn.value = true;
+			firebaseUserId.value = firebaseUser.uid;
+			try {
+				const userResponse: IUser = await userStore.getUser(firebaseUserId.value);
+				user.value = userResponse;
+				userLocation.value = userResponse.lastCoordinates;
+
+				if (userResponse.stores.length > 0) {
+					hasShop.value = true;
+				}
+			}
+			catch (error) {
+				console.error("Error fetching user after refresh:", error);
+			}
+		}
+		else {
+			loggedIn.value = false;
+		}
+	});
 	detectMobile();
 	window.addEventListener("resize", detectMobile);
 

@@ -2,7 +2,8 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { MapboxAddressAutofill } from "@mapbox/search-js-web";
 import { useFirebaseAuth } from "vuefire";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, onAuthStateChanged } from "firebase/auth";
+import { useLocalStorage } from "@vueuse/core";
 import type { IUser, RequestedProduct, IRegisterUser } from "@/types/user";
 import { UserRole } from "@/types/user";
 
@@ -23,7 +24,7 @@ export const useUserStore = defineStore("user", () => {
 		updatedAt: new Date(),
 	});
 	// const authToken = ref<string | null>(null);
-	const loggedIn = ref<boolean>(false);
+	const loggedIn = useLocalStorage<boolean>("loggedIn", false);
 	const hasShop = ref<boolean>(false);
 
 	function registerUser(newUser: IRegisterUser) {
@@ -48,6 +49,8 @@ export const useUserStore = defineStore("user", () => {
 	async function loginUser(credentials: { email: string; password: string }) {
 		try {
 			console.log("auth: ", auth);
+			// Set persistence to local to keep the user logged in between sessions
+			await setPersistence(auth, browserLocalPersistence);
 			const response = await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
 			console.log("auth: ", auth);
 			console.log("User logged in:", response);
@@ -146,5 +149,7 @@ export const useUserStore = defineStore("user", () => {
 		loginUser,
 		updateUser,
 		addRequestedProduct,
+		firebaseUserId,
+		getUser,
 	};
 });
