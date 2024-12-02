@@ -100,7 +100,7 @@ export const useShopsStore = defineStore("shops", () => {
 		}
 	};
 
-	async function updateShop(updatedShop: IShop) {
+	async function updateShop(updatedShop: Partial<IShop> & { _id: string }) {
 		try {
 			const user = auth?.currentUser;
 			if (!user) throw new Error("User not authenticated");
@@ -116,6 +116,7 @@ export const useShopsStore = defineStore("shops", () => {
 			});
 			const index = shops.value.findIndex(shop => shop._id === (response as IShop)._id);
 			shops.value[index] = response as IShop;
+			userShop.value = response as IShop;
 		}
 		catch (error) {
 			console.error("Failed to update shop:", error);
