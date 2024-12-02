@@ -42,6 +42,9 @@ const shopDetailsStyle = ref({ top: "0", left: "0" });
 
 const selectedShop = ref<IShop | null>(null);
 
+const mitHusImage = new URL("@/assets/images/mit-hus.svg", import.meta.url).href;
+const husImage = new URL("@/assets/images/hus.svg", import.meta.url).href;
+
 // Now you can watch `shops` or use it in your template, and it will stay up-to-date.
 watch(shops, (newShops) => {
 	console.log("Shops updated:", newShops);
@@ -80,6 +83,21 @@ function updateMarkers(shops: IShop[]) {
 
 		const el = document.createElement("div");
 		el.className = "marker";
+
+		// Checks if the shop belongs to the logged in user
+		shopsStore.getUserShop(user.value?.stores[0]?._id ?? "");
+		const isUserShop = shop._id === shopsStore.userShop?._id;
+		console.log("Is user shop:", isUserShop);
+		console.log("User shop:", shopsStore.userShop);
+
+		if (isUserShop) {
+			// replaces the marker svg for the logged-in user's shop
+			el.style.backgroundImage = `url(${mitHusImage})`;
+		}
+		else {
+			// Default marker svg
+			el.style.backgroundImage = `url(${husImage})`;
+		}
 
 		// Apply the styles using Object.assign
 		/*
@@ -253,7 +271,7 @@ const closeShopDetails = () => {
 
 <style>
 .marker.mapboxgl-marker {
-	background-image: url('@/assets/images/marker-image.png');
+	background-image: url('@/assets/images/hus.svg');
   background-size: cover;
   width: 30px;
   height: 30px;
