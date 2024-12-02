@@ -4,6 +4,7 @@ import type { MapboxAddressAutofill } from "@mapbox/search-js-web";
 import { useFirebaseAuth } from "vuefire";
 import { signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, onAuthStateChanged } from "firebase/auth";
 import { useLocalStorage } from "@vueuse/core";
+import { useShopsStore } from "./shops";
 import type { IUser, RequestedProduct, IRegisterUser } from "@/types/user";
 import { UserRole } from "@/types/user";
 
@@ -67,6 +68,11 @@ export const useUserStore = defineStore("user", () => {
 			}
 			user.value = userResponse;
 			userLocation.value = userResponse.lastCoordinates;
+			// get the user shop - in order to updae the userShop in the shops store
+			const shopsStore = useShopsStore();
+			if (userResponse.stores[0]?._id) {
+				shopsStore.getUserShop(userResponse.stores[0]._id);
+			}
 		}
 		catch (error) {
 			console.error("Error logging in user:", error);
