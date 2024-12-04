@@ -276,6 +276,6 @@ const closeShopDetails = () => {
   width: 30px;
   height: 30px;
   cursor: pointer;
-	z-index: 10;
+	z-index: 3;
 }
 </style>
