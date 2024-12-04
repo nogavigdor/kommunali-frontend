@@ -17,6 +17,8 @@
 				v-if="menuOpen"
 				@close="menuOpen = false" />
 		</transition>
+		<!-- General Feedback Message Component -->
+		<FeedbackMessage />
 		<client-only>
 			<UserLocation
 				v-if="showUserLocation"
@@ -111,6 +113,7 @@ onMounted(() => {
 				const userResponse: IUser = await userStore.getUser(firebaseUserId.value);
 				user.value = userResponse;
 				userLocation.value = userResponse.lastCoordinates;
+				showMap.value = true;
 
 				if (userResponse.stores.length > 0) {
 					hasShop.value = true;
