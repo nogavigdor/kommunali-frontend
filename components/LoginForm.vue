@@ -65,15 +65,6 @@
 					</UButton>
 				</div>
 			</UForm>
-
-			<!-- General Feedback Message Component -->
-			<FeedbackMessage
-				v-if="backendFeedback"
-				:type="feedbackType"
-				class="bg-feedback-light text-feedback-dark border-l-4 border-feedback p-4"
-				@close="backendFeedback = null">
-				{{ backendFeedback }}
-			</FeedbackMessage>
 		</div>
 	</div>
 </template>
@@ -83,7 +74,10 @@ import { reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import type { FormSubmitEvent } from "#ui/types";
 import { useUserStore } from "@/stores/user";
+import { useFeedbackStore } from "@/stores/feedback";
 import FeedbackMessage from "@/components/FeedbackMessage.vue";
+
+const feedbackStore = useFeedbackStore();
 
 const userStore = useUserStore();
 const router = useRouter();
@@ -95,7 +89,7 @@ const state = reactive({
 
 const passwordVisible = ref(false);
 const validationErrors = reactive<{ email?: string; password?: string }>({});
-const backendFeedback = ref<string | null>(null);
+const feedbackMessage = ref<string | null>(null);
 const feedbackType = ref<"success" | "error" | "alert">("error");
 
 function togglePasswordVisibility() {
@@ -145,20 +139,18 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
 		};
 
 		// Clear any previous backend feedback messages
-		backendFeedback.value = null;
+		feedbackStore.clearFeedback();
 
 		// Attempt to log in
 		await userStore.loginUser(credentials);
 
 		console.log("The current user is:", userStore.user);
 		// Trigger success feedback after successful login
-		backendFeedback.value = "You are now logged in.";
-		feedbackType.value = "success";
+		feedbackStore.setFeedback("You are now logged in.", "success");
 		router.push("/"); // Redirect to the homepage or desired location after login
 	}
 	catch (error) {
 		console.error("Error during login:", error);
-		feedbackType.value = "error";
 		if (error.response && error.response.data && error.response.data.errors) {
 			error.response.data.errors.forEach((err: any) => {
 				if (err.message.includes("email")) {
@@ -168,12 +160,12 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
 					validationErrors.password = err.message;
 				}
 				else {
-					backendFeedback.value = err.message;
+					feedbackStore.setFeedback(err.message, "error");
 				}
 			});
 		}
 		else {
-			backendFeedback.value = "Login failed. Please try again.";
+			feedbackStore.setFeedback("Login failed. Please try again.", "error");
 		}
 	}
 }
