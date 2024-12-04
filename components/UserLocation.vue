@@ -45,8 +45,8 @@ const showMapButton = ref(false);
 const shopsStore = useShopsStore();
 const addressData = ref({
 	street: "",
+	houseNumber: "",
 	city: "",
-	state: "",
 	postalCode: "",
 	country: "",
 });
@@ -54,12 +54,11 @@ const fullAddressLine = ref("");
 interface AutofillData {
 	features: Array<{
 		properties: {
-			address: string;
-			street: string;
-			city: string;
-			state: string;
-			postalCode: string;
-			country: string;
+			street: string; // street name
+			address_number: string; // house number
+			address_level2: string; // city
+			postcode: string; // postal code
+			country: string; // country
 		};
 	}>;
 }
@@ -112,13 +111,17 @@ const fetchSuggestions = () => {
 			// Ensure all address components are captured
 			addressData.value = {
 				street: autofillData.value.features[0].properties.street,
-				city: autofillData.value.features[0].properties.city,
-				state: autofillData.value.features[0].properties.state,
-				postalCode: autofillData.value.features[0].properties.postalCode,
+				houseNumber: autofillData.value.features[0].properties.address_number,
+				city: autofillData.value.features[0].properties.address_level2,
+				postalCode: autofillData.value.features[0].properties.postcode,
 				country: autofillData.value.features[0].properties.country,
 			};
 
-			fullAddressLine.value = `${autofillData.value.features[0].properties.street}, ${autofillData.value.features[0].properties.city}, ${autofillData.value.features[0].properties.state}, ${autofillData.value.features[0].properties.postalCode}, ${autofillData.value.features[0].properties.country}`;
+			fullAddressLine.value = `${addressData.value.street} ${addressData.value.houseNumber}, ${addressData.value.postalCode} ${addressData.value.city}`;
+
+			setTimeout(() => {
+				(document.getElementById("address-input")! as HTMLInputElement).value = fullAddressLine.value;
+			}, 1);
 			query.value = fullAddressLine.value;
 
 			console.log("Selected Address Data: ", autofillData);
