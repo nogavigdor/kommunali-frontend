@@ -1,6 +1,7 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import { useFirebaseAuth } from "vuefire";
+import { user } from "firebase-functions/v1/auth";
 import type { IShop } from "@/types/shop";
 import type { IProduct } from "@/types/product";
 import type { ILocationQuery } from "~/types/locationQuery";
@@ -9,6 +10,7 @@ export const useShopsStore = defineStore("shops", () => {
 	const config = useRuntimeConfig();
 	const shops = ref<IShop[]>([]);
 	const userShop = ref<IShop | null>(null);
+	const currentProduct = ref<IProduct | null>(null);
 	const auth = useFirebaseAuth();
 
 	// Fetch shops within bounds based on user location
@@ -167,6 +169,32 @@ export const useShopsStore = defineStore("shops", () => {
 		}
 	}
 
+	// get product from a specific shop - not necessarily from the user shop
+	async function getProduct(newProduct: IProduct) {
+		try {
+			const response = await $fetch(`${config.public.apiBaseUrl}/api/stores/${userShop.value?._id}/products`, {
+				method: "GET",
+				headers: {
+
+					"Content-Type": "application/json",
+				},
+				body: newProduct,
+			});
+			currentProduct.value = response as IProduct;
+		}
+		catch (error) {
+			console.error("Failed to add product:", error);
+		}
+	};
+
+	// get product from user shop
+
+	function getUserShopProduct(productId: string) {
+		if (userShop.value) {
+			return userShop.value.products.find(product => product._id === productId);
+		}
+	}
+
 	// Computed property to get the number of shops fetched
 	const shopCount = computed(() => shops.value.length);
 
@@ -175,6 +203,8 @@ export const useShopsStore = defineStore("shops", () => {
 		getShops,
 		getUserShop,
 		createShop,
+		getProduct,
+		getUserShopProduct,
 		addProduct,
 		updatProduct,
 		updateShop,
