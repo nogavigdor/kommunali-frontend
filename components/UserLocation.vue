@@ -108,7 +108,7 @@ const fetchSuggestions = () => {
 			const customEvent = event as CustomEvent;
 			autofillData.value = customEvent.detail;
 
-			// Ensure all address components are captured
+			// capturing all address properties
 			addressData.value = {
 				street: autofillData.value.features[0].properties.street,
 				houseNumber: autofillData.value.features[0].properties.address_number,
@@ -117,7 +117,8 @@ const fetchSuggestions = () => {
 				country: autofillData.value.features[0].properties.country,
 			};
 
-			fullAddressLine.value = `${addressData.value.street} ${addressData.value.houseNumber}, ${addressData.value.postalCode} ${addressData.value.city}`;
+			fullAddressLine.value = `${addressData.value.street} ${addressData.value.houseNumber},
+			 ${addressData.value.postalCode} ${addressData.value.city}`;
 
 			setTimeout(() => {
 				(document.getElementById("address-input")! as HTMLInputElement).value = fullAddressLine.value;
@@ -127,8 +128,6 @@ const fetchSuggestions = () => {
 			console.log("Selected Address Data: ", autofillData);
 			console.log("Full Address Line: ", fullAddressLine.value);
 			showMapButton.value = true;
-
-			// Use the address data for further processing (e.g., parsing coordinates)
 		});
 	}
 };
