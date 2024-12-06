@@ -1,7 +1,7 @@
 import type { IProduct } from "./product";
 
 export interface IShop {
-	_id?: string;
+	_id: string;
 	owner: string; // User ID as a string
 	name: string;
 	description: string;
