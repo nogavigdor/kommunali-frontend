@@ -23,18 +23,20 @@
 			class="mt-4 pb-4">
 			<swiper-slide
 				v-for="product in shop.products"
-				:key="product._id"
-				class=" min-w-[150px] max-w-xs  border border-neutral-dark rounded-lg p-2 shadow-soft">
-				<img
-					:src="placeholderImage"
-					alt="Product Image"
-					class="w-full h-32 object-cover rounded-lg">
-				<h3 class="text-lg font-heading mt-2">
-					{{ product.name }}
-				</h3>
-				<p class="text-brandSecondary-dark">
-					{{ product.price }} DKK
-				</p>
+				:key="product._id">
+				<div
+					class=" min-w-[150px] max-w-xs  border border-neutral-dark rounded-lg p-2 shadow-soft">
+					<img
+						:src="placeholderImage"
+						alt="Product Image"
+						class="w-full h-32 object-cover rounded-lg">
+					<h3 class="text-lg font-heading mt-2">
+						{{ product.name }}
+					</h3>
+					<p class="text-brandSecondary-dark">
+						{{ product.price }} DKK
+					</p>
+				</div>
 			</swiper-slide>
 		</swiper>
 	</div>
