@@ -43,12 +43,16 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useFirebaseAuth } from "vuefire";
 import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/user";
+import { useShopsStore } from "@/stores/shops";
 import type { IUser } from "@/types/user";
+import type { IShop } from "./types/shop";
 
 const menuOpen = ref(false);
 const toggleMenu = () => {
 	menuOpen.value = !menuOpen.value;
 };
+
+const shopsStore = useShopsStore();
 
 const auth = useFirebaseAuth()!;
 
@@ -115,7 +119,12 @@ onMounted(() => {
 				userLocation.value = userResponse.lastCoordinates;
 				showMap.value = true;
 
-				if (userResponse.stores.length > 0) {
+				if (userResponse.stores && userResponse.stores.length > 0) {
+					const shopObj = userResponse.stores[0];
+					const shopId = shopObj._id;
+					user.value.storesId = [shopId];
+					shopsStore.userShop = shopObj;
+
 					hasShop.value = true;
 				}
 			}
