@@ -10,34 +10,40 @@
 			<div>
 				<label><strong>Name:</strong></label>
 				<EditField
-					:value="userShop?.name"
-					field="name"
+					field-type="text"
+					:field-value="userShop?.name"
+					field-name="name"
 					@update-field="updateShopField" />
 			</div>
 			<div>
 				<label><strong>Description:</strong></label>
 				<EditField
-					:value="userShop?.description"
-					field="description"
+					field-type="text"
+					:field-value="userShop?.description"
+					field-name="description"
 					@update-field="updateShopField" />
 			</div>
 			<div>
 				<label><strong>Address:</strong></label>
 				<EditField
-					:value="userShop?.address.street"
-					field="address.street"
+					field-type="text"
+					:field-value="userShop?.address.street"
+					field-name="address.street"
 					@update-field="updateShopField" />
 				<EditField
-					:value="userShop?.address.houseNumber"
-					field="address.houseNumber"
+					field-type="text"
+					:field-value="userShop?.address.houseNumber"
+					field-name="address.houseNumber"
 					@update-field="updateShopField" />
 				<EditField
-					:value="userShop?.address.city"
-					field="address.city"
+					field-type="text"
+					:field-value="userShop?.address.city"
+					field-name="address.city"
 					@update-field="updateShopField" />
 				<EditField
-					:value="userShop?.address.postalCode"
-					field="address.postalCode"
+					field-type="text"
+					:field-value="userShop?.address.postalCode"
+					field-name="address.postalCode"
 					@update-field="updateShopField" />
 			</div>
 		</div>
@@ -53,9 +59,9 @@ import type { IShop } from "~/types/shop";
 const shopsStore = useShopsStore();
 const userShop = computed(() => shopsStore.userShop);
 
-async function updateShopField({ field, value }: { field: keyof IShop; value: string }) {
+async function updateShopField({ fieldName, fieldValue }: { fieldName: keyof IShop; fieldValue: string }) {
 	if (userShop.value) {
-		const updatedData = { [field]: value, _id: userShop.value._id } as Partial<IShop> & { _id: string };
+		const updatedData = { [fieldName]: fieldValue, _id: userShop.value._id } as Partial<IShop> & { _id: string };
 
 		try {
 			await shopsStore.updateShop(updatedData);
