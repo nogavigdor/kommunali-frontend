@@ -85,8 +85,8 @@ function updateMarkers(shops: IShop[]) {
 		el.className = "marker";
 
 		// Checks if the shop belongs to the logged in user
-		shopsStore.getUserShop(user.value?.stores[0]?._id ?? "");
-		const isUserShop = shop._id === shopsStore.userShop?._id;
+		// shopsStore.getUserShop(user.value?.stores[0]?._id ?? "");
+		const isUserShop = user.value?.storesId?.includes(shop._id) ?? false;
 		console.log("Is user shop:", isUserShop);
 		console.log("User shop:", shopsStore.userShop);
 
