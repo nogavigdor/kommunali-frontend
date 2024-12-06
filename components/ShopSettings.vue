@@ -159,14 +159,13 @@ import { ref, computed } from "vue";
 import { useUserStore } from "@/stores/user";
 import { useShopsStore } from "@/stores/shops";
 import type { IProduct } from "@/types/product";
-import type { IShop } from "@/types/shop";
 
 onMounted(async () => {
 	if (userStore.user && userStore.user.stores && userStore.user.stores.length > 0) {
-		const shop = userStore.user.stores[0] as IShop;
-		console.log("The shop is is: ", shop);
-		if (shop._id) {
-			await shopsStore.getUserShop(shop._id);
+		const shopId = userStore.user.stores[0];
+		console.log("The shop is is: ", shopId);
+		if (shopId) {
+			await shopsStore.getUserShop(shopId);
 		}
 		else {
 			console.error("Shop ID is undefined");
