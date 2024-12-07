@@ -15,6 +15,7 @@
     "@nuxt/icon": "^1.9.0",
     "@nuxt/ui": "^2.18.7",
     "@nuxtjs/tailwindcss": "^6.12.2",
+    "algoliasearch": "^5.15.0",
     "firebase": "^10.0.0",
     "firebase-admin": "^11.0.0",
     "firebase-functions": "^4.0.0",
@@ -24,6 +25,7 @@
     "pinia": "^2.2.5",
     "swiper": "^11.1.15",
     "vue": "^3.5.12",
+    "vue-instantsearch": "^4.19.11",
     "vue-router": "latest"
   },
   "devDependencies": {
