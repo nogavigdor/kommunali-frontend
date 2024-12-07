@@ -45,6 +45,14 @@ const selectedShop = ref<IShop | null>(null);
 const mitHusImage = new URL("@/assets/images/mit-hus.svg", import.meta.url).href;
 const husImage = new URL("@/assets/images/hus.svg", import.meta.url).href;
 
+const highlightedShops = ref<string[]>([]);
+
+// highlight shops on the map - used for highlighting shops which has products that match the search query
+const highlightMarkers = (shopIds: string[]) => {
+	highlightedShops.value = shopIds; // Store highlighted shop IDs
+	updateMarkers(shops.value); // Re-render markers
+};
+
 // Now you can watch `shops` or use it in your template, and it will stay up-to-date.
 watch(shops, (newShops) => {
 	console.log("Shops updated:", newShops);
@@ -96,7 +104,8 @@ function updateMarkers(shops: IShop[]) {
 		}
 		else {
 			// Default marker svg
-			el.style.backgroundImage = `url(${husImage})`;
+			el.style.backgroundImage = `url(${highlightedShops.value.includes(shop._id) ? "highlighted-hus.svg" : "hus.svg"})`;
+			el.style.width = "30px";
 		}
 
 		// Apply the styles using Object.assign
