@@ -4,5 +4,5 @@
   <!-- House shape -->
   <path d="M50 25 L75 45 V75 H55 V55 H45 V75 H25 V45 Z" fill="blue" stroke="black" stroke-width="2" />
   <!-- Title beneath -->
-  <text x="50" y="90" text-anchor="middle" font-size="10" fill="black">Your Title</text>
+  <text x="50" y="90" text-anchor="middle" font-size="10" fill="black"></text>
 </svg>
