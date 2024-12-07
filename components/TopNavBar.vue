@@ -41,13 +41,8 @@
 				</button>
 			</div>
 
-			<!-- Right Side - Search Icon -->
-			<button class="mr-4">
-				<UIcon
-					name="i-heroicons-magnifying-glass"
-					class="text-xl text-white" />
-				<UTooltip>Search</UTooltip>
-			</button>
+			<!-- Search Bar -->
+			<SearchBar @highlight-shops="highlightShopsOnMap" />
 		</div>
 	</nav>
 </template>
@@ -58,7 +53,7 @@ import { useUserStore } from "@/stores/user";
 defineProps({
 	open: Boolean,
 });
-defineEmits(["toggle-menu"]);
+defineEmits(["toggle-menu", "highlight-shops"]);
 
 const router = useRouter();
 
@@ -77,5 +72,9 @@ const goToRegisterPage = () => {
 
 const goToLoginPage = () => {
 	router.push("/login");
+};
+
+const highlightShopsOnMap = (shopIds: string[]) => {
+	emit("highlight-shops", shopIds); // Pass shop IDs to the App
 };
 </script>
