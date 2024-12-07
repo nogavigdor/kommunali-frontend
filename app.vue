@@ -3,7 +3,8 @@
 		<!-- Top Navbar -->
 		<TopNavBar
 			:open="menuOpen"
-			@toggle-menu="toggleMenu" />
+			@toggle-menu="toggleMenu"
+			@highlight-shops="mapRef.value.highlightMarkers" />
 
 		<!-- Sidebar Menu -->
 		<transition
@@ -29,7 +30,9 @@
 		<NuxtPage />
 
 		<!-- Map Container -->
-		<MapContainer :is-hidden="!showMap" />
+		<MapContainer
+			ref="map"
+			:is-hidden="!showMap" />
 
 		<!-- Bottom Navigation -->
 		<BottomNavigation @go-to="goTo" />
@@ -42,10 +45,10 @@ import { useRouter, useRoute } from "vue-router";
 import { onAuthStateChanged } from "firebase/auth";
 import { useFirebaseAuth } from "vuefire";
 import { storeToRefs } from "pinia";
+import type { IShop } from "./types/shop";
 import { useUserStore } from "@/stores/user";
 import { useShopsStore } from "@/stores/shops";
 import type { IUser } from "@/types/user";
-import type { IShop } from "./types/shop";
 
 const menuOpen = ref(false);
 const toggleMenu = () => {
@@ -61,6 +64,7 @@ const showMap = ref(false);
 const showUserLocation = ref(true);
 
 const userLocationRef = ref(null); // Add reference to UserLocation component
+const mapRef = ref(null); // Add reference to Map component
 
 const isMobile = ref(false);
 
