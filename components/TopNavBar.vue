@@ -42,7 +42,9 @@
 			</div>
 
 			<!-- Search Bar -->
-			<SearchBar @highlight-shops="highlightShopsOnMap" />
+			<ClientOnly>
+				<SearchBar @highlight-shops="highlightShopsOnMap" />
+			</ClientOnly>
 		</div>
 	</nav>
 </template>
@@ -53,7 +55,7 @@ import { useUserStore } from "@/stores/user";
 defineProps({
 	open: Boolean,
 });
-defineEmits(["toggle-menu", "highlight-shops"]);
+const emit = defineEmits(["toggle-menu", "highlight-shops"]);
 
 const router = useRouter();
 
