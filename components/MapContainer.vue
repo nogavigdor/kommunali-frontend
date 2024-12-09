@@ -44,6 +44,7 @@ const selectedShop = ref<IShop | null>(null);
 
 const mitHusImage = new URL("@/assets/images/mit-hus.svg", import.meta.url).href;
 const husImage = new URL("@/assets/images/hus.svg", import.meta.url).href;
+const highlightedHusImage = new URL("@/assets/images/highlighted-hus.svg", import.meta.url).href;
 
 const highlightedShops = ref<string[]>([]);
 
@@ -104,7 +105,7 @@ function updateMarkers(shops: IShop[]) {
 		}
 		else {
 			// Default marker svg
-			el.style.backgroundImage = `url(${highlightedShops.value.includes(shop._id) ? "highlighted-hus.svg" : "hus.svg"})`;
+			el.style.backgroundImage = `url(${highlightedShops.value.includes(shop._id) ? highlightedHusImage : husImage})`;
 			el.style.width = "30px";
 		}
 
