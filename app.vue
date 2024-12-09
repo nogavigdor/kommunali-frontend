@@ -3,8 +3,8 @@
 		<!-- Top Navbar -->
 		<TopNavBar
 			:open="menuOpen"
-			@toggle-menu="toggleMenu"
-			@highlight-shops="mapRef.value.highlightMarkers" />
+			@toggle-menu="toggleMenu" />
+		<!-- @highlight-shops="mapRef?.value?.highlightMarkers && mapRef.value.highlightMarkers()" / -->
 
 		<!-- Sidebar Menu -->
 		<transition
