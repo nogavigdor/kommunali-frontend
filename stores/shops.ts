@@ -1,7 +1,6 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import { useFirebaseAuth } from "vuefire";
-import { user } from "firebase-functions/v1/auth";
 import type { IShop } from "@/types/shop";
 import type { IProduct } from "@/types/product";
 import type { ILocationQuery } from "~/types/locationQuery";
