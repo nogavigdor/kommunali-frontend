@@ -1,6 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-	modules: ["@nuxt/eslint", "@nuxt/ui", "nuxt-mapbox", "nuxt-vuefire", "@nuxt/icon"],
+	modules: ["@nuxt/eslint", "@nuxt/ui", "nuxt-mapbox", "nuxt-vuefire", "@nuxt/icon",
+		// "@nuxtjs/algolia"
+	],
 	devtools: { enabled: true },
 	app: {
 		head: {
@@ -24,12 +26,14 @@ export default defineNuxtConfig({
 			googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
 			mapboxApiKey: process.env.MAPBOX_ACCESS_TOKEN,
 			algolia: {
+				apiKey: process.env.ALGOLIA_API_KEY,
 				applicationId: process.env.ALGOLIA_APPLICATION_ID,
-				searchApiKey: process.env.ALGOLIA_SEARCH_API_KEY,
 			},
+
 		},
 	},
 	compatibilityDate: "2024-04-03",
+
 	eslint: {
 		config: {
 			stylistic: {
