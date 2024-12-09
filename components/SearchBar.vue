@@ -1,7 +1,7 @@
 <template>
 	<ais-instant-search
 		:search-client="searchClient"
-		index-name="products">
+		:index-name="indexName">
 		<div class="relative flex items-center gap-3 p-3 bg-neutral-light rounded-lg shadow-soft">
 			<button
 				class="btn-primary flex items-center justify-center"
@@ -45,15 +45,28 @@
 
 <script setup>
 import { ref } from "vue";
-import { createSearchClient } from "vue-instantsearch";
-import algoliasearch from "algoliasearch";
+import { AisInstantSearch, AisHits } from "vue-instantsearch/vue3/es";
+import { liteClient as algoliasearch } from "algoliasearch/lite";
+import "instantsearch.css/themes/algolia-min.css";
+
+// import { createSearchClient } from "vue-instantsearch";
 
 const config = useRuntimeConfig();
 
+const indexName = "dev_kommunali_products";
+
+// const algolia = useAlgoliaRef();
+
+const searchClient = algoliasearch(
+	config.public.algolia.applicationId,
+	config.public.algolia.apiKey,
+);
+
+/*
 const searchClient = createSearchClient({
-	searchClient: algoliasearch(config.algolia.applicationId, config.algolia.searchApiKey),
-	indexName: "products",
-});
+	appId: config.public.algoliaAppId,
+	apiKey: config.public.algoliaSearchApiKey,
+}); */
 
 const isSearchOpen = ref(false);
 const searchQuery = ref("");
