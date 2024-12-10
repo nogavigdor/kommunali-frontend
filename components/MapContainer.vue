@@ -4,7 +4,7 @@
 	<ShopDetails
 		v-if="showShopDetails"
 		:shop="selectedShop || {}"
-		:style="shopDetailsStyle"
+		:style="shopDetailsStyle || {}"
 		@close="
 			closeShopDetails" />
 	<div
