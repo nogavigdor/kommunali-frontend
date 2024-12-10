@@ -7,4 +7,16 @@
 	</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+definePageMeta({
+	middleware: "auth",
+	title: "Account",
+	requiresUserAuth: true,
+	meta: [
+		{
+			name: "description",
+			content: "Manage account details here.",
+		},
+	],
+});
+</script>

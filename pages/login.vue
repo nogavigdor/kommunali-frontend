@@ -5,7 +5,16 @@
 </template>
 
 <script setup lang="ts">
-
+definePageMeta ({
+	layout: "auth",
+	title: "Login",
+	meta: [
+		{
+			name: "description",
+			content: "Login to your account on Kommunali.",
+		},
+	],
+});
 </script>
 
   <style scoped>

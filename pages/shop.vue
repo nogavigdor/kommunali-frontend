@@ -25,6 +25,18 @@ import { ref, computed, onMounted } from "vue";
 import { useUserStore } from "../stores/user";
 import { useShopsStore } from "../stores/shops";
 
+definePageMeta({
+	middleware: "auth",
+	title: "Shop",
+	requiresUserAuth: true,
+	meta: [
+		{
+			name: "description",
+			content: "Manages shop and products.",
+		},
+	],
+});
+
 const userStore = useUserStore();
 const shopStore = useShopsStore();
 

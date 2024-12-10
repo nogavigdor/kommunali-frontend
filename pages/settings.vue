@@ -7,4 +7,16 @@
 	</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+definePageMeta({
+	middleware: "auth",
+	title: "Settings",
+	requiresUserAuth: true,
+	meta: [
+		{
+			name: "description",
+			content: "Here one can configure the application settings.",
+		},
+	],
+});
+</script>

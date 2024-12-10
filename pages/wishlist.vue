@@ -7,4 +7,16 @@
 	</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+definePageMeta({
+	middleware: "auth",
+	title: "Wishlist",
+	requiresUserAuth: true,
+	meta: [
+		{
+			name: "description",
+			content: "View and manage items one wish to buy.",
+		},
+	],
+});
+</script>
