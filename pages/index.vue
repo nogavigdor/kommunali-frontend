@@ -31,6 +31,11 @@
 <script lang="ts" setup>
 import { useUserStore } from "@/stores/user";
 
+definePageMeta({
+	title: "home",
+	layout: "default",
+});
+
 const userStore = useUserStore();
 
 const showPage = computed(() => userStore.userLocation.every(value => value === 0));
