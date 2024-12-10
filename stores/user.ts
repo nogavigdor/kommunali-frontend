@@ -26,6 +26,7 @@ export const useUserStore = defineStore("user", () => {
 	});
 	// const authToken = ref<string | null>(null);
 	const loggedIn = useLocalStorage<boolean>("loggedIn", false);
+	const isAdmin = ref<boolean>(false);
 	const hasShop = ref<boolean>(false);
 
 	function registerUser(newUser: IRegisterUser) {
@@ -65,6 +66,9 @@ export const useUserStore = defineStore("user", () => {
 			// if the user has a shop, then hasShop is set to true
 			if (userResponse.stores.length > 0) {
 				hasShop.value = true;
+			}
+			if (userResponse.role === UserRole.ADMIN) {
+				isAdmin.value = true;
 			}
 			user.value = userResponse;
 			userLocation.value = userResponse.lastCoordinates;
@@ -144,6 +148,10 @@ export const useUserStore = defineStore("user", () => {
 		user.value.requested_products.push(product);
 	}
 
+	function getRole() {
+		return user.value.role;
+	}
+
 	return {
 		user,
 		hasShop,
@@ -157,5 +165,7 @@ export const useUserStore = defineStore("user", () => {
 		addRequestedProduct,
 		firebaseUserId,
 		getUser,
+		getRole,
+		isAdmin,
 	};
 });
