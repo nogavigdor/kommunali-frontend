@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta ({
+definePageMeta({
 	layout: "auth",
 	title: "Registration",
 	meta: [
