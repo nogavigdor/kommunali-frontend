@@ -1,56 +1,40 @@
 <template>
-	<d>
+	<div
+		class=" min-w-[150px] max-w-xs  border border-neutral-dark rounded-lg p-2 shadow-soft">
+		<img
+			:src="product.imageUrl ? product.imageUrl : imagePlaceholder"
+			:alt="product.name"
+			class="w-full h-32 object-cover rounded-lg">
+		<h3 class="text-lg font-heading mt-2">
+			{{ product.name }}
+		</h3>
+		<p class="text-brandSecondary-dark">
+			{{ product.price }} DKK
+		</p>
+		<button
+			v-if="editable"
+			@click="openModal = !openModal">
+			Edit
+		</button>
+		<ProductDetailsEditModal
+			v-model="openModal"
+			:product="product" />
+	</div>
 </template>
 
 <script setup lang="ts">
 import { useShopsStore } from "@/stores/shops";
 import type { IProduct } from "@/types/product";
+import imagePlaceholder from "@/assets/images/image-placeholder.webp";
 
 const props = defineProps<{
-	productId: string;
+	product: IProduct;
+	editable: boolean;
 }>();
 
-const shopsStore = useShopsStore();
-const product = ref<IProduct | null>(null);
+const openModal = ref(false);
 
-product.value = shopsStore.getUserShopProduct(props.productId) || null;
-
-// Handle image upload (triggered when file input changes)
-function handleImageUpload(event: Event) {
-	const file = (event.target as HTMLInputElement).files?.[0];
-	if (file) {
-		// Assuming a function 'uploadImageToStorage' exists to handle uploads to Firebase Storage
-		uploadImageToStorage(file).then((url) => {
-			editableValue.value = url;
-		}).catch((error) => {
-			console.error("Failed to upload image:", error);
-		});
-	}
-}
-
-// Handle taking a picture using mobile camera
-function takePicture() {
-	const inputElement = document.createElement("input");
-	inputElement.type = "file";
-	inputElement.accept = "image/*";
-	inputElement.capture = "environment"; // Use the back camera if available
-
-	inputElement.onchange = (event) => {
-		handleImageUpload(event);
-	};
-
-	inputElement.click();
-}
-
-// Assume this function handles the image upload to Firebase Storage and returns a URL
-async function uploadImageToStorage(file: File): Promise<string> {
-	// Placeholder logic for Firebase upload, replace with your Firebase upload implementation
-	const storage = getStorage();
-	const storageReference = storageRef(storage, `products/${file.name}`);
-	const snapshot = await uploadBytes(storageReference, file);
-	const downloadURL = await getDownloadURL(snapshot.ref);
-	return downloadURL;
-}
+// const shopsStore = useShopsStore();
 </script>
 
 <style scoped>
