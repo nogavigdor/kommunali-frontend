@@ -5,7 +5,7 @@
 		:style="style">
 		<div class="flex items-center justify-between">
 			<h2 class="text-2xl font-heading text-brandPrimary-700">
-				{{ shop.name }}
+				{{ shop?.name }}
 			</h2>
 			<button
 				class="text-red-500 hover:text-red-700"
@@ -14,7 +14,7 @@
 			</button>
 		</div>
 		<p class="text-brandNeutral-dark">
-			{{ shop.description }}
+			{{ shop?.description }}
 		</p>
 		<swiper
 			:slides-per-view="1.5"
@@ -22,21 +22,12 @@
 			:grab-cursor="true"
 			class="mt-4 pb-4">
 			<swiper-slide
-				v-for="product in shop.products"
+
+				v-for="product in shop?.products"
 				:key="product._id">
-				<div
-					class=" min-w-[150px] max-w-xs  border border-neutral-dark rounded-lg p-2 shadow-soft">
-					<img
-						:src="placeholderImage"
-						alt="Product Image"
-						class="w-full h-32 object-cover rounded-lg">
-					<h3 class="text-lg font-heading mt-2">
-						{{ product.name }}
-					</h3>
-					<p class="text-brandSecondary-dark">
-						{{ product.price }} DKK
-					</p>
-				</div>
+				<ProductDetails
+					:editable="isEditable"
+					:product="product" />
 			</swiper-slide>
 		</swiper>
 	</div>
@@ -45,12 +36,17 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import "swiper/swiper-bundle.css"; // Import Swiper styles
-import imagePlaceholder from "@/assets/images/image-placeholder.webp";
+import "swiper/swiper-bundle.css"; // Import Swiper styles;
+import { useUserStore } from "@/stores/user";
+import { useShopsStore } from "@/stores/shops";
+import type { IShop } from "@/types/shop";
 
-const _props = defineProps({
-	shop: {
-		type: Object,
+const userStore = useUserStore();
+const shopsStore = useShopsStore();
+
+const props = defineProps({
+	shopId: {
+		type: String,
 		required: true,
 	},
 	style: {
@@ -59,8 +55,16 @@ const _props = defineProps({
 	},
 });
 
+console.log("The shop id is: ", props.shopId);
+console.log("The user store is: ", userStore);
+const shop = computed(() => {
+	return shopsStore.shops.find((shop: IShop) => shop._id === props.shopId) || null;
+});
 const _emit = defineEmits(["close"]);
-const placeholderImage = imagePlaceholder;
+
+const isEditable = computed(() => {
+	return userStore.user && userStore.shopIds.includes(props.shopId);
+});
 </script>
 
   <style scoped>

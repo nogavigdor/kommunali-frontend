@@ -3,7 +3,7 @@
 	<!-- Shop Details Overlay -->
 	<ShopDetails
 		v-if="showShopDetails"
-		:shop="selectedShop || {}"
+		:shop-id="selectedShopId || ''"
 		:style="shopDetailsStyle || {}"
 		@close="
 			closeShopDetails" />
@@ -42,7 +42,7 @@ const showShopDetails = ref(false);
 
 const shopDetailsStyle = ref({ top: "0", left: "0" });
 
-const selectedShop = ref<IShop | null>(null);
+const selectedShopId = ref<string | null>(null);
 
 const highlightedShops = computed(() => shopsStore.highlightedShops);
 
@@ -58,11 +58,18 @@ const highlightedHusImage = new URL("@/assets/images/highlighted-hus.svg", impor
 // updateMarkers(shops.value); // Re-render markers
 // };
 
-// Now you can watch `shops` or use it in your template, and it will stay up-to-date.
+// watch `shops` so it will be up to date.
 watch(shops, (newShops) => {
 	console.log("Shops updated:", newShops);
 	if (mapRef.value) {
 		updateMarkers(newShops); // Update the map markers whenever `shops` changes
+	}
+});
+
+watch(highlightedShops, (newShops) => {
+	console.log("Highlighted shops updated:", newShops);
+	if (mapRef.value) {
+		updateMarkers(shops.value); // Update the map markers whenever `highlightedShops` changes
 	}
 });
 
@@ -99,9 +106,9 @@ function updateMarkers(shops: IShop[]) {
 
 		// Checks if the shop belongs to the logged in user
 		// shopsStore.getUserShop(user.value?.stores[0]?._id ?? "");
-		const isUserShop = user.value?.storesId?.includes(shop._id) ?? false;
+		const isUserShop = userStore.shopIds.includes(shop._id) ?? false;
 		console.log("Is user shop:", isUserShop);
-		console.log("User shop:", shopsStore.userShop);
+		// console.log(`User shop ID: ${user.value?.storesId}, Shop ID: ${shop._id}`);
 
 		if (isUserShop) {
 			// replaces the marker svg for the logged-in user's shop
@@ -142,7 +149,7 @@ function updateMarkers(shops: IShop[]) {
 			console.log("Shop clicked:", shop);
 			showShopDetails.value = true;
 
-			selectedShop.value = shop; // Set the selected shop
+			selectedShopId.value = shop._id; // Set the selected shop
 
 			// Calculate the position of the clicked marker on the screen
 			const mapBoxPoint = mapRef.value?.project(shop.location.coordinates);
@@ -260,8 +267,9 @@ const setupMapListeners = () => {
 
 // Function to keep the ShopDetails window updated with marker position
 const updateShopDetailsPosition = () => {
-	if (selectedShop.value && mapRef.value) {
-		const shopLocation = selectedShop.value.location.coordinates;
+	if (selectedShopId.value && mapRef.value) {
+		// Get the location of the selected shop
+		const shopLocation: [number, number] | undefined = userStore.user?.stores?.find((shop: IShop) => shop._id === selectedShopId.value)?.location.coordinates;
 
 		if (shopLocation) {
 			const mapBoxPoint = mapRef.value.project(shopLocation);
