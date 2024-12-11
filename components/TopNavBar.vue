@@ -43,7 +43,7 @@
 
 			<!-- Search Bar -->
 			<ClientOnly>
-				<SearchBar @highlight-shops="highlightShopsOnMap" />
+				<SearchBar />
 			</ClientOnly>
 		</div>
 	</nav>
@@ -55,7 +55,8 @@ import { useUserStore } from "@/stores/user";
 defineProps({
 	open: Boolean,
 });
-const emit = defineEmits(["toggle-menu", "highlight-shops"]);
+
+const _emit = defineEmits(["toggle-menu"]);
 
 const router = useRouter();
 
@@ -74,9 +75,5 @@ const goToRegisterPage = () => {
 
 const goToLoginPage = () => {
 	router.push("/login");
-};
-
-const highlightShopsOnMap = (shopIds: string[]) => {
-	emit("highlight-shops", shopIds); // Pass shop IDs to the App
 };
 </script>
