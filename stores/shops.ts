@@ -10,6 +10,7 @@ export const useShopsStore = defineStore("shops", () => {
 	const shops = ref<IShop[]>([]);
 	const userShop = ref<IShop | null>(null);
 	const currentProduct = ref<IProduct | null>(null);
+	const highlightedShops = ref<string[]>([]);
 	const auth = useFirebaseAuth();
 
 	// Fetch shops within bounds based on user location
@@ -197,6 +198,14 @@ export const useShopsStore = defineStore("shops", () => {
 	// Computed property to get the number of shops fetched
 	const shopCount = computed(() => shops.value.length);
 
+	function setHighlightedShops(shopsIds: string[]) {
+		highlightedShops.value = shopsIds;
+	}
+
+	function getHighlightedShops() {
+		return highlightedShops.value;
+	}
+
 	return {
 		shops,
 		getShops,
@@ -210,5 +219,8 @@ export const useShopsStore = defineStore("shops", () => {
 		deleteProduct,
 		userShop,
 		shopCount,
+		setHighlightedShops,
+		getHighlightedShops,
+		highlightedShops,
 	};
 });
