@@ -84,7 +84,7 @@ const goTo = (path) => {
 };
 
 const userStore = useUserStore();
-const { user, userLocation, loggedIn, firebaseUserId, hasShop } = storeToRefs(userStore);
+const { user, userLocation, loggedIn, firebaseUserId, hasShop, shopIds } = storeToRefs(userStore);
 const changeAddressHandler = (mapboxAddressObject) => {
 	console.log("The selected address is:", mapboxAddressObject);
 	userStore.userLocation = mapboxAddressObject.features[0].geometry.coordinates;
@@ -123,14 +123,7 @@ onMounted(() => {
 				userLocation.value = userResponse.lastCoordinates;
 				showMap.value = true;
 
-				if (userResponse.stores && userResponse.stores.length > 0) {
-					const shopObj = userResponse.stores[0];
-					const shopId = shopObj._id;
-					user.value.storesId = [shopId];
-					shopsStore.userShop = shopObj;
-
-					hasShop.value = true;
-				}
+				userStore.updateShopData(userResponse);
 			}
 			catch (error) {
 				console.error("Error fetching user after refresh:", error);
