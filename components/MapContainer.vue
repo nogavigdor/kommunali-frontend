@@ -26,6 +26,8 @@ defineProps({
 	isHidden: Boolean,
 });
 
+defineEmits(["highlight-shops"]);
+
 const shopsStore = useShopsStore();
 const userStore = useUserStore();
 // const { shops } = useShopsStore(); // non-reactive
@@ -42,17 +44,19 @@ const shopDetailsStyle = ref({ top: "0", left: "0" });
 
 const selectedShop = ref<IShop | null>(null);
 
+const highlightedShops = computed(() => shopsStore.highlightedShops);
+
 const mitHusImage = new URL("@/assets/images/mit-hus.svg", import.meta.url).href;
 const husImage = new URL("@/assets/images/hus.svg", import.meta.url).href;
 const highlightedHusImage = new URL("@/assets/images/highlighted-hus.svg", import.meta.url).href;
 
-const highlightedShops = ref<string[]>([]);
+// const highlightedShops = ref<string[]>([]);
 
 // highlight shops on the map - used for highlighting shops which has products that match the search query
-const highlightMarkers = (shopIds: string[]) => {
-	highlightedShops.value = shopIds; // Store highlighted shop IDs
-	updateMarkers(shops.value); // Re-render markers
-};
+// const highlighShops = (shopIds: string[]) => {
+// highlightedShops.value = shopIds; // Store highlighted shop IDs
+// updateMarkers(shops.value); // Re-render markers
+// };
 
 // Now you can watch `shops` or use it in your template, and it will stay up-to-date.
 watch(shops, (newShops) => {
