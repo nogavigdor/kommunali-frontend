@@ -10,7 +10,7 @@
 				@click="showNewShopForm = true">
 				Add Shop
 			</button>
-			<NewShop
+			<ShopNew
 				v-if="showNewShopForm && loggedIn"
 				@shop-created="handleShopCreated" />
 		</div>
