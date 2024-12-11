@@ -4,6 +4,14 @@
 			<h2 class="text-center text-3xl font-extrabold">
 				Create Your Account
 			</h2>
+			<p class="text-center text-sm text-gray-600">
+				Do you already have an account?
+				<a
+					class="font-medium text-brandPrimary-500 hover:text-brandPrimary-700 cursor-pointer"
+					@click="navigateToLogin">
+					Login here
+				</a>
+			</p>
 			<UForm
 				:state="state"
 				class="space-y-4"
@@ -79,6 +87,10 @@ const passwordVisible = ref(false);
 const validationErrors = reactive<{ email?: string; password?: string }>({});
 const backendError = ref<string | null>(null);
 const feedbackType = ref<FeedbackType | null>(null);
+
+const navigateToLogin = () => {
+	router.push("/login");
+};
 
 const passwordFieldType = computed(() => (passwordVisible.value ? "text" : "password"));
 
