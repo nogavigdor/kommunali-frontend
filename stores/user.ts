@@ -28,6 +28,8 @@ export const useUserStore = defineStore("user", () => {
 	const loggedIn = useLocalStorage<boolean>("loggedIn", false);
 	const isAdmin = ref<boolean>(false);
 	const hasShop = ref<boolean>(false);
+	const shopIds = ref<string[]>([]);
+	const shopsStore = useShopsStore();
 
 	function registerUser(newUser: IRegisterUser) {
 		$fetch<IUser>(`${config.public.apiBaseUrl}/api/users/register`, {
@@ -137,6 +139,7 @@ export const useUserStore = defineStore("user", () => {
 		})
 			.then((response) => {
 				user.value = response;
+				updateShopData(response);
 			})
 			.catch((error) => {
 				console.error("Error updating user:", error);
@@ -150,6 +153,17 @@ export const useUserStore = defineStore("user", () => {
 
 	function getRole() {
 		return user.value.role;
+	}
+
+	function updateShopData(userResponse: IUser) {
+		if (userResponse.stores && userResponse.stores.length > 0) {
+			const shopObj = userResponse.stores[0];
+			const shopId = shopObj._id;
+			shopIds.value = [shopId];
+			shopsStore.userShop = shopObj;
+
+			hasShop.value = true;
+		}
 	}
 
 	return {
@@ -167,5 +181,7 @@ export const useUserStore = defineStore("user", () => {
 		getUser,
 		getRole,
 		isAdmin,
+		shopIds,
+		updateShopData,
 	};
 });
