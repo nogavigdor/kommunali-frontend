@@ -12,4 +12,9 @@ export default defineNuxtRouteMiddleware((to, from) => {
 	if (!userStore.isAdmin && to.meta.requiresAdminAuth) {
 		return navigateTo("/");
 	}
+	// If the route is the loggin page, but the user is logged in,
+	// redirect to the home page
+	if (to.path === "/login" && userStore.loggedIn) {
+		return navigateTo("/");
+	}
 });
