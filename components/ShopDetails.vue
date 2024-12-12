@@ -22,7 +22,6 @@
 			:grab-cursor="true"
 			class="mt-4 pb-4">
 			<swiper-slide
-
 				v-for="product in shop?.products"
 				:key="product._id">
 				<ProductDetails
@@ -57,9 +56,16 @@ const props = defineProps({
 
 console.log("The shop id is: ", props.shopId);
 console.log("The user store is: ", userStore);
-const shop = computed(() => {
-	return shopsStore.shops.find((shop: IShop) => shop._id === props.shopId) || null;
-});
+
+// commeneted since the computed didn't work effectively - it tracked tracked the existence of the shop
+// or products but not the shop details - fo example deletion or changes in title or description
+// const shop = computed(() => {
+//	return shopsStore.shops.find((shop: IShop) => shop._id === props.shopId) || shopsStore.userShop?.products || null;
+// });
+
+// whenever there is a change within the userShop details, the shop will be updated
+const shop = computed(() => shopsStore.userShop);
+
 const _emit = defineEmits(["close"]);
 
 const isEditable = computed(() => {
