@@ -14,7 +14,12 @@
 		<button
 			v-if="editable"
 			@click="openModal = !openModal">
-			Edit
+			Edit <Icon name="pencil" />
+		</button>
+		<button
+			v-if="editable"
+			@click="deleteProduct()">
+			Delete <Icon name="trash" />
 		</button>
 		<ProductDetailsEditModal
 			v-model="openModal"
@@ -58,6 +63,12 @@ watch(
 		// Ensures the watcher tracks changes to the entire products array
 		deep: true },
 );
+
+const deleteProduct = async () => {
+	if (confirm("Are you sure you want to delete this product?")) {
+		await shopStore.deleteProduct(currentProduct.value._id || "");
+	}
+};
 
 // const shopsStore = useShopsStore();
 </script>
