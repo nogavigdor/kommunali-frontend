@@ -4,6 +4,7 @@ import type { MapboxAddressAutofill } from "@mapbox/search-js-web";
 import { useFirebaseAuth } from "vuefire";
 import { signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, onAuthStateChanged } from "firebase/auth";
 import { useLocalStorage } from "@vueuse/core";
+import { update } from "firebase/database";
 import { useShopsStore } from "./shops";
 import type { IUser, RequestedProduct, IRegisterUser } from "@/types/user";
 import { UserRole } from "@/types/user";
@@ -65,20 +66,12 @@ export const useUserStore = defineStore("user", () => {
 			// get the user from mongodb according to the firebaseUserId
 			const userResponse: IUser = await getUser(firebaseUserId.value);
 			// its important to notice that shop is the same as store
-			// if the user has a shop, then hasShop is set to true
-			if (userResponse.stores.length > 0) {
-				hasShop.value = true;
-			}
 			if (userResponse.role === UserRole.ADMIN) {
 				isAdmin.value = true;
 			}
 			user.value = userResponse;
 			userLocation.value = userResponse.lastCoordinates;
-			// if the user has a shop, get the user shop - in order to update the userShop in the shops store
-			const shopsStore = useShopsStore();
-			if (userResponse.stores[0]?._id) {
-				shopsStore.getUserShop(userResponse.stores[0]._id);
-			}
+			updateShopData(userResponse);
 		}
 		catch (error) {
 			console.error("Error logging in user:", error);
