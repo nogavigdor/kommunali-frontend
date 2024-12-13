@@ -95,10 +95,23 @@ export const useShopsStore = defineStore("shops", () => {
 				},
 				body: newProduct,
 			});
-			userShop.value?.products.push(response as IProduct);
+			const addedProduct = response as IProduct;
+
+			// Update `userShop` with a new products array
+			if (userShop.value) {
+				userShop.value = {
+					...userShop.value,
+					products: [...userShop.value.products, addedProduct],
+				};
+			}
+
+			// Update the `shops` array with a new `products` array
 			shops.value = shops.value.map((shop) => {
 				if (shop._id === userShop.value?._id) {
-					shop.products.push(response as IProduct);
+					return {
+						...shop,
+						products: [...shop.products, addedProduct],
+					};
 				}
 				return shop;
 			});
@@ -150,6 +163,16 @@ export const useShopsStore = defineStore("shops", () => {
 			if (index !== undefined && index !== -1) {
 				userShop.value!.products[index] = response as IProduct;
 			}
+			// find the shop which its product was updated in thee shops array in order
+			// to keep them updated.
+			shops.value = shops.value.map((shop) => {
+				if (shop._id === userShop.value?._id) {
+					// create a new array of products with the updated product
+					shop.products = shop.products.map(product => product._id === (response as IProduct)._id ? (response as IProduct) : product);
+				}
+				return shop;
+			},
+			);
 		}
 		catch (error) {
 			console.error("Failed to update product:", error);
@@ -170,6 +193,15 @@ export const useShopsStore = defineStore("shops", () => {
 				},
 			});
 			userShop.value!.products = userShop.value!.products.filter(product => product._id !== productId);
+			// find the shop which its product was deleted in thee shops array in order
+			// to keep them updated.
+			shops.value = shops.value.map((shop) => {
+				if (shop._id === userShop.value?._id) {
+					// create a new array of products without the deleted product
+					shop.products = shop.products.filter(product => product._id !== productId);
+				}
+				return shop;
+			});
 		}
 		catch (error) {
 			console.error("Failed to delete product:", error);
