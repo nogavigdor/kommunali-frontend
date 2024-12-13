@@ -3,7 +3,7 @@
 	<!-- Shop Details Overlay -->
 	<ShopDetails
 		v-if="showShopDetails"
-		:shop-id="selectedShopId || ''"
+		:selected-shop-id="selectedShopId || ''"
 		:style="shopDetailsStyle || {}"
 		@close="
 			closeShopDetails" />
@@ -150,6 +150,7 @@ function updateMarkers(shops: IShop[]) {
 			showShopDetails.value = true;
 
 			selectedShopId.value = shop._id; // Set the selected shop
+			console.log("Selected shop ID:", selectedShopId.value);
 
 			// Calculate the position of the clicked marker on the screen
 			const mapBoxPoint = mapRef.value?.project(shop.location.coordinates);
@@ -268,7 +269,7 @@ const setupMapListeners = () => {
 // Function to keep the ShopDetails window updated with marker position
 const updateShopDetailsPosition = () => {
 	if (selectedShopId.value && mapRef.value) {
-		// Get the location of the selected shop
+		//
 		const shopLocation: [number, number] | undefined = userStore.user?.stores?.find((shop: IShop) => shop._id === selectedShopId.value)?.location.coordinates;
 
 		if (shopLocation) {
@@ -287,7 +288,7 @@ const updateShopDetailsPosition = () => {
 // Close shop details
 const closeShopDetails = () => {
 	showShopDetails.value = false;
-	selectedShop.value = null;
+	selectedShopId.value = null;
 };
 </script>
 
