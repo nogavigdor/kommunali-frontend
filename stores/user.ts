@@ -74,7 +74,7 @@ export const useUserStore = defineStore("user", () => {
 			}
 			user.value = userResponse;
 			userLocation.value = userResponse.lastCoordinates;
-			// get the user shop - in order to updae the userShop in the shops store
+			// if the user has a shop, get the user shop - in order to update the userShop in the shops store
 			const shopsStore = useShopsStore();
 			if (userResponse.stores[0]?._id) {
 				shopsStore.getUserShop(userResponse.stores[0]._id);
