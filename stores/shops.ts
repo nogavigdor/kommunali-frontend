@@ -96,6 +96,13 @@ export const useShopsStore = defineStore("shops", () => {
 				body: newProduct,
 			});
 			userShop.value?.products.push(response as IProduct);
+			shops.value = shops.value.map((shop) => {
+				if (shop._id === userShop.value?._id) {
+					shop.products.push(response as IProduct);
+				}
+				return shop;
+			});
+			console.log("Product added and the updated shops in store are:", shops.value);
 		}
 		catch (error) {
 			console.error("Failed to add product:", error);
