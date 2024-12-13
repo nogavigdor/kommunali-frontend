@@ -78,7 +78,7 @@ console.log("The user store is: ", userStore);
 // });
 
 // whenever there is a change within the selected shop details, the shop will be updated
-const shop = computed(() => shopsStore.shops.find((shop: IShop) => shop._id === props.selectedShopId) || shopsStore.userShop || null);
+const shop = computed(() => shopsStore.shops.find((shop: IShop) => shop._id === props.selectedShopId));
 
 watch(
 	() => shopsStore.userShop?.products || [],
