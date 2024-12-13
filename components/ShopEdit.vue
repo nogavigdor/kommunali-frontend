@@ -23,6 +23,9 @@
 					field-name="description"
 					@update-field="updateShopField" />
 			</div>
+			<client-only>
+				<ShopAddressEdit />
+			</client-only>
 			<div>
 				<label><strong>Address:</strong></label>
 				<EditField
