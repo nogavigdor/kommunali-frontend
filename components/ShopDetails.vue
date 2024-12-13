@@ -10,7 +10,9 @@
 			<button
 				class="text-red-500 hover:text-red-700"
 				@click="$emit('close')">
-				Close
+				<Icon
+					name="uil:times"
+					class="text-xl" />
 			</button>
 		</div>
 		<p class="text-brandNeutral-dark">
@@ -25,10 +27,20 @@
 				v-for="product in shop?.products"
 				:key="product._id">
 				<ProductDetails
+					:selected-shop-id="shop?._id"
 					:editable="isEditable"
 					:product="product" />
 			</swiper-slide>
 		</swiper>
+		<button
+			v-if="isEditable"
+			class="btn-primary"
+			@click="openModal = !openModal">
+			Add Product
+		</button>
+		<div class="mb-4">
+			<ProductAddModal v-model="openModal" />
+		</div>
 	</div>
 </template>
 
@@ -43,8 +55,10 @@ import type { IShop } from "@/types/shop";
 const userStore = useUserStore();
 const shopsStore = useShopsStore();
 
+const openModal = ref(false);
+
 const props = defineProps({
-	shopId: {
+	selectedShopId: {
 		type: String,
 		required: true,
 	},
@@ -54,22 +68,29 @@ const props = defineProps({
 	},
 });
 
-console.log("The shop id is: ", props.shopId);
+console.log("The shop id is: ", props.selectedShopId);
 console.log("The user store is: ", userStore);
 
 // commeneted since the computed didn't work effectively - it tracked tracked the existence of the shop
 // or products but not the shop details - fo example deletion or changes in title or description
 // const shop = computed(() => {
-//	return shopsStore.shops.find((shop: IShop) => shop._id === props.shopId) || shopsStore.userShop?.products || null;
+//	return shopsStore.shops.find((shop: IShop) => shop._id === props.selectedShopId) || shopsStore.userShop?.products || null;
 // });
 
-// whenever there is a change within the userShop details, the shop will be updated
-const shop = computed(() => shopsStore.userShop);
+// whenever there is a change within the selected shop details, the shop will be updated
+const shop = computed(() => shopsStore.shops.find((shop: IShop) => shop._id === props.selectedShopId) || shopsStore.userShop || null);
 
+watch(
+	() => shopsStore.userShop?.products || [],
+	(updatedProducts, oldProducts) => {
+		console.log("Products updated in ShopDetails:", updatedProducts);
+	},
+	{ immediate: true, deep: true },
+);
 const _emit = defineEmits(["close"]);
 
 const isEditable = computed(() => {
-	return userStore.user && userStore.shopIds.includes(props.shopId);
+	return userStore.user && userStore.shopIds.includes(props.selectedShopId);
 });
 </script>
 
