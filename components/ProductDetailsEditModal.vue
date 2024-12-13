@@ -71,12 +71,12 @@ const props = defineProps<{
 const shopsStore = useShopsStore();
 
 const editProductData = ref<IProduct>({
-	_id: "",
-	name: "",
-	description: "",
-	price: 0,
-	imageUrl: "",
-	status: "available",
+	_id: props.product._id,
+	name: props.product.name,
+	description: props.product.description,
+	price: props.product.price,
+	imageUrl: props.product.imageUrl,
+	status: props.product.status,
 	reservedFor: null,
 	reservedExpiration: null,
 	soldTo: undefined,
