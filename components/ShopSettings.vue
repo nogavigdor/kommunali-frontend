@@ -4,7 +4,7 @@
 			Shop Settings
 		</h2>
 		<div class="mb-4">
-			<EditShop />
+			<ShopEdit />
 			<div class="mb-4">
 				<swiper
 					:slides-per-view="5.5"
@@ -41,19 +41,6 @@ import { useShopsStore } from "@/stores/shops";
 import type { IProduct } from "@/types/product";
 import "swiper/swiper-bundle.css"; // Import Swiper styles;
 import { select } from "firebase-functions/params";
-
-onMounted(async () => {
-	if (userStore.user && userStore.user.stores && userStore.user.stores.length > 0) {
-		const shopId = userStore.user.stores[0];
-		console.log("The shop is is: ", shopId);
-		if (shopId) {
-			await shopsStore.getUserShop(shopId);
-		}
-		else {
-			console.error("Shop ID is undefined");
-		}
-	}
-});
 
 const userStore = useUserStore();
 const shopsStore = useShopsStore();
