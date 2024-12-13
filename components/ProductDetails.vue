@@ -1,6 +1,6 @@
 <template>
 	<div
-		class=" min-w-[150px] max-w-xs  border border-neutral-dark rounded-lg p-2 shadow-soft">
+		class=" min-w-[150px] max-w-xs bg-white border border-neutral-dark rounded-lg p-2 shadow-soft">
 		<img
 			:src="currentProduct.imageUrl ? currentProduct.imageUrl : imagePlaceholder"
 			:alt="currentProduct.name"
@@ -11,16 +11,28 @@
 		<p class="text-brandSecondary-dark">
 			{{ currentProduct.price }} DKK
 		</p>
-		<button
-			v-if="editable"
-			@click="openModal = !openModal">
-			Edit <Icon name="pencil" />
-		</button>
-		<button
-			v-if="editable"
-			@click="deleteProduct()">
-			Delete <Icon name="trash" />
-		</button>
+		<UTooltip text="Edit Product">
+			<button
+				v-show="editable"
+				class=" hover:text-green-700"
+				aria-label="Edit Product"
+				@click="openModal = !openModal">
+				<Icon
+					name="uil:edit"
+					class="text-xl" />
+			</button>
+		</UTooltip>
+		<UTooltip text="Delete Product">
+			<button
+				v-show="editable"
+				class=" hover:text-red-700"
+				aria-label="Delete Product"
+				@click="deleteProduct()">
+				<Icon
+					name="uil:trash"
+					class="text-xl" />
+			</button>
+		</UTooltip>
 		<ProductDetailsEditModal
 			v-model="openModal"
 			:product="currentProduct" />
@@ -35,6 +47,7 @@ import imagePlaceholder from "@/assets/images/image-placeholder.webp";
 const shopStore = useShopsStore();
 
 const props = defineProps<{
+	selectedShopId: string | undefined;
 	product: IProduct;
 	editable: boolean;
 }>();
@@ -42,26 +55,28 @@ const props = defineProps<{
 const openModal = ref(false);
 
 // Create a local reference for the product
-const currentProduct = ref({ ...props.product });
+// const currentProduct = ref({ ...props.product });
 
-// Watch the userShop state and update the current product when the product updates.
-// Whenever the userShop is updated with new product data, the currentProduct is synchronized
+// Dynamically fetch the current shop
+// const selectedShop = computed(() => {
+//	return shopStore.shops.find(shop => shop._id === props.selectedShopId) || null;
+// });
+
+// Dynamically fetch the current product
+// const currentProduct = computed(() => {
+// return selectedShop.value?.products.find(product => product._id === props.product._id) || props.product;
+// });
+const currentProduct = ref({ ...props.product });
+// will come into play if the user is logged in and have a shop  - watch the userShop and update the current product when there is a product updates.
 watch(
-	() => shopStore.userShop?.products,
-	(updatedProducts) => {
-		if (updatedProducts) {
-			const updatedProduct = updatedProducts.find(
-				(p: IProduct) => p._id === props.product._id,
-			);
-			if (updatedProduct) {
-				currentProduct.value = { ...updatedProduct };
-			}
+	// () => selectedShop.value?.products.find(product => product._id === props.product._id),
+	() => shopStore.userShop?.products.find(product => product._id === props.product._id),
+	(updatedProduct) => {
+		if (updatedProduct) {
+			currentProduct.value = { ...updatedProduct };
 		}
 	},
-	{ // Ensures the watcher runs when the component is mounted, setting the initial value of currentProduct
-		immediate: true,
-		// Ensures the watcher tracks changes to the entire products array
-		deep: true },
+	{ immediate: true, deep: true },
 );
 
 const deleteProduct = async () => {
