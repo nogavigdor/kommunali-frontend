@@ -44,7 +44,7 @@ import { useShopsStore } from "@/stores/shops";
 import type { IProduct } from "@/types/product";
 import imagePlaceholder from "@/assets/images/image-placeholder.webp";
 
-const shopStore = useShopsStore();
+const shopsStore = useShopsStore();
 
 const props = defineProps<{
 	selectedShopId: string | undefined;
@@ -66,22 +66,17 @@ const openModal = ref(false);
 // const currentProduct = computed(() => {
 // return selectedShop.value?.products.find(product => product._id === props.product._id) || props.product;
 // });
-const currentProduct = ref({ ...props.product });
-// will come into play if the user is logged in and have a shop  - watch the userShop and update the current product when there is a product updates.
-watch(
-	// () => selectedShop.value?.products.find(product => product._id === props.product._id),
-	() => shopStore.userShop?.products.find(product => product._id === props.product._id),
-	(updatedProduct) => {
-		if (updatedProduct) {
-			currentProduct.value = { ...updatedProduct };
-		}
-	},
-	{ immediate: true, deep: true },
-);
+const currentProduct = ref({ ...props.product,
+});
 
+watch(() => shopsStore.shops, () => {
+	currentProduct.value = { ...props.product };
+});
 const deleteProduct = async () => {
 	if (confirm("Are you sure you want to delete this product?")) {
-		await shopStore.deleteProduct(currentProduct.value._id || "");
+		console.log("the shops arrany in shop store is:", shopsStore.shops);
+		console.log("the product to be deleted is:", currentProduct.value);
+		await shopsStore.deleteProduct(currentProduct.value._id || "");
 	}
 };
 
