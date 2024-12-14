@@ -38,9 +38,7 @@ import { ref, computed } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { useUserStore } from "@/stores/user";
 import { useShopsStore } from "@/stores/shops";
-import type { IProduct } from "@/types/product";
 import "swiper/swiper-bundle.css"; // Import Swiper styles;
-import { select } from "firebase-functions/params";
 
 const userStore = useUserStore();
 const shopsStore = useShopsStore();
@@ -54,37 +52,8 @@ const openModal = ref(false);
 const isEditable = computed(() => !!(userStore.loggedIn && shop.value?._id
 	&& userStore.shopIds.includes(shop.value._id)));
 
-const newProduct = ref<IProduct>({
-	name: "",
-	description: "",
-	price: 0,
-	imageUrl: "",
-	status: "available",
-	reservedFor: null,
-	reservedExpiration: null,
-	soldTo: undefined,
-});
-
-const addProduct = async () => {
-	try {
-		await shopsStore.addProduct(newProduct.value);
-		console.log("After adding the product the new products list is:", shopsStore.userShop?.products);
-		//	userShop.value?.products.push(newProduct.value);
-		newProduct.value = {
-			name: "",
-			description: "",
-			price: 0,
-			imageUrl: "",
-			status: "available",
-			reservedFor: null,
-			reservedExpiration: null,
-			soldTo: undefined,
-		};
-		openModal.value = !openModal.value;
-	}
-	catch (error) {
-		console.error("Failed to add product:", error);
-	}
+const addProduct = () => {
+	openModal.value = !openModal.value;
 };
 </script>
 
