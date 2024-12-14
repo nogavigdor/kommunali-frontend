@@ -1,3 +1,5 @@
+import { storageBucket } from "firebase-functions/params";
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 	modules: ["@nuxt/eslint", "@nuxt/ui", "nuxt-mapbox", "nuxt-vuefire", "@nuxt/icon",
@@ -52,6 +54,7 @@ export default defineNuxtConfig({
 			authDomain: process.env.FIREBASE_AUTH_DOMAIN,
 			projectId: process.env.FIREBASE_PROJECT_ID,
 			appId: process.env.FIREBASE_APP_ID,
+			storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
 		},
 		auth: {
 			enabled: true,
