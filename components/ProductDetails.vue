@@ -33,6 +33,20 @@
 					class="text-xl" />
 			</button>
 		</UTooltip>
+		<div>
+			<button
+				v-show="editable? false : true"
+				v-if="['available', 'reserved'].includes(currentProduct.status)"
+				class="btn-primary">
+				{{ requestType }}
+			</button>
+			<button
+				v-show="editable? false : true"
+				v-if="cancelRequest"
+				class="btn-secondary">
+				Cancel Request
+			</button>
+		</div>
 		<ProductDetailsEditModal
 			v-model="openModal"
 			:product="currentProduct" />
@@ -43,6 +57,9 @@
 import { useShopsStore } from "@/stores/shops";
 import type { IProduct } from "@/types/product";
 import imagePlaceholder from "@/assets/images/image-placeholder.webp";
+import { useUserStore } from "@/stores/user";
+
+const userStore = useUserStore();
 
 const shopsStore = useShopsStore();
 
@@ -53,6 +70,19 @@ const props = defineProps<{
 }>();
 
 const openModal = ref(false);
+
+const requestType = computed(() => {
+	return currentProduct.value.status === "available" ? "Request Product" : "Queue Product";
+});
+
+const cancelRequest = computed(() => {
+	if (userStore.user.requested_products.find(entry => entry.product === currentProduct.value._id)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+});
 
 // Create a local reference for the product
 // const currentProduct = ref({ ...props.product });
