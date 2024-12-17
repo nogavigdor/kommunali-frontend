@@ -1,7 +1,9 @@
 <template>
 	<ais-instant-search
+		class="absolute z-20 top-4 right-4"
 		:search-client="searchClient"
 		:index-name="indexName">
+		<!-- Search Bar -->
 		<div class="relative flex items-center gap-3 p-3 bg-neutral-light rounded-lg shadow-soft">
 			<button
 				class="relative btn-primary flex items-center justify-center"
@@ -13,55 +15,50 @@
 			</button>
 
 			<div class="relative flex-grow">
-				<input
-					v-show="isSearchOpen"
-					v-model="searchQuery"
-					type="text"
-					placeholder="Search products..."
-					class="absolute right-0 top-5 search-input hidden lg:block w-full max-w-xs px-4 py-2 bg-white text-gray-800 rounded-lg border border-brandGray-300 focus:outline-none focus:ring-2 focus:ring-brandPrimary-500 transition-all"
-					@input="onSearch">
-				<button
-					v-if="searchQuery.length > 0"
-					class="absolute top-1/2 right-3 transform -translate-y-1/2 text-brandGray-500 hover:text-brandGray-700"
-					@click="clearSearch">
-					<Icon
-						name="uil:times"
-						class="text-lg" />
-				</button>
+				<ais-autocomplete>
+					<template #default="{ currentRefinement, indices, refine }">
+						<input
+							type="search"
+							:value="currentRefinement"
+							placeholder="Search for a product"
+							class="w-full px-4 py-2 bg-white text-gray-800 rounded-lg border border-brandGray-300 focus:outline-none focus:ring-2 focus:ring-brandPrimary-500 transition-all"
+							@input="refine($event.currentTarget.value)">
+						<div
+							v-if="currentRefinement.length > 0 && indices[0].hits.length > 0"
+
+							class="absolute z-16 w-full">
+							<ul class="absolute z-20 list-none p-0 m-0">
+								<li
+									v-for="hit in indices[0].hits"
+									:key="hit.objectID"
+									class=" py-2 px-3 bg-white text-black rounded-lg shadow-soft hover:bg-neutral-dark hover:text-white cursor-pointer transition-all"
+									@click="highlightShops([hit])">
+									{{ hit.name }} - {{ hit.description }} - {{ hit.price }} Kr
+								</li>
+							</ul>
+							<button
+								type="button"
+								class="btn-primary"
+								@click="highlightShops(indices[0].hits)">
+								Show all shops
+							</button>
+						</div>
+					</template>
+				</ais-autocomplete>
 			</div>
 		</div>
 
 		<!-- Search Results -->
-		<div v-if="searchQuery.length > 0">
-			<ais-hits>
-				<template #default="{ items }">
-					<ul class="list-none p-0 m-0">
-						<li
-							v-for="item in items"
-							:key="item.objectID"
-							class="py-2 px-3 bg-white rounded-lg shadow-soft hover:bg-neutral-dark hover:text-white cursor-pointer transition-all"
-							@click="highlightShop(item.storeId)">
-							{{ item.name }} - {{ item.description }} - {{ item.price }} Kr
-						</li>
-					</ul>
-					<button
-						v-if="items.length"
-						class="btn-primary mt-3"
-						@click="highlightShops(items)">
-						Highlight Shops
-					</button>
-				</template>
-			</ais-hits>
-		</div>
 	</ais-instant-search>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { AisInstantSearch, AisHits } from "vue-instantsearch/vue3/es";
+import { AisInstantSearch, AisAutocomplete } from "vue-instantsearch/vue3/es";
 import { liteClient as algoliasearch } from "algoliasearch/lite";
-import "instantsearch.css/themes/algolia-min.css";
+// import "instantsearch.css/themes/algolia-min.css";
 import { useShopsStore } from "@/stores/shops";
+import { _0 } from "#tailwind-config/theme/backdropBlur";
 
 // import { createSearchClient } from "vue-instantsearch";
 
@@ -88,16 +85,16 @@ const searchClient = createSearchClient({
 }); */
 
 const isSearchOpen = ref(false);
-const searchQuery = ref("");
 
 function toggleSearch() {
 	isSearchOpen.value = !isSearchOpen.value;
 }
 
 function highlightShops(items) {
-	const shopIds = [...new Set(items.map(item => item.storeId))]; // Extract unique shop IDs
+	const highlightedShopIds = [...new Set(items.map(item => item.storeId))]; // Extract unique shop IDs
 	// emit("highlight-shops", shopIds); // Emit shop IDs to the parent component
-	shopStore.setHighlightedShops(shopIds);
+	shopStore.setHighlightedShops(highlightedShopIds);
+	console.log("Send from the seach bar: The highlighted shops are: ", highlightedShopIds);
 }
 </script>
 
