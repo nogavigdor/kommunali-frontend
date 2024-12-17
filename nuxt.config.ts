@@ -2,9 +2,8 @@ import { storageBucket } from "firebase-functions/params";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-	modules: ["@nuxt/eslint", "@nuxt/ui", "nuxt-mapbox", "nuxt-vuefire", "@nuxt/icon",
-		// "@nuxtjs/algolia"
-	],
+	modules: ["@nuxt/eslint", "@nuxt/ui", "nuxt-mapbox", "nuxt-vuefire", // "@nuxtjs/algolia",
+		"@nuxt/icon", "@nuxt/image"],
 	devtools: { enabled: true },
 	app: {
 		head: {
@@ -35,6 +34,14 @@ export default defineNuxtConfig({
 		},
 	},
 	compatibilityDate: "2024-04-03",
+
+	// algolia: {
+	//	apiKey: process.env.ALGOLIA_API_KEY,
+	//	applicationId: process.env.ALGOLIA_APPLICATION_ID,
+	//	instantSearch: {
+	//		theme: "algolia",
+	//	},
+	// },
 
 	eslint: {
 		config: {
