@@ -237,8 +237,8 @@ export const useShopsStore = defineStore("shops", () => {
 	// Computed property to get the number of shops fetched
 	const shopCount = computed(() => shops.value.length);
 
-	function setHighlightedShops(shopsIds: string[]) {
-		highlightedShops.value = shopsIds;
+	function setHighlightedShops(highlightedShopIds: string[]) {
+		highlightedShops.value = highlightedShopIds;
 	}
 
 	function getHighlightedShops() {
