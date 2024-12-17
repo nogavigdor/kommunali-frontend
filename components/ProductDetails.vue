@@ -1,11 +1,17 @@
 <template>
 	<div
 		class=" min-w-[150px] max-w-xs bg-white border border-neutral-dark rounded-lg p-2 shadow-soft">
-		<img
-			:src="currentProduct.imageUrl ? currentProduct.imageUrl : imagePlaceholder"
-			:alt="currentProduct.name"
-			class="w-full h-32 object-cover rounded-lg">
-		<h3 class="text-lg font-heading mt-2">
+		<NuxtImg
+			:src="currentProduct.imageUrl || imagePlaceholder"
+			:alt="currentProduct.name || 'Product Image'"
+			width="150"
+			height="128"
+			placeholder
+			placeholder-class="bg-gray-200 animate-pulse"
+			class="w-full h-32 object-cover rounded-lg"
+			@load="handleImageLoad"
+			@error="handleImageError" />
+		<h3>
 			{{ currentProduct.name }}
 		</h3>
 		<p class="text-brandSecondary-dark">
@@ -59,6 +65,8 @@ import type { IProduct } from "@/types/product";
 import imagePlaceholder from "@/assets/images/image-placeholder.webp";
 import { useUserStore } from "@/stores/user";
 
+const isLoading = ref(true);
+
 const userStore = useUserStore();
 
 const shopsStore = useShopsStore();
@@ -111,6 +119,15 @@ const deleteProduct = async () => {
 };
 
 // const shopsStore = useShopsStore();
+
+const handleImageLoad = () => {
+	isLoading.value = false; // Stop showing loading animation
+};
+
+const handleImageError = () => {
+	isLoading.value = false; // Stop loading state on error
+	console.error("Image failed to load:", currentProduct.value.imageUrl);
+};
 </script>
 
 <style scoped>
