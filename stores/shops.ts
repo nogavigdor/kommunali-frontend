@@ -1,9 +1,11 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import { useFirebaseAuth } from "vuefire";
+import { useUserStore } from "./user";
 import type { IShop } from "@/types/shop";
 import type { IProduct } from "@/types/product";
 import type { ILocationQuery } from "~/types/locationQuery";
+import { IUser } from "@/types/user";
 
 export const useShopsStore = defineStore("shops", () => {
 	const config = useRuntimeConfig();
@@ -226,6 +228,106 @@ export const useShopsStore = defineStore("shops", () => {
 		}
 	};
 
+	// accepts the productId and type of action(request or cancel)as as parameters
+	async function addProductRequest(selectedShopId: string, productId: string, action: "request" | "cancel") {
+		try {
+			const user = auth?.currentUser;
+			if (!user) throw new Error("User not authenticated");
+
+			const token = await user.getIdToken();
+
+			// Validate action
+			if (!["request", "cancel"].includes(action)) {
+				console.error("Invalid action:", action);
+				return;
+			}
+			const response = await $fetch(`${config.public.apiBaseUrl}/api/stores/${selectedShopId}/products/${productId}/request`, {
+				method: "PUT",
+				headers: {
+					"Authorization": `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+				body: { action },
+			});
+			const updatedProduct = response as IProduct;
+			// Update the shop where the product was requested
+			// with its updated product -which contains the updated requestQueue
+
+			shops.value = shops.value.map((shop) => {
+				if (shop._id === selectedShopId) {
+					return {
+						...shop,
+						products: shop.products.map(product => product._id === updatedProduct._id ? updatedProduct : product),
+					};
+				}
+				return shop;
+			});
+
+			// update the user in the user store with its
+			// updated request products array
+			const userStore = useUserStore();
+			if (userStore.user) {
+				// updates the user's requested products array with the updated product
+				userStore.user.requested_products = userStore.user.requested_products.map(product =>
+					product.product === updatedProduct._id ? { product: updatedProduct._id, store: selectedShopId } : product);
+			}
+
+			// Update the `shops` array with a new `products` array
+			shops.value = shops.value.map((shop) => {
+				if (shop._id === userShop.value?._id) {
+					return {
+						...shop,
+						products: shop.products.map(product => product._id === updatedProduct._id ? updatedProduct : product),
+					};
+				}
+				return shop;
+			});
+		}
+		catch (error) {
+			console.error("Failed to request product:", error);
+		}
+	}
+
+	// Cancel a request for a product
+	/*
+	async function cancelRequest(productId: string) {
+		try {
+			const user = auth?.currentUser;
+			if (!user) throw new Error("User not authenticated");
+
+			const token = await user.getIdToken();
+			const response = await $fetch(`${config.public.apiBaseUrl}/api/stores/${userShop.value?._id}/products/${productId}/request`, {
+				method: "DELETE",
+				headers: {
+					"Authorization": `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+			});
+			const updatedProduct = response as IProduct;
+			// Update `userShop` with a new products array
+			if (userShop.value) {
+				userShop.value = {
+					...userShop.value,
+					products: userShop.value.products.map(product => product._id === updatedProduct._id ? updatedProduct : product),
+				};
+			}
+
+			// Update the `shops` array with a new `products` array
+			shops.value = shops.value.map((shop) => {
+				if (shop._id === userShop.value?._id) {
+					return {
+						...shop,
+						products: shop.products.map(product => product._id === updatedProduct._id ? updatedProduct : product),
+					};
+				}
+				return shop;
+			});
+		}
+		catch (error) {
+			console.error("Failed to cancel request:", error);
+		}
+	}
+	*/
 	// get product from user shop
 
 	function getUserShopProduct(productId: string) {
@@ -261,5 +363,7 @@ export const useShopsStore = defineStore("shops", () => {
 		setHighlightedShops,
 		getHighlightedShops,
 		highlightedShops,
+		addProductRequest,
+		cancelRequest,
 	};
 });
