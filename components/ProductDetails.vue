@@ -41,15 +41,21 @@
 		</UTooltip>
 		<div>
 			<button
-				v-show="editable? false : true"
-				v-if="['available', 'reserved'].includes(currentProduct.status)"
-				class="btn-primary">
+				v-show="canRequestProduct"
+				class="btn-primary"
+				@click="addProductRequest(currentProduct._id || '', 'request')">
 				{{ requestType }}
 			</button>
+			<div v-show="numberInQueue > 0">
+				<p class="text-neutral-dark">
+					You are number {{ numberInQueue }} in the queue.
+				</p>
+			</div>
 			<button
 				v-show="editable? false : true"
-				v-if="cancelRequest"
-				class="btn-secondary">
+				v-if="hasUserRequestedProduct"
+				class="btn-secondary"
+				@click="addProductRequest(currentProduct._id || '', 'cancel')">
 				Cancel Request
 			</button>
 		</div>
@@ -69,8 +75,29 @@ const isLoading = ref(true);
 
 const userStore = useUserStore();
 
+const isLogged = computed(() => userStore.loggedIn);
+
 const shopsStore = useShopsStore();
 
+const numberInQueue = computed(() => {
+	if (!currentProduct.value || !currentProduct.value.requestQueue || !userStore.user) {
+		return 0; // Return 0 if any required data is missing
+	}
+
+	// Find the user's position in the requestQueue
+	const position = currentProduct.value.requestQueue.findIndex(
+		entry => entry.user === userStore.user._id,
+	);
+
+	// If the user is found, return their position (1-based index), otherwise return 0
+	return position !== -1 ? position + 1 : 0;
+});
+
+const canRequestProduct = computed(() => {
+	return !props.editable && !userStore.user.requested_products.some(
+		entry => entry.product === currentProduct.value?._id,
+	);
+});
 const props = defineProps<{
 	selectedShopId: string | undefined;
 	product: IProduct;
@@ -83,7 +110,27 @@ const requestType = computed(() => {
 	return currentProduct.value.status === "available" ? "Request Product" : "Queue Product";
 });
 
-const cancelRequest = computed(() => {
+const addProductRequest = async (productId: string, action: "request" | "cancel") => {
+	console.log("the product id is:", productId);
+	console.log("the action is:", action);
+	console.log("the selected shop id is:", props.selectedShopId);
+	console.log("the product object is:", currentProduct.value);
+	console.log("the user shop details are:", shopsStore.userShop);
+	if (isLogged.value) {
+		if (props.selectedShopId) {
+			await shopsStore.addProductRequest(props.selectedShopId, productId, action);
+		}
+		else {
+			console.error("Selected shop ID is undefined");
+		}
+	}
+	else {
+		alert("You need to be logged in to request a product");
+	}
+};
+
+const hasUserRequestedProduct = computed(() => {
+	console.log("the user request products array is:", userStore.user.requested_products);
 	if (userStore.user.requested_products.find(entry => entry.product === currentProduct.value._id)) {
 		return true;
 	}
