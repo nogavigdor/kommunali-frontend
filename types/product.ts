@@ -5,8 +5,8 @@ export interface IProduct {
 	price: number;
 	imageUrl: string;
 	status: "available" | "reserved" | "sold" | "hidden";
-
-	reservedFor: string | null;
-	reservedExpiration: Date | null;
+	requestQueue: { user: string; timestamp: Date }[];
+	// reservedFor: string | null;
+	// reservedExpiration: Date | null;
 	soldTo?: string;
 }
