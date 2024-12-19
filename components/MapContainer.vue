@@ -20,6 +20,7 @@ import { useShopsStore } from "@/stores/shops";
 import { useUserStore } from "@/stores/user";
 import type { IShop } from "@/types/shop";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { update } from "firebase/database";
 // import markerImage from "@/assets/images/marker-image.png";
 
 defineProps({
@@ -89,6 +90,18 @@ watch(userLocation, async (newLocation) => {
 	}
 });
 
+function updateShopDisplayStyle(shop: IShop) {
+	// Calculate the position of the clicked marker on the screen
+	const mapBoxPoint = mapRef.value?.project(shop.location.coordinates);
+	if (mapBoxPoint) {
+		// Set the shop details overlay position to be near the marker position
+		shopDetailsStyle.value = {
+			top: `${mapBoxPoint.y}px`,
+			left: `${mapBoxPoint.x}px`,
+		};
+	}
+}
+
 function updateMarkers(shops: IShop[]) {
 	// Remove current markers from the map
 	currentMarkers.forEach(marker => marker.remove());
@@ -152,15 +165,7 @@ function updateMarkers(shops: IShop[]) {
 			selectedShopId.value = shop._id; // Set the selected shop
 			console.log("Selected shop ID:", selectedShopId.value);
 
-			// Calculate the position of the clicked marker on the screen
-			const mapBoxPoint = mapRef.value?.project(shop.location.coordinates);
-			if (mapBoxPoint) {
-				// Set the shop details overlay position to be near the marker position
-				shopDetailsStyle.value = {
-					top: `${mapBoxPoint.y}px`,
-					left: `${mapBoxPoint.x}px`,
-				};
-			}
+			updateShopDisplayStyle(shop); // Update the shop details overlay position
 		});
 
 		// Create a popup for additional shop info
@@ -231,12 +236,14 @@ onMounted(() => {
 				[7.5, 54.5], // Southwest corner of Denmark
 				[15.5, 58], // Northeast corner of Denmark
 			],
+			trackResize: true,
 		});
 
 		// Call update markers after the map is loaded
 		mapRef.value.on("load", async () => {
 			await updateShopsOnMap();
 			setupMapListeners(); // Attach listeners for move/zoom
+			mapRef.value?.resize(); // Resize the map to fit the container
 		});
 	}
 });
@@ -268,20 +275,12 @@ const setupMapListeners = () => {
 
 // Function to keep the ShopDetails window updated with marker position
 const updateShopDetailsPosition = () => {
-	if (selectedShopId.value && mapRef.value) {
-		//
-		const shopLocation: [number, number] | undefined = userStore.user?.stores?.find((shop: IShop) => shop._id === selectedShopId.value)?.location.coordinates;
+	if (!showShopDetails.value || !selectedShopId.value) return;
 
-		if (shopLocation) {
-			const mapBoxPoint = mapRef.value.project(shopLocation);
+	const shop = shops.value.find(shop => shop._id === selectedShopId.value);
 
-			if (mapBoxPoint) {
-				shopDetailsStyle.value = {
-					top: `${mapBoxPoint.y}px`,
-					left: `${mapBoxPoint.x}px`,
-				};
-			}
-		}
+	if (shop) {
+		updateShopDisplayStyle(shop);
 	}
 };
 
