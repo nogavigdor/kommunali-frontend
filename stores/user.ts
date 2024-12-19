@@ -150,8 +150,11 @@ export const useUserStore = defineStore("user", () => {
 
 	function updateShopData(userResponse: IUser) {
 		if (userResponse.stores && userResponse.stores.length > 0) {
+			// this app version only allows one shop per user
 			const shopObj = userResponse.stores[0];
 			const shopId = shopObj._id;
+			// represents the user shop id in array format for future use -
+			// when the app is updated to allow multiple shops per user
 			shopIds.value = [shopId];
 			shopsStore.userShop = shopObj;
 
