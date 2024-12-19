@@ -2,8 +2,8 @@
 	<div
 		class=" min-w-[150px] max-w-xs bg-white border border-neutral-dark rounded-lg p-2 shadow-soft">
 		<NuxtImg
-			:src="currentProduct.imageUrl || imagePlaceholder"
-			:alt="currentProduct.name || 'Product Image'"
+			:src="product.imageUrl || imagePlaceholder"
+			:alt="product.name || 'Product Image'"
 			width="150"
 			height="128"
 			placeholder
@@ -12,10 +12,10 @@
 			@load="handleImageLoad"
 			@error="handleImageError" />
 		<h3>
-			{{ currentProduct.name }}
+			{{ product.name }}
 		</h3>
 		<p class="text-brandSecondary-dark">
-			{{ currentProduct.price }} DKK
+			{{ product.price }} DKK
 		</p>
 		<UTooltip text="Edit Product">
 			<button
@@ -43,7 +43,7 @@
 			<button
 				v-show="canRequestProduct"
 				class="btn-primary"
-				@click="addProductRequest(currentProduct._id || '', 'request')">
+				@click="addProductRequest(product._id || '', 'request')">
 				{{ requestType }}
 			</button>
 			<div v-show="totalNumberInQueue > 0">
@@ -62,13 +62,13 @@
 				v-show="editable? false : true"
 				v-if="hasUserRequestedProduct"
 				class="btn-secondary"
-				@click="addProductRequest(currentProduct._id || '', 'cancel')">
+				@click="addProductRequest(product._id || '', 'cancel')">
 				Cancel Request
 			</button>
 		</div>
 		<ProductDetailsEditModal
 			v-model="openModal"
-			:product="currentProduct" />
+			:product="product" />
 	</div>
 </template>
 
@@ -95,7 +95,7 @@ const userNumberInQueue = computed(() => {
 	}
 	// Find the user's position in the requestQueue
 	// if the index is -1, the user is not in the queue
-	const position = currentProduct.value.requestQueue.findIndex(
+	const position = props.product.requestQueue.findIndex(
 		entry => entry.user === userStore.user._id,
 	);
 
@@ -104,16 +104,16 @@ const userNumberInQueue = computed(() => {
 });
 
 const totalNumberInQueue = computed(() => {
-	if (!currentProduct.value || !currentProduct.value.requestQueue) {
+	if (!props.product || !props.product.requestQueue) {
 		return 0; // Return 0 if any required data is missing
 	}
 
-	return currentProduct.value.requestQueue.length;
+	return props.product.requestQueue.length;
 });
 
 const canRequestProduct = computed(() => {
 	return !props.editable && !userStore.user.requested_products.some(
-		entry => entry.product === currentProduct.value?._id,
+		entry => entry.product === props.product._id,
 	);
 });
 const props = defineProps<{
@@ -125,14 +125,14 @@ const props = defineProps<{
 const openModal = ref(false);
 
 const requestType = computed(() => {
-	return currentProduct.value.status === "available" ? "Request Product" : "Queue Product";
+	return props.product.status === "available" ? "Request Product" : "Queue Product";
 });
 
 const addProductRequest = async (productId: string, action: "request" | "cancel") => {
 	console.log("the product id is:", productId);
 	console.log("the action is:", action);
 	console.log("the selected shop id is:", props.selectedShopId);
-	console.log("the product object is:", currentProduct.value);
+	console.log("the product object is:", props.product);
 	console.log("the user shop details are:", shopsStore.userShop);
 	if (isLoggedIn.value) {
 		if (props.selectedShopId) {
@@ -149,7 +149,7 @@ const addProductRequest = async (productId: string, action: "request" | "cancel"
 
 const hasUserRequestedProduct = computed(() => {
 	console.log("the user request products array is:", userStore.user.requested_products);
-	if (userStore.user.requested_products.find(entry => entry.product === currentProduct.value._id)) {
+	if (userStore.user.requested_products.find(entry => entry.product === props.product._id)) {
 		return true;
 	}
 	else {
@@ -169,17 +169,24 @@ const hasUserRequestedProduct = computed(() => {
 // const currentProduct = computed(() => {
 // return selectedShop.value?.products.find(product => product._id === props.product._id) || props.product;
 // });
-const currentProduct = ref({ ...props.product,
-});
+// const currentProduct = ref({ ...props.product,
+// });
 
-watch(() => shopsStore.shops, () => {
-	currentProduct.value = { ...props.product };
+/*
+const currentProduct = computed(() => {
+	const shop = shopsStore.shops.find(shop => shop._id === props.selectedShopId);
+	return shop?.products.find(product => product._id === props.product._id) || props.product;
 });
+*/
+
+// watch(() => shopsStore.shops, () => {
+//	currentProduct.value = { ...props.product };
+// });
 const deleteProduct = async () => {
 	if (confirm("Are you sure you want to delete this product?")) {
 		console.log("the shops arrany in shop store is:", shopsStore.shops);
-		console.log("the product to be deleted is:", currentProduct.value);
-		await shopsStore.deleteProduct(currentProduct.value._id || "");
+		console.log("the product to be deleted is:", props.product);
+		await shopsStore.deleteProduct(props.product._id || "");
 	}
 };
 
@@ -191,7 +198,7 @@ const handleImageLoad = () => {
 
 const handleImageError = () => {
 	isLoading.value = false; // Stop loading state on error
-	console.error("Image failed to load:", currentProduct.value.imageUrl);
+	console.error("Image failed to load:", props.product.imageUrl);
 };
 </script>
 
