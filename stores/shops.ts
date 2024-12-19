@@ -262,26 +262,21 @@ export const useShopsStore = defineStore("shops", () => {
 				}
 				return shop;
 			});
+			// let selectedProduct = shops.value.find(shop => shop._id === selectedShopId)?.products.find(product => product._id === productId);
+			// if (selectedProduct) selectedProduct = updatedProduct;
 
 			// update the user in the user store with its
 			// updated request products array
 			const userStore = useUserStore();
 			if (userStore.user) {
 				// updates the user's requested products array with the updated product
-				userStore.user.requested_products = userStore.user.requested_products.map(product =>
-					product.product === updatedProduct._id ? { product: updatedProduct._id, store: selectedShopId } : product);
-			}
-
-			// Update the `shops` array with a new `products` array
-			shops.value = shops.value.map((shop) => {
-				if (shop._id === userShop.value?._id) {
-					return {
-						...shop,
-						products: shop.products.map(product => product._id === updatedProduct._id ? updatedProduct : product),
-					};
+				if (action === "request") {
+					userStore.user.requested_products.push({ product: productId, store: selectedShopId });
 				}
-				return shop;
-			});
+				else if (action === "cancel") {
+					userStore.user.requested_products = userStore.user.requested_products.filter(product => product.product !== productId);
+				}
+			}
 		}
 		catch (error) {
 			console.error("Failed to request product:", error);
