@@ -364,6 +364,5 @@ export const useShopsStore = defineStore("shops", () => {
 		getHighlightedShops,
 		highlightedShops,
 		addProductRequest,
-		cancelRequest,
 	};
 });
