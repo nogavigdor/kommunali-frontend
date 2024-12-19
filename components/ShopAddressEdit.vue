@@ -26,8 +26,8 @@
 			<button
 				v-if="showMapButton"
 				class="btn-primary"
-				@click.prevent="$emit('change-address', autofillData)">
-				Find your community
+				@click.prevent="$emit('change-address', addressData)">
+				Update Address
 			</button>
 		</form>
 	</div>
@@ -37,6 +37,8 @@
 import { MapboxAddressAutofill } from "@mapbox/search-js-web";
 import type { IShop } from "@/types/shop";
 import { useShopsStore } from "@/stores/shops";
+import type { AutofillData } from "@/types/autofillData";
+import type { AddressData } from "@/types/addressData";
 
 defineEmits(["change-address"]);
 
@@ -45,25 +47,15 @@ const query = ref("");
 const savedAddresses = ref<string[]>([]);
 const showMapButton = ref(false);
 const shopsStore = useShopsStore();
-const addressData = ref({
+const addressData = ref<AddressData>({
 	street: "",
 	houseNumber: "",
 	city: "",
 	postalCode: "",
 	country: "",
+	coordinates: [0, 0],
 });
 const fullAddressLine = ref("");
-interface AutofillData {
-	features: Array<{
-		properties: {
-			street: string; // street name
-			address_number: string; // house number
-			address_level2: string; // city
-			postcode: string; // postal code
-			country: string; // country
-		};
-	}>;
-}
 
 const autofillData = ref<AutofillData>({ features: [] });
 
@@ -108,6 +100,7 @@ const fetchSuggestions = () => {
 				city: autofillData.value.features[0].properties.address_level2,
 				postalCode: autofillData.value.features[0].properties.postcode,
 				country: autofillData.value.features[0].properties.country,
+				coordinates: autofillData.value.features[0].geometry.coordinates,
 			};
 
 			fullAddressLine.value = `${addressData.value.street} ${addressData.value.houseNumber},
