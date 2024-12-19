@@ -24,7 +24,7 @@
 					@update-field="updateShopField" />
 			</div>
 			<client-only>
-				<ShopAddressEdit />
+				<ShopAddressEdit @change-address="prepareAddressUpdate" />
 			</client-only>
 			<div>
 				<label><strong>Address:</strong></label>
@@ -55,12 +55,42 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import type { AddressData } from "@/types/addressData";
 import { useShopsStore } from "@/stores/shops";
 import EditField from "@/components/EditField.vue";
 import type { IShop } from "~/types/shop";
 
 const shopsStore = useShopsStore();
 const userShop = computed(() => shopsStore.userShop);
+
+const prepareAddressUpdate = async (addressData: AddressData) => {
+	try {
+		// Prepare the data fields in the same format as updateShopField
+		const updatedData = {
+			"address.street": addressData.street,
+			"address.houseNumber": addressData.houseNumber,
+			"address.city": addressData.city,
+			"address.postalCode": addressData.postalCode,
+			"address.country": addressData.country,
+			"location.type": "Point",
+			"location.coordinates": addressData.coordinates,
+			"_id": userShop.value?._id, // Add the shop ID
+		} as Partial<IShop> & { _id: string };
+
+		if (userShop.value) {
+			// Call the updateShop function with the new structure
+			await shopsStore.updateShop(updatedData);
+		}
+		else {
+			console.error("userShop is null");
+		}
+
+		console.log("Shop updated successfully");
+	}
+	catch (error) {
+		console.error("Error updating shop:", error);
+	}
+};
 
 async function updateShopField({ fieldName, fieldValue }: { fieldName: keyof IShop; fieldValue: string }) {
 	if (userShop.value) {
