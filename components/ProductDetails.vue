@@ -46,9 +46,16 @@
 				@click="addProductRequest(currentProduct._id || '', 'request')">
 				{{ requestType }}
 			</button>
-			<div v-show="numberInQueue > 0">
-				<p class="text-neutral-dark">
-					You are number {{ numberInQueue }} in the queue.
+			<div v-show="totalNumberInQueue > 0">
+				<p
+					v-if="userNumberInQueue>0"
+					class="text-neutral-dark">
+					You are number {{ userNumberInQueue }} in the queue.
+				</p>
+				<p
+					v-else
+					class="text-neutral-dark">
+					{{ totalNumberInQueue }} people in the queue.
 				</p>
 			</div>
 			<button
@@ -75,22 +82,33 @@ const isLoading = ref(true);
 
 const userStore = useUserStore();
 
-const isLogged = computed(() => userStore.loggedIn);
+const isLoggedIn = computed(() => userStore.loggedIn);
 
 const shopsStore = useShopsStore();
 
-const numberInQueue = computed(() => {
-	if (!currentProduct.value || !currentProduct.value.requestQueue || !userStore.user) {
-		return 0; // Return 0 if any required data is missing
+const userNumberInQueue = computed(() => {
+	// if (!currentProduct.value || !currentProduct.value.requestQueue || !userStore.user) {
+	//	return 0; // Return 0 if any required data is missing
+	// }
+	if (totalNumberInQueue.value === 0) {
+		return 0;
 	}
-
 	// Find the user's position in the requestQueue
+	// if the index is -1, the user is not in the queue
 	const position = currentProduct.value.requestQueue.findIndex(
 		entry => entry.user === userStore.user._id,
 	);
 
 	// If the user is found, return their position (1-based index), otherwise return 0
 	return position !== -1 ? position + 1 : 0;
+});
+
+const totalNumberInQueue = computed(() => {
+	if (!currentProduct.value || !currentProduct.value.requestQueue) {
+		return 0; // Return 0 if any required data is missing
+	}
+
+	return currentProduct.value.requestQueue.length;
 });
 
 const canRequestProduct = computed(() => {
@@ -116,7 +134,7 @@ const addProductRequest = async (productId: string, action: "request" | "cancel"
 	console.log("the selected shop id is:", props.selectedShopId);
 	console.log("the product object is:", currentProduct.value);
 	console.log("the user shop details are:", shopsStore.userShop);
-	if (isLogged.value) {
+	if (isLoggedIn.value) {
 		if (props.selectedShopId) {
 			await shopsStore.addProductRequest(props.selectedShopId, productId, action);
 		}
