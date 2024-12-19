@@ -31,6 +31,7 @@
 			</div>
 		</div>
 	</div>
+	<ShopNew />
 </template>
 
 <script setup lang="ts">
