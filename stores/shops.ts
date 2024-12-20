@@ -75,6 +75,7 @@ export const useShopsStore = defineStore("shops", () => {
 				body: newShop,
 			});
 			shops.value.push(response as IShop);
+			useUserStore().shopIds.push((response as IShop)._id);
 			userShop.value = response as IShop;
 		}
 		catch (error) {
