@@ -94,14 +94,13 @@ const isLoggedIn = computed(() => userStore.loggedIn);
 
 const shopsStore = useShopsStore();
 
+// Dynamically fetch the request type based on the product status
 const requestType = computed(() => {
 	return props.product.status === "available" ? "Request Product" : "Queue Product";
 });
 
+// Dynamically fetch the user's position in the queue
 const userNumberInQueue = computed(() => {
-	// if (!currentProduct.value || !currentProduct.value.requestQueue || !userStore.user) {
-	//	return 0; // Return 0 if any required data is missing
-	// }
 	if (totalNumberInQueue.value === 0) {
 		return 0;
 	}
@@ -115,6 +114,7 @@ const userNumberInQueue = computed(() => {
 	return position !== -1 ? position + 1 : 0;
 });
 
+// Dynamically fetch the total number of people in the queue
 const totalNumberInQueue = computed(() => {
 	if (!props.product || !props.product.requestQueue) {
 		return 0; // Return 0 if any required data is missing
