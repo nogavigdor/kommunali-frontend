@@ -78,6 +78,14 @@ import type { IProduct } from "@/types/product";
 import imagePlaceholder from "@/assets/images/image-placeholder.webp";
 import { useUserStore } from "@/stores/user";
 
+const props = defineProps<{
+	selectedShopId: string | undefined;
+	product: IProduct;
+	editable: boolean;
+}>();
+
+const openModal = ref(false);
+
 const isLoading = ref(true);
 
 const userStore = useUserStore();
@@ -85,6 +93,10 @@ const userStore = useUserStore();
 const isLoggedIn = computed(() => userStore.loggedIn);
 
 const shopsStore = useShopsStore();
+
+const requestType = computed(() => {
+	return props.product.status === "available" ? "Request Product" : "Queue Product";
+});
 
 const userNumberInQueue = computed(() => {
 	// if (!currentProduct.value || !currentProduct.value.requestQueue || !userStore.user) {
@@ -115,17 +127,6 @@ const canRequestProduct = computed(() => {
 	return !props.editable && !userStore.user.requested_products.some(
 		entry => entry.product === props.product._id,
 	);
-});
-const props = defineProps<{
-	selectedShopId: string | undefined;
-	product: IProduct;
-	editable: boolean;
-}>();
-
-const openModal = ref(false);
-
-const requestType = computed(() => {
-	return props.product.status === "available" ? "Request Product" : "Queue Product";
 });
 
 const addProductRequest = async (productId: string, action: "request" | "cancel") => {
