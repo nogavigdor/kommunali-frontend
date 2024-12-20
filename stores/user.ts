@@ -1,10 +1,8 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import type { MapboxAddressAutofill } from "@mapbox/search-js-web";
 import { useFirebaseAuth } from "vuefire";
-import { signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, onAuthStateChanged } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "firebase/auth";
 import { useLocalStorage } from "@vueuse/core";
-import { update } from "firebase/database";
 import { useShopsStore } from "./shops";
 import type { IUser, RequestedProduct, IRegisterUser } from "@/types/user";
 import { UserRole } from "@/types/user";
