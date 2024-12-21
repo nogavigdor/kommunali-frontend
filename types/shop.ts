@@ -3,6 +3,7 @@ import type { IProduct } from "./product";
 export interface IShop {
 	_id: string;
 	owner: string; // User ID as a string
+	ownerFirebaseId: string; // Firebase ID of the owner
 	name: string;
 	description: string;
 	location: {
