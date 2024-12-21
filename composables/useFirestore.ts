@@ -1,6 +1,8 @@
-import { useDocument, useCollection, useCurrentUser } from "vuefire";
-import { doc, collection, query, where, updateDoc, arrayUnion, setDoc, getDoc } from "firebase/firestore";
-import { db } from "@/composables/useFirebaseClient"; // Firebase Client SDK setup
+import { useFirebaseApp, useDocument, useCollection, useCurrentUser } from "vuefire";
+import { doc, collection, query, where, updateDoc, arrayUnion, setDoc, getDoc, getFirestore } from "firebase/firestore";
+
+const firebaseApp = useFirebaseApp();
+const db = getFirestore(firebaseApp);
 
 export function useFirestore() {
 	const currentUser = useCurrentUser();
