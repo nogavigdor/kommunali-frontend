@@ -324,12 +324,17 @@ export const useShopsStore = defineStore("shops", () => {
 		}
 	}
 	*/
-	// get product from user shop
+	// get product from userShop state in this store
 
 	function getUserShopProduct(productId: string) {
 		if (userShop.value) {
 			return userShop.value.products.find(product => product._id === productId);
 		}
+	}
+
+	// get product from  shops state in this store
+	function getShopById(shopId: string) {
+		return shops.value.find(shop => shop._id === shopId);
 	}
 
 	// Computed property to get the number of shops fetched
@@ -347,6 +352,7 @@ export const useShopsStore = defineStore("shops", () => {
 		shops,
 		getShops,
 		getUserShop,
+		getShopById,
 		createShop,
 		getProduct,
 		getUserShopProduct,
