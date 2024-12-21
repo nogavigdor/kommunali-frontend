@@ -5,7 +5,6 @@ import { useUserStore } from "./user";
 import type { IShop } from "@/types/shop";
 import type { IProduct } from "@/types/product";
 import type { ILocationQuery } from "~/types/locationQuery";
-import { IUser } from "@/types/user";
 
 export const useShopsStore = defineStore("shops", () => {
 	const config = useRuntimeConfig();
