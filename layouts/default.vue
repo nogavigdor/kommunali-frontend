@@ -26,7 +26,6 @@
 				ref="userLocationRef"
 				@change-address="changeAddressHandler" />
 		</client-only>
-		<FeedbackMeesage />
 		<NuxtPage />
 
 		<!-- Map Container -->
