@@ -18,6 +18,7 @@
 		<p class="text-brandNeutral-dark">
 			{{ shop?.description }}
 		</p>
+
 		<swiper
 			:slides-per-view="1.5"
 			space-between="10"
@@ -38,6 +39,20 @@
 			@click="openModal = !openModal">
 			Add Product
 		</button>
+		<div class="mt-4">
+			<button
+				class="flex items-center gap-2 btn-primary w-full justify-center py-3"
+				@click="openChat">
+				<Icon
+					name="uil:comment-dots"
+					class="w-6 h-6 text-white" />
+				<span>Chat with Shop Owner</span>
+			</button>
+			<ChatBox
+				v-if="showChat"
+				:selected-shop-id="shop?._id"
+				@close="showChat = false" />
+		</div>
 		<div class="mb-4">
 			<ProductAddModal v-model="openModal" />
 		</div>
@@ -68,6 +83,12 @@ const props = defineProps({
 	},
 });
 
+const showChat = ref(false);
+
+const openChat = () => {
+	showChat.value = !showChat.value;
+};
+
 console.log("The shop id is: ", props.selectedShopId);
 console.log("The user store is: ", userStore);
 
@@ -82,7 +103,7 @@ const shop = computed(() => shopsStore.shops.find((shop: IShop) => shop._id === 
 
 watch(
 	() => shopsStore.userShop?.products || [],
-	(updatedProducts, oldProducts) => {
+	(updatedProducts) => {
 		console.log("Products updated in ShopDetails:", updatedProducts);
 	},
 	{ immediate: true, deep: true },
