@@ -5,6 +5,11 @@ import { db } from "@/composables/useFirebaseClient"; // Firebase Client SDK set
 export function useFirestore() {
 	const currentUser = useCurrentUser();
 
+	// Generate a chat ID based on the two user IDs
+	const generateChatId = (user1: string, user2: string) => {
+		return [user1, user2].sort().join("_"); // Ensure consistency regardless of user order
+	};
+
 	// Reactive binding for a single chat document
 	const getChat = (chatId: string) => {
 		const chatRef = doc(db, "chats", chatId);
@@ -47,6 +52,7 @@ export function useFirestore() {
 	};
 
 	return {
+		generateChatId,
 		getChat,
 		getUserChats,
 		sendMessageToChat,
