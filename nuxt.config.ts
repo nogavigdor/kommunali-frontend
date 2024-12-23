@@ -2,7 +2,6 @@
 export default defineNuxtConfig({
 	modules: ["@nuxt/eslint", "@nuxt/ui", "nuxt-mapbox", "nuxt-vuefire", // "@nuxtjs/algolia",
 		"@nuxt/icon", "@nuxt/image"],
-	plugins: ["~/plugins/firebase-client.ts"],
 	devtools: { enabled: true },
 	app: {
 		head: {
