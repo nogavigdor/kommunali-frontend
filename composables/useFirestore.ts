@@ -4,7 +4,7 @@ import { doc, collection, query, where, updateDoc, arrayUnion, setDoc, getDoc, g
 const firebaseApp = useFirebaseApp();
 const db = getFirestore(firebaseApp);
 
-export function useFirestore() {
+export function useCustomFirestore() {
 	const currentUser = useCurrentUser();
 
 	// Generate a chat ID based on the two user IDs

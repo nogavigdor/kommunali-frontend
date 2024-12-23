@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { useCurrentUser } from "vuefire";
-import { useFirestore } from "@/composables/useFirestore";
+import { useCustomFirestore } from "../composables/useFirestore";
 import { useShopsStore } from "@/stores/shops";
 
 const shopsStore = useShopsStore();
@@ -58,7 +58,7 @@ const props = defineProps<{
 	selectedShopId: string | undefined;
 }>();
 
-const { generateChatId, getChat, sendMessageToChat } = useFirestore();
+const { generateChatId, getChat, sendMessageToChat } = useCustomFirestore();
 const { value: currentUser } = useCurrentUser(); // Reactive current user
 
 const isOpen = ref(true); // Chat visibility
