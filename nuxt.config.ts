@@ -2,9 +2,6 @@
 export default defineNuxtConfig({
 	modules: ["@nuxt/eslint", "@nuxt/ui", "nuxt-mapbox", "nuxt-vuefire", // "@nuxtjs/algolia",
 		"@nuxt/icon", "@nuxt/image"],
-	plugins: [
-		"~/plugins/firebase-admin.ts",
-	],
 	devtools: { enabled: true },
 	app: {
 		head: {
@@ -23,13 +20,7 @@ export default defineNuxtConfig({
 	//	"~/assets/css/tailwind.css",
 	// ],
 	runtimeConfig: {
-		// for future use of firebase admin sdk of firebse authentification
-		firebaseAdmin: {
-			type: process.env.FIREBASE_ADMIN_TYPE,
-			projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
-			privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-			clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-		},
+
 		public: {
 			apiBaseUrl: process.env.API_BASE_URL,
 			googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
@@ -40,6 +31,7 @@ export default defineNuxtConfig({
 			},
 
 		},
+
 	},
 	compatibilityDate: "2024-04-03",
 
