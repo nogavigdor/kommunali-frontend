@@ -36,5 +36,8 @@
     "@iconify-json/uil": "^1.2.1",
     "cross-env": "^7.0.3",
     "mapbox-gl": "^3.7.0"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.29.1"
   }
 }
