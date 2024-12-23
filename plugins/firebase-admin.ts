@@ -4,7 +4,7 @@
 // Mainly for server-side stuff like handling user tokens, Firestore, or anything that
 // requires admin privileges. This runs on the server side with Nuxt.
 
-import admin from "firebase-admin";
+import * as admin from "firebase-admin";
 import { defineEventHandler } from "h3";
 
 export default defineEventHandler(() => {
