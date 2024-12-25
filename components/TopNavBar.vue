@@ -43,7 +43,7 @@
 
 			<!-- Search Bar -->
 			<ClientOnly>
-				<SearchBar />
+				<SearchBarTypesense />
 			</ClientOnly>
 		</div>
 	</nav>
