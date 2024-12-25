@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { useCurrentUser } from "vuefire";
-import { useCustomFirestore } from "../composables/useFirestore";
+import { useCustomFirestore } from "../composables/useChats";
 import { useShopsStore } from "@/stores/shops";
 
 const shopsStore = useShopsStore();
