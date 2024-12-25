@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+//import { cjsInterop } from "vite-plugin-cjs-interop";
+
 export default defineNuxtConfig({
 	modules: ["@nuxt/eslint", "@nuxt/ui", "nuxt-mapbox", "nuxt-vuefire", // "@nuxtjs/algolia",
 		"@nuxt/icon", "@nuxt/image"],
@@ -25,14 +27,31 @@ export default defineNuxtConfig({
 			apiBaseUrl: process.env.API_BASE_URL,
 			googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
 			mapboxApiKey: process.env.MAPBOX_ACCESS_TOKEN,
+			/*
 			algolia: {
 				apiKey: process.env.ALGOLIA_API_KEY,
 				applicationId: process.env.ALGOLIA_APPLICATION_ID,
+			},
+			*/
+			typesense: {
+				apiKey: process.env.TYPESENSE_API_KEY,
+				nodes: JSON.parse(process.env.TYPESENSE_NODES || "[]"),
+				collectionName: process.env.TYPESENSE_COLLECTION_NAME || "dev_kommunali_products",
 			},
 
 		},
 
 	},
+	// vite: {
+	// 	plugins: [
+	// 		cjsInterop({
+	// 			dependencies: ["typesense-instantsearch-adapter"],
+	// 		}),
+	// 	],
+	// },
+	// build: {
+	// 	transpile: ["typesense-instantsearch-adapter"],
+	// },
 	compatibilityDate: "2024-04-03",
 
 	// algolia: {
