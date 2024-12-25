@@ -8,9 +8,10 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-     "start": "nuxt start"
+    "start": "nuxt start"
   },
   "dependencies": {
+    "@babel/runtime": "^7.26.0",
     "@mapbox/search-js-web": "^1.0.0-beta.22",
     "@nuxt/eslint": "^0.6.0",
     "@nuxt/icon": "^1.9.0",
@@ -28,6 +29,8 @@
     "nuxt-vuefire": "^1.0.4",
     "pinia": "^2.2.5",
     "swiper": "^11.1.15",
+    "typesense": "^1.8.2",
+    "typesense-instantsearch-adapter": "^2.8.0",
     "vue": "^3.5.12",
     "vue-instantsearch": "^4.19.11",
     "vue-router": "latest"
@@ -35,7 +38,8 @@
   "devDependencies": {
     "@iconify-json/uil": "^1.2.1",
     "cross-env": "^7.0.3",
-    "mapbox-gl": "^3.7.0"
+    "mapbox-gl": "^3.7.0",
+    "vite-plugin-cjs-interop": "^2.1.6"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "4.29.1"
