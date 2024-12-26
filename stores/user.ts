@@ -160,6 +160,10 @@ export const useUserStore = defineStore("user", () => {
 		}
 	}
 
+	const getChatId = (shopId: string) => {
+		return user?.value.chatsInitiated.find(chat => chat.shopId === shopId)?.chatFirebaseId;
+	};
+
 	return {
 		user,
 		hasShop,
@@ -174,6 +178,7 @@ export const useUserStore = defineStore("user", () => {
 		firebaseUserId,
 		getUser,
 		getRole,
+		getChatId,
 		isAdmin,
 		shopIds,
 		updateShopData,
