@@ -55,10 +55,18 @@
 					type="submit"
 					:disabled="!canSave"
 					class="w-full bg-brandPrimary-500 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium hover:bg-brandPrimary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brandPrimary-500">
-					<Iccon
-						name="uli:plus-circle"
-						class="text-xl" />
-					Save Product
+					<span v-if="!canSave">
+						<Iccon
+							name="uli:spinner"
+							class="animate-spin text-xl mr-2" />
+						Image is uploading...
+					</span>
+					<span v-else>
+						<Icon
+							name="uli:plus-circle"
+							class="text-xl mr-2" />
+						Save Product
+					</span>
 				</button>
 			</div>
 		</form>
@@ -121,3 +129,18 @@ const addProduct = async () => {
 	}
 };
 </script>
+
+<style scoped>
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>
