@@ -53,17 +53,17 @@
 				</p>
 				<button
 					type="submit"
-					:disabled="!canSave"
+					:disabled="isImageUploading"
 					class="w-full bg-brandPrimary-500 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium hover:bg-brandPrimary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brandPrimary-500">
-					<span v-if="!canSave">
+					<span v-if="isImageUploading">
 						<Iccon
-							name="uli:spinner"
+							name="uil:spinner"
 							class="animate-spin text-xl mr-2" />
 						Image is uploading...
 					</span>
 					<span v-else>
 						<Icon
-							name="uli:plus-circle"
+							name="uil:plus-circle"
 							class="text-xl mr-2" />
 						Save Product
 					</span>
@@ -81,7 +81,7 @@ const showAddModal = defineModel<boolean>();
 
 const shopsStore = useShopsStore();
 
-const canSave = ref(false);
+const isImageUploading = ref(false);
 
 const newProductData = ref<IProduct>({
 	_id: "",
@@ -101,7 +101,8 @@ const setImageUrl = (url: string) => {
 
 const handleSaveButton = (uploading: boolean) => {
 	// Disable the save button while image uploading
-	canSave.value = !uploading;
+	// uploading can be true or false - emmited from ImageUpload component
+	isImageUploading.value = uploading;
 };
 
 const addProduct = async () => {
@@ -122,6 +123,7 @@ const addProduct = async () => {
 			requestQueue: [],
 			soldTo: undefined,
 		};
+		isImageUploading.value = false; // Reset canSave
 		showAddModal.value = false;
 	}
 	catch (error) {
