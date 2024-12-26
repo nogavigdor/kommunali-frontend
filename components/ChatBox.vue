@@ -11,7 +11,7 @@
 				class="text-brandGray-500 hover:text-error-dark transition"
 				@click="toggleChat">
 				<Icon
-					name="close"
+					name="uil:times"
 					class="w-5 h-5" />
 			</button>
 		</div>
@@ -48,28 +48,39 @@
 </template>
 
 <script setup lang="ts">
-import { useCurrentUser } from "vuefire";
-import { useCustomFirestore } from "../composables/useChats";
-import { useShopsStore } from "@/stores/shops";
+import { useCurrentUser, useFirebaseApp, useDocument } from "vuefire";
 
-const shopsStore = useShopsStore();
+import { doc, getFirestore } from "firebase/firestore";
+
+import { useCustomFirestore } from "../composables/useChat";
 
 const props = defineProps<{
-	selectedShopId: string | undefined;
+	selectedShopId: string;
+	chatId: string | undefined;
 }>();
 
-const { generateChatId, getChat, sendMessageToChat } = useCustomFirestore();
+const firebaseApp = useFirebaseApp();
+const db = getFirestore(firebaseApp);
+
+const { getChatMessages, createChat, sendMessageToChat } = useCustomFirestore();
 const { value: currentUser } = useCurrentUser(); // Reactive current user
 
 const isOpen = ref(true); // Chat visibility
 const newMessage = ref("");
-const ownerFirebaseId = props.selectedShopId ? shopsStore.getShopById(props.selectedShopId)?.ownerFirebaseId : undefined;
-// Generate a unique chat ID based on user IDs
-const chatId = ownerFirebaseId && currentUser?.uid ? generateChatId(ownerFirebaseId, currentUser.uid) : "";
 
-// Fetch chat data reactively from Firestore
-const { data: chatData } = getChat(chatId);
+// const chatData = ref<DocumentData>({});
+const chatData = props.chatId ? useDocument(doc(db, "shopChats", props.selectedShopId, "chats", props.chatId)) : ref(null);
 
+// if (props.chatId) {
+// 	chatData.value = getChatMessages(props.chatId, props.selectedShopId);
+// }
+
+// Watch for chatId changes
+// watch(() => props.chatId, (newChatId) => {
+// 	if (newChatId) {
+// 		chatData.value = getChatMessages(newChatId, props.selectedShopId);
+// 	}
+// });
 // Computed property for chat messages
 const messages = computed(() => chatData.value?.messages || []);
 
@@ -80,6 +91,9 @@ const toggleChat = () => {
 
 // Send a new message
 const sendMessage = async () => {
+	if (!props.chatId) {
+		await createChat(props.selectedShopId);
+	}
 	if (!newMessage.value.trim() || !currentUser?.uid) return;
 
 	const message = {
@@ -88,7 +102,7 @@ const sendMessage = async () => {
 		timestamp: Date.now(),
 	};
 
-	await sendMessageToChat(chatId, message);
+	await sendMessageToChat(props.chatId, props.selectedShopId, message);
 	newMessage.value = ""; // Clear the input field
 };
 </script>
