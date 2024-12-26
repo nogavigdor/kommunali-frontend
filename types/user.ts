@@ -21,6 +21,7 @@ export interface IUser {
 	stores?: IShop[]; // Array of store objects, DO NOT USE FROM HERE - USE ShopsStore
 	storesId?: string[]; // Array of store IDs
 	requested_products: RequestedProduct[]; // Array of requested products with store references
+	chatsInitiated: { shopId: string; chatFirebaseId: string }[];
 	updatedAt: Date;
 }
 
