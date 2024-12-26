@@ -53,7 +53,7 @@ import { useUserStore } from "@/stores/user";
 // Reactive variables
 const imageUrl = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
-const emit = defineEmits(["image-uploaded"]);
+const emit = defineEmits(["image-uploaded", "uploading"]);
 
 // Firebase storage reference
 const storage = getStorage();
@@ -101,6 +101,7 @@ async function uploadImageToStorage(file: File): Promise<string> {
 		throw new Error("User is not authenticated. Cannot upload image.");
 	}
 	try {
+		emit("uploading", true); // Start upload state
 		const userId = user.uid;
 		const storagePath = `users/${userId}/products/${Date.now()}_${file.name}`; // Unique file path per user
 		const storageReference = storageRef(storage, storagePath);
@@ -129,9 +130,10 @@ async function uploadImageToStorage(file: File): Promise<string> {
 	catch (error) {
 		console.error("Error uploading image:", error);
 		errorMessage.value = "Failed to upload image. Please try again.";
-		return "";
 	}
-	return imageUrl.value || "";
+	finally {
+		emit("uploading", false); // End upload state
+	}
 }
 
 // Save image URL to MongoDB

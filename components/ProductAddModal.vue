@@ -40,7 +40,9 @@
 				<label
 					for="edit-product-image-url"
 					class="block text-sm font-medium text-neutral-dark">Image URL</label>
-				<ImageUpload @image-uploaded="setImageUrl" />
+				<ImageUpload
+					@image-uploaded="setImageUrl"
+					@uploading="handleSaveButton" />
 				<p
 					v-if="newProductData.imageUrl"
 					class="mt-2 text-sm text-neutral-dark">
@@ -51,6 +53,7 @@
 				</p>
 				<button
 					type="submit"
+					:disabled="!canSave"
 					class="w-full bg-brandPrimary-500 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium hover:bg-brandPrimary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brandPrimary-500">
 					<Iccon
 						name="uli:plus-circle"
@@ -70,6 +73,8 @@ const showAddModal = defineModel<boolean>();
 
 const shopsStore = useShopsStore();
 
+const canSave = ref(false);
+
 const newProductData = ref<IProduct>({
 	_id: "",
 	name: "",
@@ -85,6 +90,11 @@ const newProductData = ref<IProduct>({
 // Set the uploaded image URL
 const setImageUrl = (url: string) => {
 	newProductData.value.imageUrl = url;
+};
+
+const handleSaveButton = (uploading: boolean) => {
+	// Disable the save button while image uploading
+	canSave.value = !uploading;
 };
 
 const addProduct = async () => {
