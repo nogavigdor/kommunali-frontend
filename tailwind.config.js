@@ -62,22 +62,23 @@ export default {
           DEFAULT: "#CFD8DC", // Medium Gray for borders or cards
           dark: "#424242", // Dark Charcoal for text
         },
+        success: {
+          light: "#C8E6C9", // Light green for backgrounds
+          DEFAULT: "#66BB6A", // Default green for success messages
+          dark: "#388E3C" // Darker green for emphasis
+        },
+        error: {
+          light: "#FFCDD2", // Light red for backgrounds
+          DEFAULT: "#E57373", // Default red for error messages
+          dark: "#D32F2F" // Darker red for emphasis
+        },
+        alert: {
+          light: "#FFE0B2", // Light orange for warning backgrounds
+          DEFAULT: "#FFB74D", // Default orange for alert messages
+          dark: "#F57C00" // Darker orange for emphasis
+        },
       },
-      success: {
-        light: "#C8E6C9", // Light green for backgrounds
-        DEFAULT: "#66BB6A", // Default green for success messages
-        dark: "#388E3C" // Darker green for emphasis
-      },
-      error: {
-        light: "#FFCDD2", // Light red for backgrounds
-        DEFAULT: "#E57373", // Default red for error messages
-        dark: "#D32F2F" // Darker red for emphasis
-      },
-      alert: {
-        light: "#FFE0B2", // Light orange for warning backgrounds
-        DEFAULT: "#FFB74D", // Default orange for alert messages
-        dark: "#F57C00" // Darker orange for emphasis
-      },
+      
       spacing: {
         128: "32rem", // Useful for larger sections like hero areas
         144: "36rem",
@@ -109,33 +110,7 @@ export default {
           },
         },
       },
-      button: {
-        primary: {
-          "backgroundColor": "#7B1FA2",
-          "color": "#FFF",
-          "&:hover": {
-            backgroundColor: "#4A0072",
-          },
-          "&:disabled": {
-            backgroundColor: "#CFD8DC",
-            color: "#9E9E9E",
-          },
-        },
-        secondary: {
-          "backgroundColor": "#FFEB3B",
-          "color": "#424242",
-          "&:hover": {
-            backgroundColor: "#FBC02D",
-          },
-        },
-        accent: {
-          "backgroundColor": "#EC407A",
-          "color": "#FFF",
-          "&:hover": {
-            backgroundColor: "#D81B60",
-          },
-        },
-      },
+      
     },
   },
   plugins: [
