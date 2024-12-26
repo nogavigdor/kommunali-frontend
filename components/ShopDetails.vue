@@ -48,10 +48,13 @@
 					class="w-6 h-6 text-white" />
 				<span>Chat with Shop Owner</span>
 			</button>
-			<ChatBox
-				v-if="showChat"
-				:selected-shop-id="shop?._id"
-				@close="showChat = false" />
+			<client-only>
+				<ChatBox
+					v-if="shop && showChat"
+					:selected-shop-id="shop._id"
+					:chat-id="chatId"
+					@close="showChat = false" />
+			</client-only>
 		</div>
 		<div class="mb-4">
 			<ProductAddModal v-model="openModal" />
@@ -81,6 +84,10 @@ const props = defineProps({
 		type: Object,
 		required: true,
 	},
+});
+
+const chatId = computed(() => {
+	return userStore.getChatId(props.selectedShopId);
 });
 
 const showChat = ref(false);
