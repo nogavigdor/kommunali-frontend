@@ -4,6 +4,10 @@
 		v-model="showAddModal"
 		title="Edit Product">
 		<form @submit.prevent="addProduct">
+			<Icon
+				name="uil:times"
+				class="absolute top-2 right-2 cursor-pointer"
+				@click="cloaseModal" />
 			<div class="mb-2">
 				<label
 					for="edit-product-name"
@@ -43,14 +47,6 @@
 				<ImageUpload
 					@image-uploaded="setImageUrl"
 					@uploading="handleSaveButton" />
-				<p
-					v-if="newProductData.imageUrl"
-					class="mt-2 text-sm text-neutral-dark">
-					Image URL: <a
-						:href="newProductData.imageUrl"
-						target="_blank"
-						class="text-brandPrimary-500 hover:underline">{{ newProductData.imageUrl }}</a>
-				</p>
 				<button
 					type="submit"
 					:disabled="isImageUploading"
@@ -113,22 +109,30 @@ const addProduct = async () => {
 		//		userShop.value!.products[index] = { ...editProductData.value };
 		//	}
 		// reset the form
-		newProductData.value = {
-			_id: "",
-			name: "",
-			description: "",
-			price: 0,
-			imageUrl: "",
-			status: "available",
-			requestQueue: [],
-			soldTo: undefined,
-		};
-		isImageUploading.value = false; // Reset canSave
-		showAddModal.value = false;
+		resetForm();
 	}
 	catch (error) {
 		console.error("Failed to update product:", error);
 	}
+};
+
+const cloaseModal = () => {
+	resetForm();
+};
+
+const resetForm = () => {
+	newProductData.value = {
+		_id: "",
+		name: "",
+		description: "",
+		price: 0,
+		imageUrl: "",
+		status: "available",
+		requestQueue: [],
+		soldTo: undefined,
+	};
+	isImageUploading.value = false;
+	showAddModal.value = false;
 };
 </script>
 
