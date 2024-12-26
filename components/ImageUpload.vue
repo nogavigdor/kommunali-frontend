@@ -18,7 +18,7 @@
 						<Icon name="info-circle" />
 					</button>
 				</template>
-				Use this field to either upload an image from your device or take a picture using your camera.
+				Upload an image from your device or take a picture using your camera.
 			</UTooltip>
 		</div>
 		<div
@@ -35,7 +35,9 @@
 		<div
 			v-if="errorMessage"
 			class="w-full max-w-md bg-error-light text-error-dark p-4 rounded-lg shadow-soft">
-			<p>{{ errorMessage }}</p>
+			<p class="text-error-dark">
+				{{ errorMessage }}
+			</p>
 		</div>
 	</div>
 </template>
