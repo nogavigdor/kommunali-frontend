@@ -82,8 +82,7 @@ const newProductData = ref<IProduct>({
 	price: 0,
 	imageUrl: "",
 	status: "available",
-	reservedFor: null,
-	reservedExpiration: null,
+	requestQueue: [],
 	soldTo: undefined,
 });
 
@@ -112,8 +111,7 @@ const addProduct = async () => {
 			price: 0,
 			imageUrl: "",
 			status: "available",
-			reservedFor: null,
-			reservedExpiration: null,
+			requestQueue: [],
 			soldTo: undefined,
 		};
 		showAddModal.value = false;
