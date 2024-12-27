@@ -41,6 +41,7 @@
 		</button>
 		<div class="mt-4">
 			<button
+				v-if="shop.ownerFirebaseId !== userStore.user?.firebaseUserId"
 				class="flex items-center gap-2 btn-primary w-full justify-center py-3"
 				@click="toggleChat">
 				<Icon
