@@ -17,6 +17,7 @@ export interface IUser {
 	email: string;
 	firstName: string;
 	lastName: string;
+	nickname: string;
 	lastCoordinates: [number, number]; // [latitude, longitude]
 	stores?: IShop[]; // Array of store objects, DO NOT USE FROM HERE - USE ShopsStore
 	storesId?: string[]; // Array of store IDs

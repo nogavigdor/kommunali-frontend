@@ -18,8 +18,10 @@ export const useUserStore = defineStore("user", () => {
 		email: "",
 		firstName: "",
 		lastName: "",
+		nickname: "",
 		stores: [],
 		requested_products: [],
+		chatsInitiated: [],
 		lastCoordinates: [0, 0],
 		updatedAt: new Date(),
 	});
@@ -104,9 +106,11 @@ export const useUserStore = defineStore("user", () => {
 			email: "",
 			firstName: "",
 			lastName: "",
+			nickname: "",
 			stores: [],
 			lastCoordinates: [0, 0],
 			requested_products: [],
+			chatsInitiated: [],
 			updatedAt: new Date(),
 		};
 
