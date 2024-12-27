@@ -42,7 +42,7 @@
 		<div class="mt-4">
 			<button
 				class="flex items-center gap-2 btn-primary w-full justify-center py-3"
-				@click="openChat">
+				@click="toggleChat">
 				<Icon
 					name="uil:comment-dots"
 					class="w-6 h-6 text-white" />
@@ -50,10 +50,10 @@
 			</button>
 			<client-only>
 				<ChatBox
-					v-if="shop && showChat"
+					v-show="shop && showChat"
 					:selected-shop-id="shop._id"
 					:chat-id="chatId"
-					@close="showChat = false" />
+					@close-chat="toggleChat" />
 			</client-only>
 		</div>
 		<div class="mb-4">
@@ -92,8 +92,11 @@ const chatId = computed(() => {
 
 const showChat = ref(false);
 
-const openChat = () => {
+const toggleChat = () => {
 	showChat.value = !showChat.value;
+	console.log ("You have clicked either the chat button or the close button");
+	console.log("the showChat value is: ", showChat.value);
+	console.log("The shop value is: ", shop);
 };
 
 console.log("The shop id is: ", props.selectedShopId);

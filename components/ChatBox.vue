@@ -1,6 +1,6 @@
 <template>
 	<div
-		v-if="isOpen"
+
 		class="fixed bottom-20 right-8 w-96 bg-white rounded-4xl shadow-strong border border-brandGray-300 p-4 flex flex-col">
 		<!-- Header -->
 		<div class="flex items-center justify-between border-b pb-3 mb-3 border-brandGray-200">
@@ -9,7 +9,7 @@
 			</h3>
 			<button
 				class="text-brandGray-500 hover:text-error-dark transition"
-				@click="toggleChat">
+				@click="$emit('closeChat')">
 				<Icon
 					name="uil:times"
 					class="w-5 h-5" />
@@ -59,13 +59,14 @@ const props = defineProps<{
 	chatId: string | undefined;
 }>();
 
+defineEmits(["closeChat"]);
+
 const firebaseApp = useFirebaseApp();
 const db = getFirestore(firebaseApp);
 
 const { getChatMessages, createChat, sendMessageToChat } = useCustomFirestore();
 const { value: currentUser } = useCurrentUser(); // Reactive current user
 
-const isOpen = ref(true); // Chat visibility
 const newMessage = ref("");
 
 // const chatData = ref<DocumentData>({});
