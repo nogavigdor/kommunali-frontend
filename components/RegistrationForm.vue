@@ -21,7 +21,7 @@
 					label="Nickname"
 					name="nickname">
 					<UInput
-						v-model="state.email"
+						v-model="state.nickname"
 						placeholder="Your Nickname"
 						type="nickname" />
 					<p
