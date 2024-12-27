@@ -40,25 +40,65 @@
 			Add Product
 		</button>
 		<div class="mt-4">
+			<div v-if="isShopOwner">
+				<!-- Button to toggle chat list -->
+				<button
+					class="btn-primary"
+					@click="toggleChatList">
+					Chats
+				</button>
+
+				<!-- Chat list container -->
+				<div
+					v-if="showChatList && userChats"
+					class="mt-4 space-y-2">
+					<div
+
+						class="flex items-center justify-between p-4 rounded-lg bg-neutral-light shadow-soft hover:bg-neutral-dark hover:text-white transition-all">
+						<button
+							class="btn-secondary"
+							@click="showChat=!showChat">
+							Open Chat
+						</button>
+						<ClientOnly>
+							<div
+								v-for="chat in userChats"
+								:key="chat.chatFirebaseId">
+								<ChatBox
+									v-show="showChat"
+									:selected-shop-id="chat.shopId"
+									:chat-id="currentChatId"
+									@close-chat="openChat" />
+								<button
+									class="btn-primary"
+									@click="() => openChat(chat.chatFirebaseId)">
+									Open Chat {{ chat.chatFirebaseId }}
+								</button>
+							</div>
+						</ClientOnly>
+					</div>
+				</div>
+			</div>
 			<button
-				v-if="shop.ownerFirebaseId !== userStore.user?.firebaseUserId"
+				v-if="!isShopOwner"
 				class="flex items-center gap-2 btn-primary w-full justify-center py-3"
-				@click="toggleChat">
+				@click="openChat(chatId || '')">
 				<Icon
 					name="uil:comment-dots"
+					u
 					class="w-6 h-6 text-white" />
 				<span>Chat with Shop Owner</span>
-			</button>
-			<client-only>
+			</button><client-only>
 				<ChatBox
+					v-if="!isShopOwner"
 					v-show="shop && showChat"
 					:selected-shop-id="shop._id"
 					:chat-id="chatId"
-					@close-chat="toggleChat" />
+					@close-chat="closeChat" />
 			</client-only>
-		</div>
-		<div class="mb-4">
-			<ProductAddModal v-model="openModal" />
+			<div class="mb-4">
+				<ProductAddModal v-model="openModal" />
+			</div>
 		</div>
 	</div>
 </template>
@@ -74,7 +114,15 @@ import type { IShop } from "@/types/shop";
 const userStore = useUserStore();
 const shopsStore = useShopsStore();
 
+const isShopOwner = computed(() => {
+	return userStore.user?.firebaseUserId === shop.value?.ownerFirebaseId;
+});
+
 const openModal = ref(false);
+
+const showChatList = ref(false);
+
+const currentChatId = ref("");
 
 const props = defineProps({
 	selectedShopId: {
@@ -93,12 +141,27 @@ const chatId = computed(() => {
 
 const showChat = ref(false);
 
-const toggleChat = () => {
+const openChat = (chatId: string) => {
 	showChat.value = !showChat.value;
+	currentChatId.value = chatId;
+
 	console.log ("You have clicked either the chat button or the close button");
 	console.log("the showChat value is: ", showChat.value);
 	console.log("The shop value is: ", shop);
 };
+
+const closeChat = () => {
+	showChat.value = !showChat.value;
+	currentChatId.value = "";
+};
+
+const toggleChatList = () => {
+	showChatList.value = !showChatList.value;
+};
+
+const userChats = computed(() => {
+	return userStore.user.chatsInitiated;
+});
 
 console.log("The shop id is: ", props.selectedShopId);
 console.log("The user store is: ", userStore);
