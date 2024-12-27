@@ -45,7 +45,7 @@ export function useCustomFirestore() {
 	};
 
 	// Add a message to a specific chat
-	const sendMessageToChat = async (chatId: string, shopId: string, message: { senderId: string; text: string; timestamp: number }) => {
+	const sendMessageToChat = async (chatId: string, shopId: string, message: { nickname: string; senderId: string; text: string; timestamp: number }) => {
 		const chatRef = doc(db, "shopChats", shopId, "chats", chatId);
 
 		// Ensure the chat document exists

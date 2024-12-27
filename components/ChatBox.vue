@@ -102,6 +102,7 @@ const sendMessage = async () => {
 	if (!newMessage.value.trim() || !currentUser?.uid) return;
 
 	const message = {
+		nickname: currentUser.displayName,
 		senderId: currentUser.uid,
 		text: newMessage.value.trim(),
 		timestamp: Date.now(),
