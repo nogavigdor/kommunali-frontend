@@ -171,10 +171,12 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
 		// Clear any previous backend error messages
 		backendError.value = null;
 
-		const user = await userStore.registerUser(newUser);
+		await userStore.registerUser(newUser);
+
+		const user = userStore.user;
 
 		// Trigger success feedback after successfull registration  and redirect to login page
-		feedbackStore.setFeedback(`Congratulations ${user.nickma}`, "success");
+		feedbackStore.setFeedback(`Congratulations ${user.nickname}`, "success");
 		router.push("/login");
 	}
 	catch (error) {
