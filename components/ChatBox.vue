@@ -1,11 +1,11 @@
 <template>
 	<div
 
-		class="fixed bottom-20 right-8 w-96 bg-white rounded-4xl shadow-strong border border-brandGray-300 p-4 flex flex-col">
+		class="absolute top-0 left-0 z-30 w-full h-full bg-white rounded-4xl shadow-strong border border-brandGray-300 p-4 flex flex-col">
 		<!-- Header -->
 		<div class="flex items-center justify-between border-b pb-3 mb-3 border-brandGray-200">
 			<h3 class="text-brandPrimary-500 font-heading text-lg">
-				Chat
+				Chat with {{ shop?.name }}
 			</h3>
 			<button
 				class="text-brandGray-500 hover:text-error-dark transition"
@@ -26,7 +26,7 @@
 					'self-start bg-brandGray-100 text-brandGray-700': message.senderId !== currentUser?.uid,
 				}"
 				class="max-w-xs px-4 py-2 rounded-lg shadow-soft">
-				{{ message.text }}
+				{{ message.timestamp }} {{ message.senderId }}: {{ message.text }}
 			</div>
 		</div>
 
@@ -54,6 +54,8 @@ import { doc, getFirestore } from "firebase/firestore";
 
 import { useCustomFirestore } from "../composables/useChat";
 
+import { useShopsStore } from "../stores/shops";
+
 const props = defineProps<{
 	selectedShopId: string;
 	chatId: string | undefined;
@@ -67,6 +69,8 @@ const db = getFirestore(firebaseApp);
 const { getChatMessages, createChat, sendMessageToChat } = useCustomFirestore();
 const { value: currentUser } = useCurrentUser(); // Reactive current user
 
+const shopsStore = useShopsStore();
+const shop = shopsStore.getShopById(props.selectedShopId);
 const newMessage = ref("");
 
 // const chatData = ref<DocumentData>({});
