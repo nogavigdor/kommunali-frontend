@@ -16,6 +16,21 @@
 				:state="state"
 				class="space-y-4"
 				@submit="onSubmit">
+				<!-- Nickname -->
+				<UFormGroup
+					label="Nickname"
+					name="nickname">
+					<UInput
+						v-model="state.email"
+						placeholder="Your Nickname"
+						type="nickname" />
+					<p
+						v-if="validationErrors.nickname"
+						class="text-alert-500 text-sm">
+						{{ validationErrors.nickname }}
+					</p>
+				</UFormGroup>
+
 				<!-- Email -->
 				<UFormGroup
 					label="Email"
@@ -79,12 +94,13 @@ const feedbackStore = useFeedbackStore();
 const router = useRouter();
 
 const state = reactive({
+	nickname: "",
 	email: "",
 	password: "",
 });
 
 const passwordVisible = ref(false);
-const validationErrors = reactive<{ email?: string; password?: string }>({});
+const validationErrors = reactive<{ email?: string; password?: string; nickname?: string }>({});
 const backendError = ref<string | null>(null);
 const feedbackType = ref<FeedbackType | null>(null);
 
@@ -129,9 +145,25 @@ watch(
 	},
 );
 
+watch(
+	() => state.nickname,
+	(newNickname) => {
+		if (!newNickname) {
+			validationErrors.nickname = "Nickname is required";
+		}
+		else if (newNickname.length < 3) {
+			validationErrors.nickname = "Nickname must be at least 3 characters";
+		}
+		else {
+			validationErrors.nickname = undefined;
+		}
+	},
+);
+
 async function onSubmit(event: FormSubmitEvent<typeof state>) {
 	try {
 		const newUser = {
+			nickname: event.data.nickname,
 			email: event.data.email,
 			password: event.data.password,
 		};
@@ -139,10 +171,10 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
 		// Clear any previous backend error messages
 		backendError.value = null;
 
-		await userStore.registerUser(newUser);
+		const user = await userStore.registerUser(newUser);
 
 		// Trigger success feedback after successfull registration  and redirect to login page
-		feedbackStore.setFeedback("You have been successfully registered.", "success");
+		feedbackStore.setFeedback(`Congratulations ${user.nickma}`, "success");
 		router.push("/login");
 	}
 	catch (error) {
@@ -162,7 +194,7 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
 			});
 		}
 		else {
-			feedbackStore.Feedback("Registration failed due to technical issues. Please try again.", "error");
+			feedbackStore.setFeedback("Registration failed due to technical issues. Please try again.", "error");
 		}
 	}
 }
