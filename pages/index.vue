@@ -1,6 +1,6 @@
 <template>
 	<div
-		v-if="showPage"
+		v-show="showPage"
 		class="relative min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-brandPrimary-500 to-brandPrimary-800 text-white overflow-hidden">
 		<!-- Main Content -->
 		<div class="relative z-10 text-center px-6 max-w-2xl animate-slide-in-down">
