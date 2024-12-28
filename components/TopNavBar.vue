@@ -1,50 +1,66 @@
 <!-- TopNavbar.vue -->
 <template>
-	<nav class="bg-primary text-white">
-		<div class="flex justify-between items-center w-full">
+	<nav class="bg-primary text-white relative">
+		<div class="flex justify-between items-center w-full px-4">
 			<!-- Left Side - Menu Icon -->
 			<button
 				class="ml-4"
 				@click="$emit('toggle-menu')">
 				<UIcon
-					:name="open?'i-heroicons-x-mark':'i-heroicons-bars-3'"
-					class="absolute text-xl z-20 top-5 left-5 text-white" />
+					:name="open ? 'i-heroicons-x-mark' : 'i-heroicons-bars-3'"
+					class="text-xl z-20" />
 			</button>
 
-			<!-- Register Button  -->
+			<!-- Middle - Desktop Menu (Only for Desktop) -->
 			<div
-				v-if="!userLoggedIn"
-				class="flex-grow text-center">
-				<button
-					class="btn-secondary"
-					@click="goToRegisterPage">
-					Register
-				</button>
+				class="hidden flex-grow md:flex items-center">
+				<MenuDesktop />
 			</div>
-			<!-- Login Button  -->
-			<div
-				v-if="!userLoggedIn"
-				class="flex-grow text-center">
-				<button
-					class="btn-secondary"
-					@click="goToLoginPage">
-					Login
-				</button>
-			</div>
-			<div
-				v-else
-				class="flex-grow text-center">
-				<button
-					class="btn-secondary"
-					@click="userLogOut">
-					Logout
-				</button>
-			</div>
+			<SearchBarTypesense />
 
-			<!-- Search Bar -->
-			<ClientOnly>
-				<SearchBarTypesense />
-			</ClientOnly>
+			<!-- Right Side - Account Icon -->
+			<div class="relative">
+				<button @click="toggleAccountMenu">
+					<Icon
+						name="uil:user"
+						class="text-2xl" />
+				</button>
+				<transition
+					enter-active-class="transition duration-200"
+					leave-active-class="transition duration-200"
+					enter-from-class="opacity-0 scale-95"
+					enter-to-class="opacity-100 scale-100"
+					leave-from-class="opacity-100 scale-100"
+					leave-to-class="opacity-0 scale-95">
+					<div
+						v-if="showAccountMenu"
+						class="absolute right-0 mt-2 bg-white text-black shadow-md rounded-lg p-4 z-10">
+						<ul>
+							<li v-if="!userLoggedIn">
+								<button
+									class="block w-full text-left"
+									@click="goToLoginPage">
+									Login
+								</button>
+							</li>
+							<li v-if="!userLoggedIn">
+								<button
+									class="block w-full text-left"
+									@click="goToRegisterPage">
+									Register
+								</button>
+							</li>
+							<li v-if="userLoggedIn">
+								<button
+									class="block w-full text-left"
+									@click="userLogOut">
+									Logout
+								</button>
+							</li>
+						</ul>
+					</div>
+				</transition>
+			</div>
 		</div>
 	</nav>
 </template>
@@ -56,11 +72,17 @@ defineProps({
 	open: Boolean,
 });
 
+const showAccountMenu = ref(false);
+
 const _emit = defineEmits(["toggle-menu"]);
 
 const router = useRouter();
 
 const userStore = useUserStore();
+
+const toggleAccountMenu = () => {
+	showAccountMenu.value = !showAccountMenu.value;
+};
 
 const userLoggedIn = computed(() => userStore.loggedIn);
 
@@ -70,7 +92,7 @@ const userLogOut = () => {
 
 // Function to navigate to the registration page
 const goToRegisterPage = () => {
-	router.push("/registration");
+	router.push("/register");
 };
 
 const goToLoginPage = () => {
