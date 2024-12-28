@@ -4,7 +4,8 @@ import defaultTheme from 'tailwindcss/defaultTheme'
 
 
 export default {
-  darkMode: false,
+  darkMode: "false",
+  mode: 'jit',
   content: [
     "./components/**/*.{vue,js,ts}",
     "./layouts/**/*.vue",
