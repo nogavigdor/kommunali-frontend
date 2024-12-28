@@ -4,11 +4,11 @@
 		<div class="flex justify-between items-center w-full px-4">
 			<!-- Left Side - Menu Icon -->
 			<button
-				class="ml-4"
+				class="ml-4  z-50"
 				@click="$emit('toggle-menu')">
 				<UIcon
 					:name="open ? 'i-heroicons-x-mark' : 'i-heroicons-bars-3'"
-					class="text-xl z-20" />
+					class="text-xl" />
 			</button>
 
 			<!-- Middle - Desktop Menu (Only for Desktop) -->
