@@ -1,9 +1,17 @@
 <template>
-	<div class="p-6">
-		<h1 class="text-2xl font-bold">
-			Requests Page
-		</h1>
-		<p>Manage requests from other users.</p>
+	<div class="page-transition">
+		<div class="flex justify-between items-center mb-4">
+			<h1 class="text-4xl font-bold text-left">
+				Requests Page
+			</h1>
+			<ToLink
+				link="/"
+				icon="arrow-left"
+				tooltip-text="Back to Home Page" />
+		</div>
+		<p class="mt-4 text-lg">
+			Manage requests from other users.
+		</p>
 	</div>
 </template>
 

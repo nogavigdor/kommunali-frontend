@@ -1,8 +1,14 @@
 <template>
-	<div class="p-6">
-		<h2 class="text-xl font-bold mb-4 text-brandPrimary-500">
-			Shop Management
-		</h2>
+	<div class="page-transition">
+		<div class="flex justify-between items-center mb-4">
+			<h1 class="text-xl font-bold mb-4 text-brandPrimary-500">
+				Shop Management
+			</h1>
+			<ToLink
+				link="/"
+				icon="arrow-left"
+				tooltip-text="Back to Home Page" />
+		</div>
 		<div v-if="!hasShop">
 			<button
 				v-if="!showNewShopForm"
