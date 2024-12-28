@@ -1,15 +1,15 @@
 <template>
 	<div class="flex gap-4">
-		<a
+		<NuxtLink
 			v-for="link in links"
 			:key="link.label"
-			:href="link.to"
+			:to="link.to"
 			class="text-white hover:text-gray-300">
 			<UIcon
 				:name="link.icon"
 				class="inline-block mr-2" />
 			{{ link.label }}
-		</a>
+		</NuxtLink>
 	</div>
 </template>
 
