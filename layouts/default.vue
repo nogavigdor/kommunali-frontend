@@ -22,11 +22,23 @@
 		<FeedbackMessage />
 		<client-only>
 			<UserLocation
-				v-if="showUserLocation"
+				v-if="showUserLocation && !showMap"
 				ref="userLocationRef"
 				@change-address="changeAddressHandler" />
 		</client-only>
-		<NuxtPage />
+		<!-- Sliding Page Content -->
+		<div
+			:class="[
+				'h-full bg-white transform transition-transform duration-500',
+				{
+					'w-full': isMobile, // Full-width for mobile
+					'absolute z-50 right-0 w-1/2': !isMobile, // Sliding effect for desktop
+					'translate-x-0': isSliding, // Slide-in when active
+					'translate-x-full': !isSliding, // Hidden when inactive
+				},
+			]">
+			<NuxtPage />
+		</div>
 
 		<!-- Map Container -->
 		<MapContainer
@@ -34,7 +46,9 @@
 			:is-hidden="!showMap" />
 
 		<!-- Bottom Navigation -->
-		<BottomNavigation @go-to="goTo" />
+		<BottomNavigation
+			v-if="isMobile"
+			@go-to="goTo" />
 	</div>
 </template>
 
@@ -101,6 +115,7 @@ watch(
 			showMap.value = false;
 			showUserLocation.value = false;
 			showPage.value = true;
+			isSliding.value = true;
 		}
 		else {
 			showMap.value = true; // Show the map if on homepage
