@@ -26,7 +26,7 @@
 					'self-start bg-brandGray-100 text-brandGray-700': message.senderId !== currentUser?.uid,
 				}"
 				class="max-w-xs px-4 py-2 rounded-lg shadow-soft">
-				{{ message.timestamp }} {{ message.senderId }}: {{ message.text }}
+				{{ message.timestamp }} {{ message.nickname }}: {{ message.text }}
 			</div>
 		</div>
 

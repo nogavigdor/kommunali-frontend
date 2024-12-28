@@ -22,24 +22,12 @@
 		<FeedbackMessage />
 		<client-only>
 			<UserLocation
-				v-if="showUserLocation && !showMap"
+				v-if="showUserLocation"
 				ref="userLocationRef"
 				@change-address="changeAddressHandler" />
 		</client-only>
 		<!-- Sliding Page Content -->
-		<div
-			:class="[
-				'h-full bg-white transform transition-transform duration-500',
-				{
-					'w-full': isMobile, // Full-width for mobile
-					'absolute z-50 right-0 w-1/2': !isMobile, // Sliding effect for desktop
-					'translate-x-0': isSliding, // Slide-in when active
-					'translate-x-full': !isSliding, // Hidden when inactive
-				},
-			]">
-			<NuxtPage />
-		</div>
-
+		<NuxtPage />
 		<!-- Map Container -->
 		<MapContainer
 			ref="map"
@@ -62,6 +50,8 @@ import type { IShop } from "./types/shop";
 import { useUserStore } from "@/stores/user";
 import { useShopsStore } from "@/stores/shops";
 import type { IUser } from "@/types/user";
+
+const isSliding = ref(false);
 
 const menuOpen = ref(false);
 const toggleMenu = () => {
@@ -158,3 +148,12 @@ onMounted(() => {
 	};
 });
 </script>
+
+<style>
+.page-enter-active, .page-leave-active {
+	transition: transform 0.5s;
+}
+.page-enter-from, .page-leave-to {
+	transform: translateX(-100%);
+}
+</style>

@@ -1,5 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-//import { cjsInterop } from "vite-plugin-cjs-interop";
+// import { cjsInterop } from "vite-plugin-cjs-interop";
 
 export default defineNuxtConfig({
 	modules: ["@nuxt/eslint", "@nuxt/ui", "nuxt-mapbox", "nuxt-vuefire", // "@nuxtjs/algolia",
@@ -14,6 +14,13 @@ export default defineNuxtConfig({
 
 			],
 		},
+		pageTransition: {
+			name: "page",
+			mode: "out-in",
+		},
+	},
+	colorMode: {
+		preference: "light",
 	},
 	ui: {
 		safelistColors: ["brandPrimary", "brandGray"],

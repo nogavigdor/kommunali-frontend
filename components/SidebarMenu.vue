@@ -34,10 +34,10 @@ const profile = {
 	click,
 };
 
-const help = {
-	label: "help",
+const faq = {
+	label: "faq",
 	icon: "i-heroicons-help-circle",
-	to: "/help",
+	to: "/faq",
 	click,
 };
 
@@ -58,8 +58,8 @@ const shop = computed(() => ({
 // Sidebar menu links
 const links = computed(() =>
 	loggedIn.value
-		? [profile, help, settings, shop.value]
-		: [help],
+		? [profile, faq, settings, shop.value]
+		: [faq],
 
 );
 </script>
