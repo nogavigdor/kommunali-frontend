@@ -64,15 +64,15 @@ const { shops } = storeToRefs(shopsStore);
 
 // Watch for changes in the shops array
 // for example, when a user creates a shop, show the map
-watch(shops, (newShops, oldShops) => {
-	if (newShops.length > oldShops.length) {
-		console.log("A new shop was added. Making the map visible...");
-		if (mapRef.value) {
-			mapRef.value.centerMap(newShops[newShops.length - 1].location.coordinates); // Center the map on the new shop's coordinates
-		}
-		showMap.value = true; // Show the map
-	}
-});
+// watch(shops, (newShops, oldShops) => {
+// 	if (newShops.length > oldShops.length) {
+// 		console.log("A new shop was added. Making the map visible...");
+// 		if (mapRef.value) {
+// 			mapRef.value.centerMap(newShops[newShops.length - 1].location.coordinates); // Center the map on the new shop's coordinates
+// 		}
+// 		showMap.value = true; // Show the map
+// 	}
+// });
 
 const auth = useFirebaseAuth()!;
 
