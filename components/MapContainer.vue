@@ -3,14 +3,15 @@
 	<!-- Shop Details Overlay -->
 	<ShopDetails
 		v-if="showShopDetails"
+		v-show="!isHidden"
 		:selected-shop-id="selectedShopId || ''"
 		:style="shopDetailsStyle || {}"
 		@close="
 			closeShopDetails" />
 	<div
+		v-show="!isHidden"
 		id="map"
-		class="relative flex-grow h-full w-full"
-		:class="isHidden ? 'hidden' : ''" />
+		class="relative flex-grow h-full w-full" />
 </template>
 
 <script setup lang="ts">
@@ -289,6 +290,16 @@ const closeShopDetails = () => {
 	showShopDetails.value = false;
 	selectedShopId.value = null;
 };
+
+// Center the map on a specific set of coordinates
+function centerMap(coordinates: [number, number]) {
+	if (mapRef.value) {
+		console.log("Centering map on:", coordinates);
+		mapRef.value.setCenter(coordinates); // Update the map's center
+	}
+}
+// Expose the centerMap function to the parent component
+defineExpose({ centerMap });
 </script>
 
 <style>
