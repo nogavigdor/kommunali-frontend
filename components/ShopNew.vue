@@ -25,70 +25,9 @@
 					class="mt-1 block w-full border border-neutral-300 rounded-md shadow-sm focus:ring-brandPrimary-500 focus:border-brandPrimary-500 sm:text-sm" />
 			</div>
 			<div class="mb-4">
-				<label
-					for="shop-street"
-					class="block text-sm font-medium text-neutral-dark">Street</label>
-				<input
-					id="shop-street"
-					v-model="newShop.address.street"
-					type="text"
-					class="mt-1 block w-full border border-neutral-300 rounded-md shadow-sm focus:ring-brandPrimary-500 focus:border-brandPrimary-500 sm:text-sm"
-					required>
-			</div>
-			<div class="mb-4">
-				<label
-					for="shop-house-number"
-					class="block text-sm font-medium text-neutral-dark">House Number</label>
-				<input
-					id="shop-house-number"
-					v-model="newShop.address.houseNumber"
-					type="text"
-					class="mt-1 block w-full border border-neutral-300 rounded-md shadow-sm focus:ring-brandPrimary-500 focus:border-brandPrimary-500 sm:text-sm"
-					required>
-			</div>
-			<div class="mb-4">
-				<label
-					for="shop-apartment"
-					class="block text-sm font-medium text-neutral-dark">Apartment</label>
-				<input
-					id="shop-apartment"
-					v-model="newShop.address.apartment"
-					type="text"
-					class="mt-1 block w-full border border-neutral-300 rounded-md shadow-sm focus:ring-brandPrimary-500 focus:border-brandPrimary-500 sm:text-sm">
-			</div>
-			<div class="mb-4">
-				<label
-					for="shop-postal-code"
-					class="block text-sm font-medium text-neutral-dark">Postal Code</label>
-				<input
-					id="shop-postal-code"
-					v-model="newShop.address.postalCode"
-					type="text"
-					class="mt-1 block w-full border border-neutral-300 rounded-md shadow-sm focus:ring-brandPrimary-500 focus:border-brandPrimary-500 sm:text-sm"
-					required>
-			</div>
-			<div class="mb-4">
-				<label
-					for="shop-city"
-					class="block text-sm font-medium text-neutral-dark">City</label>
-				<input
-					id="shop-city"
-					v-model="newShop.address.city"
-					type="text"
-					class="mt-1 block w-full border border-neutral-300 rounded-md shadow-sm focus:ring-brandPrimary-500 focus:border-brandPrimary-500 sm:text-sm"
-					required>
-			</div>
-			<div class="mb-4">
-				<label
-					for="shop-coordinates"
-					class="block text-sm font-medium text-neutral-dark">Coordinates (Longitude, Latitude)</label>
-				<input
-					id="shop-coordinates"
-					v-model="newShop.location.coordinates"
-					type="text"
-					class="mt-1 block w-full border border-neutral-300 rounded-md shadow-sm focus:ring-brandPrimary-500 focus:border-brandPrimary-500 sm:text-sm"
-					placeholder="e.g., -122.4194, 37.7749"
-					required>
+				<ShopAddressEdit
+					auto-emit
+					@change-address="prepareNewAddress" />
 			</div>
 			<button
 				type="submit"
@@ -103,12 +42,13 @@
 import { ref } from "vue";
 import type { IShop } from "@/types/shop";
 import { useShopsStore } from "@/stores/shops";
+import type { AddressData } from "@/types/addressData";
 
 const shopStore = useShopsStore();
 
 const emit = defineEmits(["shop-created"]);
 
-const newShop = ref<IShop>({
+const newShop = ref<Omit<IShop, "_id" | "ownerFirebaseId">>({
 	owner: "",
 	name: "",
 	description: "",
@@ -127,6 +67,15 @@ const newShop = ref<IShop>({
 	createdAt: new Date(),
 	updatedAt: new Date(),
 });
+
+const prepareNewAddress = async (addressData: AddressData) => {
+	// Prepare the data fields in the same format as updateShopField
+	newShop.value.address.street = addressData.street;
+	newShop.value.address.houseNumber = addressData.houseNumber;
+	newShop.value.address.city = addressData.city;
+	newShop.value.address.postalCode = addressData.postalCode;
+	newShop.value.location.coordinates = addressData.coordinates;
+};
 
 const submitForm = () => {
 	try {
