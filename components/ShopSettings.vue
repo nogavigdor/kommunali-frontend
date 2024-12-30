@@ -7,9 +7,14 @@
 			<ShopEdit />
 			<div class="mb-4">
 				<swiper
-					:slides-per-view="5.5"
+					:slides-per-view="1.5"
 					space-between="10"
 					:grab-cursor="true"
+					:breakpoints="{
+						640: { slidesPerView: 1.2, spaceBetween: 8 }, // Small screens
+						768: { slidesPerView: 2.5, spaceBetween: 10 }, // Medium screens
+						1024: { slidesPerView: 3, spaceBetween: 15 }, // Large screens
+					}"
 					class="mt-4 pb-4">
 					<swiper-slide
 						v-for="product in shop?.products"
