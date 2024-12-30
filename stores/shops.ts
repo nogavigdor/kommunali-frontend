@@ -59,7 +59,7 @@ export const useShopsStore = defineStore("shops", () => {
 		}
 	}
 
-	async function createShop(newShop: IShop) {
+	async function createShop(newShop: Omit<IShop, "_id" | "ownerFirebaseId">) {
 		try {
 			const user = auth?.currentUser;
 			if (!user) throw new Error("User not authenticated");
@@ -76,6 +76,7 @@ export const useShopsStore = defineStore("shops", () => {
 			shops.value.push(response as IShop);
 			useUserStore().shopIds.push((response as IShop)._id);
 			userShop.value = response as IShop;
+			useUserStore().userLocation = newShop.location.coordinates;
 		}
 		catch (error) {
 			console.error("Failed to add shop:", error);
