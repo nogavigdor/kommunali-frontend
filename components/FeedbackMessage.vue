@@ -3,7 +3,6 @@
 		v-if="showFeedback"
 		:class="['fixed top-0 left-0 right-0 p-4 flex justify-between items-center shadow-medium z-50', feedbackClass]"
 		role="alert">
-		>
 		<div class="flex items-center gap-3">
 			<!-- Feedback Icon -->
 			<Icon
