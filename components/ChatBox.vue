@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from "vue";
+import type { DocumentData } from "firebase/firestore";
 import { useCurrentUser, useFirebaseApp, useDocument } from "vuefire";
 import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { useCustomFirestore } from "../composables/useChat";
@@ -67,8 +67,9 @@ const { sendMessageToChat } = useCustomFirestore();
 const { value: currentUser } = useCurrentUser(); // Reactive current user
 
 const newMessage = ref("");
-const chatData = ref(null);
-const messages = ref([]);
+
+const chatData = ref<DocumentData | null>(null);
+const messages = ref<Array<{ nickname: string; senderId: string; text: string; timestamp: number }>>([]);
 
 const fetchChatData = async () => {
 	if (!props.chatId || !props.selectedShopId) return;
@@ -102,7 +103,7 @@ const sendMessage = async () => {
 
 	await sendMessageToChat(props.chatId, props.selectedShopId, message);
 
-	// Add the message to the local state immediately for a better UX
+	// Added the message to the local state immediately for a better UX
 	messages.value.push(message);
 	newMessage.value = ""; // Clear the input field
 };
