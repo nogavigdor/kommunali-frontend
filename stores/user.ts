@@ -53,19 +53,12 @@ export const useUserStore = defineStore("user", () => {
 	// Sign in user with email and password utilizing Firebase Auth
 	async function loginUser(credentials: { email: string; password: string }) {
 		try {
-			console.log("auth: ", auth);
 			// Set persistence to local to keep the user logged in between sessions
 			await setPersistence(auth, browserLocalPersistence);
 			const response = await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
-			console.log("auth: ", auth);
-			console.log("User logged in:", response);
-			loggedIn.value = true;
-			// userLocation.value = [response.user.lastCoordinates[0], response.user.lastCoordinates[1]];
-			// updateUser(response.user);
 			firebaseUserId.value = response.user.uid;
 			// get the user from mongodb according to the firebaseUserId
 			const userResponse: IUser = await getUser(firebaseUserId.value);
-			// its important to notice that shop is the same as store
 			if (userResponse.role === UserRole.ADMIN) {
 				isAdmin.value = true;
 			}
