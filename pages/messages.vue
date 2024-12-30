@@ -11,7 +11,7 @@
 		</div>
 		<p>Manage your shop's message history below.</p>
 
-		<!-- Chat List -->
+		<!-- My shop Chat List -->
 		<div
 			v-if="shopChats.length > 0"
 			class="mt-4 space-y-2">
@@ -44,6 +44,26 @@
 			class="text-gray-500 mt-4">
 			No chats available.
 		</p>
+		<!-- Chats I've initiated with other shops -->
+		<div
+			v-if="shopChats.length > 0"
+			class="mt-4 space-y-2">
+			<div
+				v-for="chat in userChats"
+				:key="chat.message.timestamp"
+				class="flex items-center justify-between p-4 rounded-lg bg-neutral-light shadow-soft hover:bg-neutral-dark hover:text-white transition-all cursor-pointer"
+				@click="selectChat(chat)">
+				<!-- Chat Summary -->
+				<div>
+					<p class="font-semibold">
+						{{ chat.message.nickname }}
+					</p>
+				</div>
+				<Icon
+					name="uil:angle-right"
+					class="text-lg" />
+			</div>
+		</div>
 
 		<!-- ChatBox -->
 		<ClientOnly>
@@ -58,22 +78,53 @@
 
 <script setup lang="ts">
 import { format } from "date-fns";
+import type { get } from "firebase/database";
+import type { Timestamp } from "firebase-admin/firestore";
 import { useCustomFirestore } from "@/composables/useChat";
 import { useShopsStore } from "@/stores/shops";
+import { useUserStore } from "@/stores/user";
 
 const shopsStore = useShopsStore();
+const userStore = useUserStore();
+
+const chatsInitiated = computed(() => userStore.user.chatsInitiated);
 
 // Composable to interact with Firestore
-const { getShopChats } = useCustomFirestore();
+const { getShopChats, getChatByChatId } = useCustomFirestore();
 
 const shopChats = ref<{ lastMessageNickname: string; lastMessageText: string; lastMessageTimestamp: number }[]>([]); // Holds chat summaries
 const selectedShopId = ref(""); // Current shop ID
 const selectedChatId = ref(""); // Current chat ID
 const showChatBox = ref(false); // Controls visibility of ChatBox
+const userChats = ref<{ chatId: string; shopOwner: string; customer: string; message: { text: string; nickname: string; senderId: string; timestamp: number }; timestamp: Timestamp }[]>([]); // Holds chats initiated by the user
 
-// Fetch chats for the shop owner
+// fetch chats initiated by shop owner
+const fetchChatsInitiated = async () => {
+	try {
+		const chatPromises = chatsInitiated.value.map(chat =>
+			getChatByChatId(chat.chatFirebaseId),
+		);
+		const resolvedChats = await Promise.all(chatPromises);
+		userChats.value = resolvedChats
+			.filter((chat): chat is NonNullable<typeof chat> => chat !== null)
+			.map(chat => ({
+				shopOwner: chat.shopOwner,
+				customer: chat.customer,
+				message: {
+					text: chat.messages[0].text,
+					nickname: chat.messages[0].nickname,
+					senderId: chat.messages[0].senderId,
+					timestamp: chat.messages[0].timestamp,
+				},
+				timestamp: chat.messages[0].timestamp,
+			}));
+	}
+	catch (error) {
+		console.error("Error fetching initiated chats:", error);
+	}
+};
 
-// Fetch chats for the shop owner
+// Fetch chats addressed for the shop owner
 const fetchShopChats = async () => {
 	try {
 		const shopId = shopsStore.userShop?._id || ""; // Ensure the shop ID is retrieved
@@ -122,6 +173,7 @@ const closeChatBox = () => {
 
 // Fetch chats on page load
 onMounted(fetchShopChats);
+onMounted(fetchChatsInitiated);
 </script>
 
   <style scoped>

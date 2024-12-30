@@ -1,5 +1,5 @@
 import { useFirebaseApp, useDocument, useCollection, useCurrentUser } from "vuefire";
-import { doc, collection, query, where, updateDoc, arrayUnion, getDoc, getDocs, getFirestore } from "firebase/firestore";
+import { doc, collection, collectionGroup, query, where, updateDoc, arrayUnion, getDoc, getDocs, getFirestore } from "firebase/firestore";
 import { useUserStore } from "@/stores/user";
 import { useShopsStore } from "@/stores/shops";
 import type { IUser } from "@/types/user";
@@ -38,18 +38,40 @@ export function useCustomFirestore() {
 	};
 
 	// Fetch all chats for the current user
-	const getUserChats = () => {
-		if (!currentUser.value) throw new Error("User is not authenticated");
+	const getChatByChatId = async (chatId: string) => {
+		try {
+			// Create a collection group query to search all "chats" subcollections
+			const chatsQuery = query(
+				collectionGroup(db, "chats"), // Query across all "chats" subcollections
+				where("__name__", "==", chatId), // Match the document ID with the chatId
+			);
 
-		const chatsRef = collection(db, "chats");
-		// Create a Firestore query
-		const userChatsQuery = query(chatsRef, where("participants", "array-contains", currentUser.value.uid));
-		return useCollection(userChatsQuery); // Pass the Firestore query to useCollection
+			// Execute the query
+			const snapshot = await getDocs(chatsQuery);
+
+			if (snapshot.empty) {
+				console.log(`No chat found with ID: ${chatId}`);
+				return null;
+			}
+
+			// Extract data from the matched document
+			const chatDoc = snapshot.docs[0];
+			const chatData = chatDoc.data();
+			return {
+				chatId: chatDoc.id,
+				customer: chatData.customer || "Unknown",
+				shopOwner: chatData.shopOwner || "Unknown",
+				messages: chatData.messages || [],
+			};
+		}
+		catch (error) {
+			console.error("Error finding chat by ID:", error);
+			return null;
+		}
 	};
 	const getShopChats = async (shopId: string) => {
 		if (!shopId) throw new Error("Shop ID is required to fetch chats");
 
-		const db = getFirestore();
 		const shopOwnerId = shopsStore.userShop?.ownerFirebaseId; // Ensure this fetches the correct owner ID
 		const currentUser = useCurrentUser();
 		console.log("The current user is:", currentUser.value);
@@ -110,7 +132,7 @@ export function useCustomFirestore() {
 		createChat,
 		getChatId,
 		getChatMessages,
-		getUserChats,
+		getChatByChatId,
 		getShopChats,
 		sendMessageToChat,
 	};
