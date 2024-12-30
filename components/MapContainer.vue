@@ -1,7 +1,7 @@
 <!-- MapContainer.vue -->
 <template>
 	<SearchBarTypesense
-
+		v-show="isIndexPage"
 		class="position-search" />
 
 	<!-- Shop Details Overlay -->
@@ -27,12 +27,17 @@ import { useShopsStore } from "@/stores/shops";
 import { useUserStore } from "@/stores/user";
 import type { IShop } from "@/types/shop";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { useRouter } from "vue-router";
 
 // import markerImage from "@/assets/images/marker-image.png";
 
 defineProps({
 	isHidden: Boolean,
 });
+
+const router = useRouter();
+
+const isIndexPage = computed(() => router.currentRoute.value.name === "index");
 
 const isMobile = inject("isMobile") as boolean;
 
