@@ -20,6 +20,7 @@
 </template>
 
 <script setup lang="ts">
+import { inject } from "vue";
 import mapboxgl from "mapbox-gl";
 import { storeToRefs } from "pinia";
 import { useShopsStore } from "@/stores/shops";
@@ -27,11 +28,14 @@ import { useUserStore } from "@/stores/user";
 import type { IShop } from "@/types/shop";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { update } from "firebase/database";
+
 // import markerImage from "@/assets/images/marker-image.png";
 
 defineProps({
 	isHidden: Boolean,
 });
+
+const isMobile = inject("isMobile") as boolean;
 
 defineEmits(["highlight-shops"]);
 
@@ -47,7 +51,7 @@ let currentMarkers: mapboxgl.Marker[] = [];
 
 const showShopDetails = ref(false);
 
-const shopDetailsStyle = ref({ top: "0", left: "0" });
+const shopDetailsStyle = ref<{ top: string; left: string; width?: string; height?: string }>({ top: "0", left: "0" });
 
 const selectedShopId = ref<string | null>(null);
 
@@ -97,6 +101,11 @@ watch(userLocation, async (newLocation) => {
 });
 
 function updateShopDisplayStyle(shop: IShop) {
+	if (isMobile.value) {
+		shopDetailsStyle.value = { width: "100%", height: "100%", top: "0", left: "0" };
+		return;
+	}
+
 	// Calculate the position of the clicked marker on the screen
 	const mapBoxPoint = mapRef.value?.project(shop.location.coordinates);
 	if (mapBoxPoint) {
@@ -107,7 +116,6 @@ function updateShopDisplayStyle(shop: IShop) {
 		};
 	}
 }
-
 function updateMarkers(shops: IShop[]) {
 	// Remove current markers from the map
 	currentMarkers.forEach(marker => marker.remove());
