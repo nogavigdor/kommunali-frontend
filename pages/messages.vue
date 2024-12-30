@@ -17,7 +17,7 @@
 			class="mt-4 space-y-2">
 			<div
 				v-for="chat in shopChats"
-				:key="chat.chatFirebaseId"
+				:key="chat.lastMessageTimestamp"
 				class="flex items-center justify-between p-4 rounded-lg bg-neutral-light shadow-soft hover:bg-neutral-dark hover:text-white transition-all cursor-pointer"
 				@click="selectChat(chat)">
 				<!-- Chat Summary -->
@@ -48,7 +48,7 @@
 		<!-- ChatBox -->
 		<ClientOnly>
 			<ChatBox
-				v-if="showChatBox"
+				v-show="showChatBox"
 				:selected-shop-id="selectedShopId"
 				:chat-id="selectedChatId"
 				@close-chat="closeChatBox" />
@@ -84,7 +84,10 @@ const fetchShopChats = async () => {
 		console.log("from messages page: Shop ID:", shopId); // Debugging log
 		const chats = await getShopChats(shopId); // Fetch chats
 
-		shopChats.value = chats; // Assign fetched chats to the reactive variable
+		shopChats.value = chats.map(chat => ({
+			...chat,
+			lastMessageTimestamp: chat.lastMessageTimestamp.getTime(),
+		})); // Assign fetched chats to the reactive variable
 		console.log("Shop Chats:", shopChats.value); // Debugging log
 	}
 	catch (error) {
@@ -97,8 +100,17 @@ const formatTimestamp = (timestamp) => {
 };
 
 // Select a chat and open ChatBox
-const selectChat = (chat) => {
-	selectedShopId.value = chat.shopId;
+interface Chat {
+	lastMessageNickname: string;
+	lastMessageText: string;
+	lastMessageTimestamp: number;
+	shopId: string;
+	chatFirebaseId: string;
+}
+
+const selectChat = (chat: Chat) => {
+	console.log("Selected Chat:", chat); // Debugging log
+	selectedShopId.value = shopsStore.userShop?._id || "";
 	selectedChatId.value = chat.chatFirebaseId;
 	showChatBox.value = true;
 };
