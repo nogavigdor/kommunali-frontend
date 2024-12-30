@@ -1,11 +1,10 @@
 <template>
 	<div
-
 		class="absolute top-0 left-0 z-30 w-full h-full bg-white rounded-4xl shadow-strong border border-brandGray-300 p-4 flex flex-col">
 		<!-- Header -->
 		<div class="flex items-center justify-between border-b pb-3 mb-3 border-brandGray-200">
 			<h3 class="text-brandPrimary-500 font-heading text-lg">
-				Chat with {{ shop?.name }}
+				Chat with {{ customerNickname || "Unknown" }}
 			</h3>
 			<button
 				class="text-brandGray-500 hover:text-error-dark transition"
@@ -26,7 +25,7 @@
 					'self-start bg-brandGray-100 text-brandGray-700': message.senderId !== currentUser?.uid,
 				}"
 				class="max-w-xs px-4 py-2 rounded-lg shadow-soft">
-				{{ message.timestamp }} {{ message.nickname }}: {{ message.text }}
+				{{ formatTimestamp(message.timestamp) }} {{ message.nickname || "Unknown" }}: {{ message.text }}
 			</div>
 		</div>
 
@@ -48,17 +47,15 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, watch, onMounted } from "vue";
 import { useCurrentUser, useFirebaseApp, useDocument } from "vuefire";
-
-import { doc, getFirestore } from "firebase/firestore";
-
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { useCustomFirestore } from "../composables/useChat";
-
-import { useShopsStore } from "../stores/shops";
 
 const props = defineProps<{
 	selectedShopId: string;
 	chatId: string | undefined;
+	customerNickname: string; // Pass the nickname from parent
 }>();
 
 defineEmits(["closeChat"]);
@@ -66,49 +63,51 @@ defineEmits(["closeChat"]);
 const firebaseApp = useFirebaseApp();
 const db = getFirestore(firebaseApp);
 
-const { getChatMessages, createChat, sendMessageToChat } = useCustomFirestore();
+const { sendMessageToChat } = useCustomFirestore();
 const { value: currentUser } = useCurrentUser(); // Reactive current user
 
-const shopsStore = useShopsStore();
-const shop = shopsStore.getShopById(props.selectedShopId);
 const newMessage = ref("");
+const chatData = ref(null);
+const messages = ref([]);
 
-// const chatData = ref<DocumentData>({});
-const chatData = props.chatId ? useDocument(doc(db, "shopChats", props.selectedShopId, "chats", props.chatId)) : ref(null);
+const fetchChatData = async () => {
+	if (!props.chatId || !props.selectedShopId) return;
 
-// if (props.chatId) {
-// 	chatData.value = getChatMessages(props.chatId, props.selectedShopId);
-// }
+	const chatRef = doc(db, "shopChats", props.selectedShopId, "chats", props.chatId);
+	const chatSnap = await getDoc(chatRef);
 
-// Watch for chatId changes
-// watch(() => props.chatId, (newChatId) => {
-// 	if (newChatId) {
-// 		chatData.value = getChatMessages(newChatId, props.selectedShopId);
-// 	}
-// });
-// Computed property for chat messages
-const messages = computed(() => chatData.value?.messages || []);
-
-// Toggle chat visibility
-const toggleChat = () => {
-	isOpen.value = !isOpen.value;
+	if (chatSnap.exists()) {
+		chatData.value = chatSnap.data();
+		messages.value = chatData.value.messages || [];
+	}
+	else {
+		console.error("Chat document not found.");
+		messages.value = [];
+	}
 };
 
-// Send a new message
+watch(() => props.chatId, fetchChatData);
+
+onMounted(fetchChatData);
+
 const sendMessage = async () => {
-	if (!props.chatId) {
-		await createChat(props.selectedShopId);
-	}
-	if (!newMessage.value.trim() || !currentUser?.uid) return;
+	if (!props.chatId || !newMessage.value.trim() || !currentUser?.uid) return;
 
 	const message = {
-		nickname: currentUser.displayName,
+		nickname: currentUser.displayName || "Anonymous",
 		senderId: currentUser.uid,
 		text: newMessage.value.trim(),
 		timestamp: Date.now(),
 	};
 
 	await sendMessageToChat(props.chatId, props.selectedShopId, message);
+
+	// Add the message to the local state immediately for a better UX
+	messages.value.push(message);
 	newMessage.value = ""; // Clear the input field
+};
+
+const formatTimestamp = (timestamp: number) => {
+	return new Date(timestamp).toLocaleString();
 };
 </script>
