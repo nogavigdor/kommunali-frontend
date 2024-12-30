@@ -78,12 +78,17 @@ const auth = useFirebaseAuth()!;
 
 const showMap = ref(false);
 
+const isMobile = ref(false);
+// Export the showMap and isMobile constants to be used in other components
+// along the components tree
+provide("showMap", showMap);
+
+provide("isMobile", isMobile);
+
 const showUserLocation = ref(true);
 
 const userLocationRef = ref(null);
 const mapRef = ref<MapContainerInstance | null>(null); // Add reference to Map component
-
-const isMobile = ref(false);
 
 const showPage = ref(true);
 

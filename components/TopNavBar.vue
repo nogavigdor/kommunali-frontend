@@ -1,7 +1,7 @@
 <!-- TopNavbar.vue -->
 <template>
 	<nav class="bg-primary text-white relative">
-		<div class="flex justify-between items-center w-full px-4">
+		<div class="flex justify-between items-center w-full px-4 pr-5 pl-5 pt-5">
 			<!-- Left Side - Menu Icon -->
 			<button
 				class="ml-4  z-50"
@@ -16,7 +16,10 @@
 				class="hidden flex-grow md:flex items-center">
 				<MenuDesktop />
 			</div>
-			<SearchBarTypesense />
+
+			<SearchBarTypesense
+				v-show="showSearch"
+				class="position-search" />
 
 			<!-- Right Side - Account Icon -->
 			<div class="relative">
@@ -66,11 +69,21 @@
 </template>
 
 <script setup lang="ts">
+import { inject } from "vue";
+import { useRouter, useRoute } from "vue-router";
+
 import { useUserStore } from "@/stores/user";
 
 defineProps({
 	open: Boolean,
 });
+const showMap = inject("showMap");
+
+const isMobile = inject("isMobile");
+
+const showSearch = ref(true);
+
+const route = useRoute();
 
 const showAccountMenu = ref(false);
 
@@ -98,4 +111,27 @@ const goToRegisterPage = () => {
 const goToLoginPage = () => {
 	router.push("/login");
 };
+
+// on mobile the search bar will be shown only on homepage
+const checkShowSearch = () => {
+	if (route.path != "/" && isMobile) {
+		showSearch.value = false;
+	}
+	else {
+		showSearch.value = true;
+	}
+};
+// check if the search bar should be shown on page load
+watch([route, isMobile], () => {
+	checkShowSearch();
+});
 </script>
+
+<style scoped>
+.position-search {
+	position: absolute;
+	right:20px;
+	top:150px;
+	z-index:5;
+}
+</style>
