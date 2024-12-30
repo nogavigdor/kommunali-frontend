@@ -1,6 +1,6 @@
 <template>
 	<div class="flex max-w-md mx-auto  p-4">
-		<form class="flex flex-row-reverse gap-x-4">
+		<form class="flex gap-x-4">
 			<input
 				id="address-input-2"
 				type="text"
@@ -8,7 +8,7 @@
 				placeholder="Please enter an address"
 				autocomplete="street-address"
 				@input.once="fetchSuggestions">
-			<input
+			<!-- input
 				type="text"
 				name="houseNumber"
 				placeholder="House Number"
@@ -22,9 +22,12 @@
 				type="text"
 				name="postalCode"
 				placeholder="Postal Code"
-				autocomplete="postal-code">
+				autocomplete="postal-code" -->
+			<p v-if="fullAddressLine">
+				{{ fullAddressLine }}
+			</p>
 			<button
-				v-if="showMapButton"
+				v-if="!autoEmit && showMapButton"
 				class="btn-primary"
 				@click.prevent="$emit('change-address', addressData)">
 				Update Address
@@ -40,10 +43,16 @@ import { useShopsStore } from "@/stores/shops";
 import type { AutofillData } from "@/types/autofillData";
 import type { AddressData } from "@/types/addressData";
 
-defineEmits(["change-address"]);
+const emit = defineEmits(["change-address"]);
+
+const props = defineProps({
+	autoEmit: {
+		type: Boolean,
+		default: false,
+	},
+});
 
 const config = useRuntimeConfig();
-const query = ref("");
 const savedAddresses = ref<string[]>([]);
 const showMapButton = ref(false);
 const shopsStore = useShopsStore();
@@ -74,6 +83,7 @@ const fetchSuggestions = () => {
 	const autofillElement = new MapboxAddressAutofill();
 	autofillElement.accessToken = config.public.mapboxApiKey;
 	autofillElement.browserAutofillEnabled = false;
+	autofillElement.options.country = "dk";
 
 	const inputElement = document.getElementById("address-input-2") as HTMLInputElement;
 	const formElement = inputElement.parentElement as HTMLFormElement;
@@ -106,14 +116,14 @@ const fetchSuggestions = () => {
 			fullAddressLine.value = `${addressData.value.street} ${addressData.value.houseNumber},
 			 ${addressData.value.postalCode} ${addressData.value.city}`;
 
-			setTimeout(() => {
-				(document.getElementById("address-input")! as HTMLInputElement).value = fullAddressLine.value;
-			}, 1);
-			query.value = fullAddressLine.value;
-
 			console.log("Selected Address Data: ", autofillData);
 			console.log("Full Address Line: ", fullAddressLine.value);
-			showMapButton.value = true;
+			if (props.autoEmit) {
+				emit("change-address", addressData.value);
+			}
+			else {
+				showMapButton.value = true;
+			}
 		});
 	}
 };

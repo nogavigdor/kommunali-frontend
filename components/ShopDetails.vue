@@ -33,52 +33,25 @@
 					:product="product" />
 			</swiper-slide>
 		</swiper>
-		<button
-			v-if="isEditable"
-			class="btn-primary"
-			@click="openModal = !openModal">
-			Add Product
-		</button>
-		<div class="mt-4">
-			<div v-if="isShopOwner">
-				<!-- Button to toggle chat list -->
-				<button
-					class="btn-primary"
-					@click="toggleChatList">
-					Chats
-				</button>
 
-				<!-- Chat list container -->
-				<div
-					v-if="showChatList && userChats"
-					class="mt-4 space-y-2">
-					<div
+		<div class="flex justify-between mt-4">
+			<button
+				v-if="isEditable"
+				class="btn-primary"
+				@click="openModal = !openModal">
+				Add Product
+			</button>
+			<!-- Link to messages page -->
+			<NuxtLink
+				v-if="isShopOwner"
+				role="button"
+				:to="{ name: 'messages' }"
+				class="btn-icon">
+				<Icon
+					:name="'uil:chat'" />
+				My chats
+			</NuxtLink>
 
-						class="flex items-center justify-between p-4 rounded-lg bg-neutral-light shadow-soft hover:bg-neutral-dark hover:text-white transition-all">
-						<button
-							class="btn-secondary"
-							@click="showChat=!showChat">
-							Open Chat
-						</button>
-						<ClientOnly>
-							<div
-								v-for="chat in userChats"
-								:key="chat.chatFirebaseId">
-								<ChatBox
-									v-show="showChat"
-									:selected-shop-id="chat.shopId"
-									:chat-id="currentChatId"
-									@close-chat="openChat" />
-								<button
-									class="btn-primary"
-									@click="() => openChat(chat.chatFirebaseId)">
-									Open Chat {{ chat.chatFirebaseId }}
-								</button>
-							</div>
-						</ClientOnly>
-					</div>
-				</div>
-			</div>
 			<button
 				v-if="!isShopOwner"
 				class="flex items-center gap-2 btn-primary w-full justify-center py-3"
@@ -154,14 +127,6 @@ const closeChat = () => {
 	showChat.value = !showChat.value;
 	currentChatId.value = "";
 };
-
-const toggleChatList = () => {
-	showChatList.value = !showChatList.value;
-};
-
-const userChats = computed(() => {
-	return userStore.user.chatsInitiated;
-});
 
 console.log("The shop id is: ", props.selectedShopId);
 console.log("The user store is: ", userStore);
