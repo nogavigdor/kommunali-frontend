@@ -17,10 +17,6 @@
 				<MenuDesktop />
 			</div>
 
-			<SearchBarTypesense
-				v-show="showSearch"
-				class="position-search" />
-
 			<!-- Right Side - Account Icon -->
 			<div class="relative">
 				<button @click="toggleAccountMenu">
@@ -69,21 +65,13 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 
 import { useUserStore } from "@/stores/user";
 
 defineProps({
 	open: Boolean,
 });
-const showMap = inject("showMap");
-
-const isMobile = inject("isMobile");
-
-const showSearch = ref(true);
-
-const route = useRoute();
 
 const showAccountMenu = ref(false);
 
@@ -111,27 +99,8 @@ const goToRegisterPage = () => {
 const goToLoginPage = () => {
 	router.push("/login");
 };
-
-// on mobile the search bar will be shown only on homepage
-const checkShowSearch = () => {
-	if (route.path != "/" && isMobile && showMap == false) {
-		showSearch.value = false;
-	}
-	else {
-		showSearch.value = true;
-	}
-};
-// check if the search bar should be shown on page load
-watch([route, isMobile], () => {
-	checkShowSearch();
-});
 </script>
 
 <style scoped>
-.position-search {
-	position: absolute;
-	right:20px;
-	top:150px;
-	z-index:5;
-}
+
 </style>

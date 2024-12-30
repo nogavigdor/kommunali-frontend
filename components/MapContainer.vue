@@ -1,5 +1,9 @@
 <!-- MapContainer.vue -->
 <template>
+	<SearchBarTypesense
+
+		class="position-search" />
+
 	<!-- Shop Details Overlay -->
 	<ShopDetails
 		v-if="showShopDetails"
@@ -9,6 +13,7 @@
 		@close="
 			closeShopDetails" />
 	<div
+
 		v-show="!isHidden"
 		id="map"
 		class="relative flex-grow h-full w-full" />
@@ -352,5 +357,12 @@ defineExpose({ centerMap });
   height: 30px;
   cursor: pointer;
 	z-index: 3;
+}
+
+.position-search {
+	position: absolute;
+	right:20px;
+	top:150px;
+	z-index:5;
 }
 </style>
