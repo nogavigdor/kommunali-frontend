@@ -27,7 +27,6 @@ import { useShopsStore } from "@/stores/shops";
 import { useUserStore } from "@/stores/user";
 import type { IShop } from "@/types/shop";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { update } from "firebase/database";
 
 // import markerImage from "@/assets/images/marker-image.png";
 
@@ -44,7 +43,6 @@ const userStore = useUserStore();
 // const { shops } = useShopsStore(); // non-reactive
 const { shops } = storeToRefs(shopsStore);
 const { userLocation } = storeToRefs(userStore);
-const user = computed(() => userStore.user);
 const userLoggedIn = computed(() => userStore.loggedIn);
 
 let currentMarkers: mapboxgl.Marker[] = [];
@@ -229,45 +227,11 @@ const updateShopsOnMap = async () => {
 	updateMarkers(shops.value as IShop[]);
 };
 
-const initializeMap = (coordinates: [number, number]) => {
-	mapboxgl.accessToken = config.public.mapboxApiKey;
-	console.log("onMounted called - initializing map");
-
-	// Initialize the map instance with default coordinates or user's last known coordinates
-	const initialCoordinates = user.value?.lastCoordinates || [12.568337, 55.676098]; // Default to Copenhagen
-	// Initialize the map instance
-	if (!mapRef.value) {
-		console.log("Creating new Map instance");
-		mapRef.value = new mapboxgl.Map({
-			container: "map",
-			style: "mapbox://styles/mapbox/light-v11",
-			center: coordinates || [12.568337, 55.676098], // Default location
-			zoom: 12,
-			minZoom: 12, // Prevent zooming out too much (adjust to suit your needs)
-			maxZoom: 18, // Allow zooming in closely
-			maxBounds: [
-				[7.5, 54.5], // Southwest corner of Denmark
-				[15.5, 58], // Northeast corner of Denmark
-			],
-			trackResize: true,
-		});
-
-		// Call update markers after the map is loaded
-		mapRef.value.on("load", async () => {
-			await updateShopsOnMap();
-			setupMapListeners(); // Attach listeners for move/zoom
-			mapRef.value?.resize(); // Resize the map to fit the container
-		});
-	}
-};
-
 // Initialize Mapbox on component mount
 onMounted(() => {
 	mapboxgl.accessToken = config.public.mapboxApiKey;
 	console.log("onMounted called - initializing map");
 
-	// Initialize the map instance with default coordinates or user's last known coordinates
-	const initialCoordinates = user.value?.lastCoordinates || [12.568337, 55.676098]; // Default to Copenhagen
 	// Initialize the map instance
 	if (!mapRef.value) {
 		console.log("Creating new Map instance");
@@ -340,8 +304,8 @@ const closeShopDetails = () => {
 function centerMap(coordinates: [number, number]) {
 	// Check if the map is already initialized
 	if (!mapRef.value) {
-		console.log("Map not initialized. Initializing map...");
-		initializeMap(coordinates); // Initialize the map with the desired coordinates
+		console.log("Map not initialized. Cannot center map...");
+		// initializeMap(coordinates); // Initialize the map with the desired coordinates
 		return;
 	}
 
