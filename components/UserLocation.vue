@@ -89,6 +89,7 @@ const fetchSuggestions = () => {
 	const autofillElement = new MapboxAddressAutofill();
 	autofillElement.accessToken = config.public.mapboxApiKey;
 	autofillElement.browserAutofillEnabled = false;
+	autofillElement.options.country = "dk";
 
 	const inputElement = document.getElementById("address-input") as HTMLInputElement;
 	const formElement = inputElement.parentElement as HTMLFormElement;
