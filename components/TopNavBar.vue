@@ -114,7 +114,7 @@ const goToLoginPage = () => {
 
 // on mobile the search bar will be shown only on homepage
 const checkShowSearch = () => {
-	if (route.path != "/" && isMobile) {
+	if (route.path != "/" && isMobile && showMap == false) {
 		showSearch.value = false;
 	}
 	else {
