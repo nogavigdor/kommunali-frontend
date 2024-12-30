@@ -108,7 +108,7 @@ async function uploadImageToStorage(file: File): Promise<string> {
 		const storagePath = `users/${userId}/products/${Date.now()}_${file.name}`; // Unique file path per user
 		const storageReference = storageRef(storage, storagePath);
 
-		// Definea the custom metadata to include the owner UID
+		// Defines the custom metadata to include the owner UID
 		// in order to comply with the rules which I've set in Firebase Storage
 		// and later on will enable to edit the file only by the owner (aka the product owner)
 		const metadata = {
