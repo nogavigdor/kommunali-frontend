@@ -4,7 +4,7 @@
 		<!-- Header -->
 		<div class="flex items-center justify-between border-b pb-3 mb-3 border-brandGray-200">
 			<h3 class="text-brandPrimary-500 font-heading text-lg">
-				Chat with {{ customerNickname || "Unknown" }}
+				Chat with {{ "Unknown" }}
 			</h3>
 			<button
 				class="text-brandGray-500 hover:text-error-dark transition"
@@ -47,15 +47,14 @@
 </template>
 
 <script setup lang="ts">
-import type { DocumentData } from "firebase/firestore";
 import { useCurrentUser, useFirebaseApp, useDocument } from "vuefire";
-import { doc, getDoc, getFirestore } from "firebase/firestore";
+import { doc, getFirestore } from "firebase/firestore";
+import { timestamp } from "@vueuse/core";
 import { useCustomFirestore } from "../composables/useChat";
 
 const props = defineProps<{
 	selectedShopId: string;
 	chatId: string | undefined;
-	customerNickname: string; // Pass the nickname from parent
 }>();
 
 defineEmits(["closeChat"]);
@@ -63,48 +62,34 @@ defineEmits(["closeChat"]);
 const firebaseApp = useFirebaseApp();
 const db = getFirestore(firebaseApp);
 
-const { sendMessageToChat } = useCustomFirestore();
+const { createChat, sendMessageToChat } = useCustomFirestore();
 const { value: currentUser } = useCurrentUser(); // Reactive current user
 
 const newMessage = ref("");
 
-const chatData = ref<DocumentData | null>(null);
-const messages = ref<Array<{ nickname: string; senderId: string; text: string; timestamp: number }>>([]);
+// const chatData = ref<DocumentData>({});
+const chatData = useDocument(() => props.chatId ? doc(db, "shopChats", props.selectedShopId, "chats", props.chatId) : null);
 
-const fetchChatData = async () => {
-	if (!props.chatId || !props.selectedShopId) return;
+// Computed property for chat messages
+const messages = computed(() => chatData.value?.messages || []);
 
-	const chatRef = doc(db, "shopChats", props.selectedShopId, "chats", props.chatId);
-	const chatSnap = await getDoc(chatRef);
-
-	if (chatSnap.exists()) {
-		chatData.value = chatSnap.data();
-		messages.value = chatData.value.messages || [];
-	}
-	else {
-		console.error("Chat document not found.");
-		messages.value = [];
-	}
-};
-
-watch(() => props.chatId, fetchChatData);
-
-onMounted(fetchChatData);
-
+// Send a new message
 const sendMessage = async () => {
-	if (!props.chatId || !newMessage.value.trim() || !currentUser?.uid) return;
+	if (!props.chatId) {
+		await createChat(props.selectedShopId);
+	}
+	if (!newMessage.value.trim() || !currentUser?.uid) return;
 
 	const message = {
-		nickname: currentUser.displayName || "Anonymous",
+		nickname: currentUser.displayName || "Unknown",
 		senderId: currentUser.uid,
 		text: newMessage.value.trim(),
-		timestamp: Date.now(),
+		timestamp: timestamp(),
 	};
 
-	await sendMessageToChat(props.chatId, props.selectedShopId, message);
-
-	// Added the message to the local state immediately for a better UX
-	messages.value.push(message);
+	if (props.chatId) {
+		await sendMessageToChat(props.chatId, props.selectedShopId, message);
+	}
 	newMessage.value = ""; // Clear the input field
 };
 

@@ -84,21 +84,23 @@
 
 <script setup lang="ts">
 import { format } from "date-fns";
-import type { get } from "firebase/database";
 import type { Timestamp } from "firebase-admin/firestore";
+import { collection } from "firebase/firestore";
 import { useCustomFirestore } from "@/composables/useChat";
 import { useShopsStore } from "@/stores/shops";
 import { useUserStore } from "@/stores/user";
 
 const shopsStore = useShopsStore();
 const userStore = useUserStore();
+const { db } = useCustomFirestore();
 
 const chatsInitiated = computed(() => userStore.user.chatsInitiated);
 
 // Composable to interact with Firestore
 const { getShopChats, getChatByChatId } = useCustomFirestore();
 
-const shopChats = ref<{ lastMessageNickname: string; lastMessageText: string; lastMessageTimestamp: number }[]>([]); // Holds chat summaries
+// const shopChats = ref<{ lastMessageNickname: string; lastMessageText: string; lastMessageTimestamp: number }[]>([]); // Holds chat summaries
+const shopChats = useCollection(() => shopsStore.userShop?._id ? collection(db, "shopChats", shopsStore.userShop._id, "chats") : null); // Holds all chats for user's shop
 const selectedShopId = ref(""); // Current shop ID
 const selectedChatId = ref(""); // Current chat ID
 const showChatBox = ref(false); // Controls visibility of ChatBox
@@ -108,19 +110,16 @@ const userChats = ref<{ chatId: string; shopOwner: string; customer: string; mes
 const fetchChatsInitiated = async () => {
 	try {
 		console.log("from messages page: Chats Initiated:", chatsInitiated.value);
-		const shopId = shopsStore.userShop?._id || ""; // Ensure the shop ID is retrieved
-		if (!shopId) {
-			console.error("No shop ID available");
-			return;
-		}
 
 		const chatPromises = chatsInitiated.value.map(chat =>
-			getChatByChatId(chat.chatFirebaseId, shopId),
+			getChatByChatId(chat.chatFirebaseId, chat.shopId),
 		);
 
 		const resolvedChats = await Promise.all(chatPromises);
+
+		console.log(resolvedChats);
 		userChats.value = resolvedChats
-			.filter((chat): chat is NonNullable<typeof chat> => chat !== null)
+			.filter((chat): chat is NonNullable<typeof chat> => chat !== null && chat.messages.length > 0)
 			.map(chat => ({
 				shopOwner: chat.shopOwner,
 				customer: chat.customer,
@@ -138,27 +137,6 @@ const fetchChatsInitiated = async () => {
 	}
 };
 
-// Fetch chats addressed for the shop owner
-const fetchShopChats = async () => {
-	try {
-		const shopId = shopsStore.userShop?._id || ""; // Ensure the shop ID is retrieved
-		if (!shopId) {
-			console.error("No shop ID available");
-			return;
-		}
-		console.log("from messages page: Shop ID:", shopId); // Debugging log
-		const chats = await getShopChats(shopId); // Fetch chats
-
-		shopChats.value = chats.map(chat => ({
-			...chat,
-			lastMessageTimestamp: chat.lastMessageTimestamp.getTime(),
-		})); // Assign fetched chats to the reactive variable
-		console.log("Shop Chats:", shopChats.value); // Debugging log
-	}
-	catch (error) {
-		console.error("Error fetching shop chats:", error);
-	}
-};
 // Format timestamp into a readable date
 const formatTimestamp = (timestamp) => {
 	return format(new Date(timestamp), "dd/MM/yyyy HH:mm");
@@ -187,7 +165,7 @@ const closeChatBox = () => {
 
 // Fetch chats on page load
 onMounted(async () => {
-	await fetchShopChats();
+	await until(() => shopsStore.userShop?._id).toBeTruthy(); // Wait until the shop ID is available
 	await fetchChatsInitiated();
 });
 </script>

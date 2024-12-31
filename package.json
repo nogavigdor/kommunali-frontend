@@ -19,6 +19,8 @@
     "@nuxt/ui": "^2.18.7",
     "@nuxtjs/algolia": "^1.10.2",
     "@nuxtjs/tailwindcss": "^6.12.2",
+    "@vueuse/core": "^12.2.0",
+    "@vueuse/nuxt": "^12.2.0",
     "algoliasearch": "^5.15.0",
     "date-fns": "^4.1.0",
     "firebase": "^10.0.0",

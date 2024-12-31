@@ -4,16 +4,13 @@ import { useUserStore } from "@/stores/user";
 import { useShopsStore } from "@/stores/shops";
 import type { IUser } from "@/types/user";
 
-const shopsStore = useShopsStore();
-
-const config = useRuntimeConfig();
-
-const userStore = useUserStore();
-const firebaseApp = useFirebaseApp();
-const db = getFirestore(firebaseApp);
-
 export function useCustomFirestore() {
+	const shopsStore = useShopsStore();
+	const config = useRuntimeConfig();
 	const currentUser = useCurrentUser();
+	const userStore = useUserStore();
+	const firebaseApp = useFirebaseApp();
+	const db = getFirestore(firebaseApp);
 
 	// create chat
 	const createChat = async (shopId: string) => {
@@ -28,8 +25,8 @@ export function useCustomFirestore() {
 			// in future app version we can create chat for a specific product
 			body: JSON.stringify({ shopId, productId: null }),
 		});
+
 		userStore.user = user;
-		return getChatId(shopId);
 	};
 	// Reactive binding for a single chat document
 	const getChatMessages = (chatId: string, shopId: string) => {
@@ -130,5 +127,6 @@ export function useCustomFirestore() {
 		getChatByChatId,
 		getShopChats,
 		sendMessageToChat,
+		db,
 	};
 }
