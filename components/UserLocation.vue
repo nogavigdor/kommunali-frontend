@@ -3,12 +3,10 @@
 		<form class="flex flex-row-reverse gap-x-4">
 			<input
 				id="address-input"
-				v-model="query"
 				type="text"
 				name="address"
 				placeholder="Please enter an address"
-				autocomplete="street-address"
-				@input.once="fetchSuggestions">
+				autocomplete="street-address">
 			<button
 				v-if="showMapButton"
 				class="btn-primary"
@@ -16,7 +14,7 @@
 				Find your community
 			</button>
 		</form>
-		<ul
+		<!-- ul
 			v-if="suggestions.length"
 			class="mt-2 border border-secondary-light rounded-md shadow bg-white max-h-40 overflow-y-auto">
 			<li
@@ -26,7 +24,7 @@
 				@click="selectAddress(suggestion)">
 				{{ suggestion }}
 			</li>
-		</ul>
+		</ul -->
 	</div>
 </template>
 
@@ -38,8 +36,8 @@ import { useShopsStore } from "@/stores/shops";
 defineEmits(["change-address"]);
 
 const config = useRuntimeConfig();
-const query = ref("");
-const suggestions = ref<string[]>([]);
+
+// const suggestions = ref<string[]>([]);
 const savedAddresses = ref<string[]>([]);
 const showMapButton = ref(false);
 const shopsStore = useShopsStore();
@@ -68,6 +66,7 @@ const autofillData = ref<AutofillData>({ features: [] });
 const isLoggedIn = ref(false);
 
 onMounted(async () => {
+	setUpAutoFill();
 	if (isLoggedIn.value) {
 		savedAddresses.value = shopsStore.shops.map(
 			(shop: IShop) => `${shop.address.street} ${shop.address.houseNumber}, ${shop.address.city}`,
@@ -85,7 +84,7 @@ const scrollToInput = () => {
 };
 
 // Fetch address suggestions from Mapbox
-const fetchSuggestions = () => {
+const setUpAutoFill = () => {
 	const autofillElement = new MapboxAddressAutofill();
 	autofillElement.accessToken = config.public.mapboxApiKey;
 	autofillElement.browserAutofillEnabled = false;
@@ -98,11 +97,6 @@ const fetchSuggestions = () => {
 		// Attach autofill functionality to the input
 		autofillElement.appendChild(inputElement);
 		formElement.appendChild(autofillElement);
-
-		// Listen for autofill events
-		inputElement.addEventListener("input", () => {
-			console.log("User is typing: ", inputElement.value);
-		});
 
 		autofillElement.addEventListener("retrieve", (event: Event) => {
 			console.log("Retrieve event");
@@ -118,13 +112,12 @@ const fetchSuggestions = () => {
 				country: autofillData.value.features[0].properties.country,
 			};
 
-			fullAddressLine.value = `${addressData.value.street} ${addressData.value.houseNumber},
-			 ${addressData.value.postalCode} ${addressData.value.city}`;
+			fullAddressLine.value = `${addressData.value.street} ${addressData.value.houseNumber}, `
+			+ `${addressData.value.postalCode} ${addressData.value.city}`;
 
 			setTimeout(() => {
 				(document.getElementById("address-input")! as HTMLInputElement).value = fullAddressLine.value;
 			}, 1);
-			query.value = fullAddressLine.value;
 
 			console.log("Selected Address Data: ", autofillData);
 			console.log("Full Address Line: ", fullAddressLine.value);

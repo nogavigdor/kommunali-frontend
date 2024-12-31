@@ -7,7 +7,7 @@
 				name="address"
 				placeholder="Please enter an address"
 				autocomplete="street-address"
-				@input.once="fetchSuggestions">
+				>
 			<!-- input
 				type="text"
 				name="houseNumber"
@@ -42,6 +42,7 @@ import type { IShop } from "@/types/shop";
 import { useShopsStore } from "@/stores/shops";
 import type { AutofillData } from "@/types/autofillData";
 import type { AddressData } from "@/types/addressData";
+import { set } from "date-fns";
 
 const emit = defineEmits(["change-address"]);
 
@@ -71,6 +72,7 @@ const autofillData = ref<AutofillData>({ features: [] });
 const isLoggedIn = ref(false);
 
 onMounted(async () => {
+	setUpAutoFill();
 	if (isLoggedIn.value) {
 		savedAddresses.value = shopsStore.shops.map(
 			(shop: IShop) => `${shop.address.street} ${shop.address.houseNumber}, ${shop.address.city}`,
@@ -79,7 +81,7 @@ onMounted(async () => {
 });
 
 // Fetch address suggestions from Mapbox
-const fetchSuggestions = () => {
+const setUpAutoFill = () => {
 	const autofillElement = new MapboxAddressAutofill();
 	autofillElement.accessToken = config.public.mapboxApiKey;
 	autofillElement.browserAutofillEnabled = false;
@@ -92,11 +94,6 @@ const fetchSuggestions = () => {
 		// Attach autofill functionality to the input
 		autofillElement.appendChild(inputElement);
 		formElement.appendChild(autofillElement);
-
-		// Listen for autofill events
-		inputElement.addEventListener("input", () => {
-			console.log("User is typing: ", inputElement.value);
-		});
 
 		autofillElement.addEventListener("retrieve", (event: Event) => {
 			console.log("Retrieve event");
@@ -113,8 +110,8 @@ const fetchSuggestions = () => {
 				coordinates: autofillData.value.features[0].geometry.coordinates,
 			};
 
-			fullAddressLine.value = `${addressData.value.street} ${addressData.value.houseNumber},
-			 ${addressData.value.postalCode} ${addressData.value.city}`;
+			fullAddressLine.value = `${addressData.value.street} ${addressData.value.houseNumber}, `
+			+ `${addressData.value.postalCode} ${addressData.value.city}`;
 
 			console.log("Selected Address Data: ", autofillData);
 			console.log("Full Address Line: ", fullAddressLine.value);
