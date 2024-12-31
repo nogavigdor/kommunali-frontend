@@ -38,24 +38,19 @@ export function useCustomFirestore() {
 	};
 
 	// Fetch all chats for the current user
-	const getChatByChatId = async (chatId: string) => {
+	const getChatByChatId = async (chatId: string, shopId: string) => {
 		try {
-			// Create a collection group query to search all "chats" subcollections
-			const chatsQuery = query(
-				collectionGroup(db, "chats"), // Query across all "chats" subcollections
-				where("__name__", "==", chatId), // Match the document ID with the chatId
-			);
+			// Construct the full document path
+			const chatPath = `shopChats/${shopId}/chats/${chatId}`;
+			const chatRef = doc(db, chatPath);
 
-			// Execute the query
-			const snapshot = await getDocs(chatsQuery);
-
-			if (snapshot.empty) {
+			// Fetch the document
+			const chatDoc = await getDoc(chatRef);
+			if (!chatDoc.exists()) {
 				console.log(`No chat found with ID: ${chatId}`);
 				return null;
 			}
 
-			// Extract data from the matched document
-			const chatDoc = snapshot.docs[0];
 			const chatData = chatDoc.data();
 			return {
 				chatId: chatDoc.id,

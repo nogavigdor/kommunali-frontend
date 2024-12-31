@@ -46,7 +46,7 @@
 		</p>
 		<!-- Chats I've initiated with other shops -->
 		<div
-			v-if="shopChats.length > 0"
+			v-if="userChats.length > 0"
 			class="mt-4 space-y-2">
 			<div
 				v-for="chat in userChats"
@@ -64,6 +64,12 @@
 					class="text-lg" />
 			</div>
 		</div>
+		<!-- No Chats -->
+		<p
+			v-else
+			class="text-gray-500 mt-4">
+			No chats initiated by you.
+		</p>
 
 		<!-- ChatBox -->
 		<ClientOnly>
@@ -101,9 +107,17 @@ const userChats = ref<{ chatId: string; shopOwner: string; customer: string; mes
 // fetch chats initiated by shop owner
 const fetchChatsInitiated = async () => {
 	try {
+		console.log("from messages page: Chats Initiated:", chatsInitiated.value);
+		const shopId = shopsStore.userShop?._id || ""; // Ensure the shop ID is retrieved
+		if (!shopId) {
+			console.error("No shop ID available");
+			return;
+		}
+
 		const chatPromises = chatsInitiated.value.map(chat =>
-			getChatByChatId(chat.chatFirebaseId),
+			getChatByChatId(chat.chatFirebaseId, shopId),
 		);
+
 		const resolvedChats = await Promise.all(chatPromises);
 		userChats.value = resolvedChats
 			.filter((chat): chat is NonNullable<typeof chat> => chat !== null)
@@ -172,8 +186,10 @@ const closeChatBox = () => {
 };
 
 // Fetch chats on page load
-onMounted(fetchShopChats);
-onMounted(fetchChatsInitiated);
+onMounted(async () => {
+	await fetchShopChats();
+	await fetchChatsInitiated();
+});
 </script>
 
   <style scoped>
