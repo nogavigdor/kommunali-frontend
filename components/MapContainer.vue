@@ -14,9 +14,9 @@
 		@close="
 			closeShopDetails" />
 	<div
-
 		v-show="!isHidden"
 		id="map"
+		style="width: 100%; min-height: 70vh;"
 		class="relative flex-grow h-full w-full" />
 </template>
 
@@ -88,9 +88,9 @@ watch(highlightedShops, (newShops) => {
 	}
 });
 console.log("The shops are:", shops);
-const config = useRuntimeConfig() as unknown as { public: { mapboxApiKey: string } };
+const config = useRuntimeConfig();
 
-const mapRef = ref<mapboxgl.Map | null>(null) as Ref<mapboxgl.Map | null>;
+const mapRef = ref<mapboxgl.Map | null>(null);
 
 // Watch for changes in userLocation and update the map center
 watch(userLocation, async (newLocation) => {
@@ -232,36 +232,39 @@ const updateShopsOnMap = async () => {
 	updateMarkers(shops.value as IShop[]);
 };
 
-// Initialize Mapbox on component mount
-onMounted(() => {
+// Initialize Mapbox
+const initializeMap = () => {
 	mapboxgl.accessToken = config.public.mapboxApiKey;
-	console.log("onMounted called - initializing map");
+	console.log("initializing map called");
+
+	if (mapRef.value) {
+		console.log("Map already initialized. Skipping...");
+		return;
+	}
 
 	// Initialize the map instance
-	if (!mapRef.value) {
-		console.log("Creating new Map instance");
-		mapRef.value = new mapboxgl.Map({
-			container: "map",
-			style: "mapbox://styles/mapbox/light-v11",
-			center: userLocation.value || userStore.user.lastCoordinates, // Default location
-			zoom: 12,
-			minZoom: 12, // Prevent zooming out too much (adjust to suit your needs)
-			maxZoom: 18, // Allow zooming in closely
-			maxBounds: [
-				[7.5, 54.5], // Southwest corner of Denmark
-				[15.5, 58], // Northeast corner of Denmark
-			],
-			trackResize: true,
-		});
+	console.log("Creating new Map instance");
+	mapRef.value = new mapboxgl.Map({
+		container: "map",
+		style: "mapbox://styles/mapbox/light-v11",
+		center: userLocation.value || userStore.user.lastCoordinates, // Default location
+		zoom: 12,
+		minZoom: 12, // Prevent zooming out too much (adjust to suit your needs)
+		maxZoom: 18, // Allow zooming in closely
+		maxBounds: [
+			[7.5, 54.5], // Southwest corner of Denmark
+			[15.5, 58], // Northeast corner of Denmark
+		],
+		trackResize: true,
+	});
 
-		// Call update markers after the map is loaded
-		mapRef.value.on("load", async () => {
-			await updateShopsOnMap();
-			setupMapListeners(); // Attach listeners for move/zoom
-			mapRef.value?.resize(); // Resize the map to fit the container
-		});
-	}
-});
+	// Call update markers after the map is loaded
+	mapRef.value.on("load", async () => {
+		await updateShopsOnMap();
+		setupMapListeners(); // Attach listeners for move/zoom
+		mapRef.value?.resize(); // Resize the map to fit the container
+	});
+};
 
 // add event listeners for map move/zoom events
 const setupMapListeners = () => {
@@ -289,6 +292,21 @@ const setupMapListeners = () => {
 		mapRef.value.on("zoom", updateShopDetailsPosition);
 	}
 };
+
+watch(() => props.isHidden, async (newIsHidden) => {
+	if (newIsHidden) {
+		return;
+	}
+	// Map is not hidden
+
+	if (!mapRef.value) {
+		await nextTick();
+		initializeMap();
+	}
+	else {
+		// mapRef.value.resize();
+	}
+});
 
 // Function to keep the ShopDetails window updated with marker position
 const updateShopDetailsPosition = () => {
