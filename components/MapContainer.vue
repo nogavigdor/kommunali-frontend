@@ -1,8 +1,7 @@
 <!-- MapContainer.vue -->
-<template
-	v-show="!isHidden">
+<template>
 	<SearchBarTypesense
-		v-show="isIndexPage"
+		v-show="isIndexPage && !isHidden"
 		class="position-search" />
 
 	<!-- Shop Details Overlay -->
