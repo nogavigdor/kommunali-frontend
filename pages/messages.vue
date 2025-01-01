@@ -12,9 +12,13 @@
 		<p>Manage your shop's message history below.</p>
 
 		<!-- My shop Chat List -->
+
 		<div
 			v-if="shopChats.length > 0"
 			class="mt-4 space-y-2">
+			<h2 class="text-lg font-semibold">
+				My shop chats:
+			</h2>
 			<div
 				v-for="chat in shopChats"
 				:key="chat.lastMessageTimestamp"
@@ -22,18 +26,14 @@
 				@click="selectChat(chat)">
 				<!-- Chat Summary -->
 				<div>
-					<p class="font-semibold">
-						{{ chat.lastMessageNickname }}
-					</p>
-					<p class="text-sm text-gray-500 truncate">
-						{{ chat.lastMessageText }}
-					</p>
-					<p class="text-xs text-gray-400">
-						{{ formatTimestamp(chat.lastMessageTimestamp) }}
-					</p>
+					Last updated: {{ chat.messages[0].timestamp }}
 				</div>
+				<div>
+					Chat with: {{ chat.customerNickname }}
+				</div>
+
 				<Icon
-					name="uil:angle-right"
+					name="iul:angle-right"
 					class="text-lg" />
 			</div>
 		</div>
@@ -48,6 +48,9 @@
 		<div
 			v-if="userChats.length > 0"
 			class="mt-4 space-y-2">
+			<h2 class="text-lg font-semibold">
+				My chats with other shops:
+			</h2>
 			<div
 				v-for="chat in userChats"
 				:key="chat.message.timestamp"
@@ -56,7 +59,10 @@
 				<!-- Chat Summary -->
 				<div>
 					<p class="font-semibold">
-						{{ chat.message.nickname }}
+						Me: {{ Date(chat.message.timestamp) }}
+					</p>
+					<p class="font-semibold">
+						Shop owner: {{ chat.shopOwnerNickname }}
 					</p>
 				</div>
 				<Icon
@@ -97,37 +103,41 @@ const { db } = useCustomFirestore();
 const chatsInitiated = computed(() => userStore.user.chatsInitiated);
 
 // Composable to interact with Firestore
-const { getShopChats, getChatByChatId } = useCustomFirestore();
+const { getChatByChatId } = useCustomFirestore();
 
-// const shopChats = ref<{ lastMessageNickname: string; lastMessageText: string; lastMessageTimestamp: number }[]>([]); // Holds chat summaries
-const shopChats = useCollection(() => shopsStore.userShop?._id ? collection(db, "shopChats", shopsStore.userShop._id, "chats") : null); // Holds all chats for user's shop
+const myShopId = computed(() => shopsStore.userShop?._id);
 const selectedShopId = ref(""); // Current shop ID
 const selectedChatId = ref(""); // Current chat ID
 const showChatBox = ref(false); // Controls visibility of ChatBox
-const userChats = ref<{ chatId: string; shopOwner: string; customer: string; message: { text: string; nickname: string; senderId: string; timestamp: number }; timestamp: Timestamp }[]>([]); // Holds chats initiated by the user
+// will contain chats initiated by with other shops of other users
+const userChats = ref<{ chatId: string; shopOwnerNickname: string; customerNickname: string; message: { text: string; nickname: string; senderId: string; timestamp: timestamp } }[]>([]); // Holds chats initiated by the user
+// will contain all the chats that that other users have initiated with the user's shop
+const shopChats = useCollection(() => myShopId.value ? collection(db, "shopChats", myShopId.value, "chats") : null); // Holds all chats for user's shop
 
 // fetch chats initiated by shop owner
 const fetchChatsInitiated = async () => {
 	try {
 		console.log("from messages page: Chats Initiated:", chatsInitiated.value);
 
+		// create the chatPromises array
 		const chatPromises = chatsInitiated.value.map(chat =>
 			getChatByChatId(chat.chatFirebaseId, chat.shopId),
 		);
 
+		// resolve all the promises
 		const resolvedChats = await Promise.all(chatPromises);
 
 		console.log(resolvedChats);
 		userChats.value = resolvedChats
-			.filter((chat): chat is NonNullable<typeof chat> => chat !== null && chat.messages.length > 0)
+			.filter(chat => chat !== null && chat.messages.length > 0)
 			.map(chat => ({
-				shopOwner: chat.shopOwner,
-				customer: chat.customer,
+				shopOwnerNickname: chat.shopOwnerNickname,
+				customerNickname: chat.customerNickname,
 				message: {
-					text: chat.messages[0].text,
-					nickname: chat.messages[0].nickname,
-					senderId: chat.messages[0].senderId,
-					timestamp: chat.messages[0].timestamp,
+					text: chat.messages[chat.messages.length - 1].text,
+					nickname: chat.messages[chat.messages.length - 1].nickname,
+					senderId: chat.messages[chat.messages.length - 1].senderId,
+					timestamp: chat.messages[chat.messages.length - 1].timestamp,
 				},
 				timestamp: chat.messages[0].timestamp,
 			}));
