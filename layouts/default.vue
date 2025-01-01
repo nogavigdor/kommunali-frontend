@@ -143,10 +143,21 @@ onMounted(() => {
 			try {
 				const userResponse: IUser = await userStore.getUser(firebaseUserId.value);
 				user.value = userResponse;
-				userLocation.value = userResponse.lastCoordinates;
-				showMap.value = true;
+				if (userResponse.lastCoordinates[0] !== 0 && userResponse.lastCoordinates[1] !== 0) {
+					userLocation.value = userResponse.lastCoordinates;
+				}
 
 				userStore.updateShopData(userResponse);
+				if (!userLocation.value || (userLocation.value[0] == 0 && userLocation.value[1] == 0)) {
+					useRouter().push("/");
+				}
+				else {
+					showMap.value = true;
+				}
+
+				if ((userResponse.stores ?? []).length > 0) {
+					showMap.value = true;
+				}
 			}
 			catch (error) {
 				console.error("Error fetching user after refresh:", error);
