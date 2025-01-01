@@ -35,7 +35,8 @@
 				v-model="newMessage"
 				type="text"
 				placeholder="Type a message..."
-				class="form-input flex-1">
+				class="form-input flex-1"
+				@keydown.enter.prevent="sendMessage">
 			<button
 				class="btn-accent ml-3 px-4 py-2 rounded-lg shadow-medium"
 				:disabled="!newMessage.trim()"
