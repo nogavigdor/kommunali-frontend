@@ -1,5 +1,6 @@
 <!-- MapContainer.vue -->
-<template>
+<template
+	v-show="!isHidden">
 	<SearchBarTypesense
 		v-show="isIndexPage"
 		class="position-search" />
@@ -31,7 +32,7 @@ import { useRouter } from "vue-router";
 
 // import markerImage from "@/assets/images/marker-image.png";
 
-defineProps({
+const props = defineProps({
 	isHidden: Boolean,
 });
 
@@ -86,7 +87,6 @@ watch(highlightedShops, (newShops) => {
 		updateMarkers(shops.value); // Update the map markers whenever `highlightedShops` changes
 	}
 });
-
 console.log("The shops are:", shops);
 const config = useRuntimeConfig() as unknown as { public: { mapboxApiKey: string } };
 
@@ -243,7 +243,7 @@ onMounted(() => {
 		mapRef.value = new mapboxgl.Map({
 			container: "map",
 			style: "mapbox://styles/mapbox/light-v11",
-			center: userLocation.value || [12.568337, 55.676098], // Default location
+			center: userLocation.value || userStore.user.lastCoordinates, // Default location
 			zoom: 12,
 			minZoom: 12, // Prevent zooming out too much (adjust to suit your needs)
 			maxZoom: 18, // Allow zooming in closely
@@ -265,6 +265,7 @@ onMounted(() => {
 
 // add event listeners for map move/zoom events
 const setupMapListeners = () => {
+	if (props.isHidden) return;
 	if (mapRef.value) {
 		// Attach event listeners to update the shops when the map is moved or zoomed
 		mapRef.value?.on("moveend", async () => {
@@ -274,7 +275,8 @@ const setupMapListeners = () => {
 			// Update the user's last known coordinates if they are logged in
 			if (userLoggedIn.value)
 				console.log("Updating user last coordinates:", lng, lat);
-			userStore.updateUser({ lastCoordinates: [lng, lat] });
+			if (props.isHidden !== true)
+				userStore.updateUser({ lastCoordinates: [lng, lat] });
 		});
 
 		mapRef.value?.on("zoomend", async () => {
