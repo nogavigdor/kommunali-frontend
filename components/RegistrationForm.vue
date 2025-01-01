@@ -176,7 +176,7 @@ async function onSubmit(event: FormSubmitEvent<typeof state>) {
 		const user = userStore.user;
 
 		// Trigger success feedback after successfull registration  and redirect to login page
-		feedbackStore.setFeedback(`Congratulations ${user.nickname}`, "success");
+		feedbackStore.setFeedback(`Congratulations, ${user.nickname}! You have successfully registered. Please login.`, "success");
 		router.push("/login");
 	}
 	catch (error) {
