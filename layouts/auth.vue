@@ -1,5 +1,6 @@
 <template>
 	<div class="auth-layout">
+		<FeedbackMessage />
 		<NuxtPage />
 		<button @click="goToHome">
 			Go to Homepage
