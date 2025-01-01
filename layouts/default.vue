@@ -88,9 +88,6 @@ provide("isMobile", isMobile);
 const showUserLocation = ref(true);
 
 const userLocationRef = ref(null);
-const mapRef = ref<MapContainerInstance | null>(null); // Add reference to Map component
-
-const showPage = ref(true);
 
 // Detect if the view is on mobile
 const detectMobile = () => {
@@ -112,7 +109,6 @@ const changeAddressHandler = (mapboxAddressObject) => {
 	userStore.userLocation = mapboxAddressObject.features[0].geometry.coordinates;
 	console.log("The user location is:", userStore.userLocation);
 	showMap.value = true; // Trigger the map to be displayed
-	showPage.value = false; // Hide the homepage content
 };
 
 // Watch the route to determine if it's the homepage or another page
@@ -123,13 +119,11 @@ watch(
 		if (isMobile.value && newPath !== "/") {
 			showMap.value = false;
 			showUserLocation.value = false;
-			showPage.value = true;
 			isSliding.value = true;
 		}
 		else {
 			showMap.value = true; // Show the map if on homepage
 			showUserLocation.value = true; // Show the user location if on homepage
-			showPage.value = true; // Hide the homepage content if on another page
 		}
 	},
 );
@@ -151,13 +145,16 @@ onMounted(() => {
 				if (!userLocation.value || (userLocation.value[0] == 0 && userLocation.value[1] == 0)) {
 					useRouter().push("/");
 				}
-				else {
+				else if (isMobile.value && route.path === "/") {
+					showMap.value = true;
+				}
+				else if (!isMobile.value) {
 					showMap.value = true;
 				}
 
-				if ((userResponse.stores ?? []).length > 0) {
-					showMap.value = true;
-				}
+				// if ((userResponse.stores ?? []).length > 0) {
+				//	showMap.value = true;
+				// }
 			}
 			catch (error) {
 				console.error("Error fetching user after refresh:", error);
