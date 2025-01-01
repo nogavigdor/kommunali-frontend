@@ -4,7 +4,7 @@
 		<!-- Header -->
 		<div class="flex items-center justify-between border-b pb-3 mb-3 border-brandGray-200">
 			<h3 class="text-brandPrimary-500 font-heading text-lg">
-				Chat with {{ "Unknown" }}
+				Chat with
 			</h3>
 			<button
 				class="text-brandGray-500 hover:text-error-dark transition"
@@ -67,6 +67,10 @@ const { createChat, sendMessageToChat } = useCustomFirestore();
 const { value: currentUser } = useCurrentUser(); // Reactive current user
 
 const newMessage = ref("");
+
+// const incommingChat = computed
+// const displayName = computed(() => {
+// }
 
 // const chatData = ref<DocumentData>({});
 const chatData = useDocument(() => props.chatId ? doc(db, "shopChats", props.selectedShopId, "chats", props.chatId) : null);
