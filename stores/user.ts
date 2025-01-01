@@ -63,7 +63,12 @@ export const useUserStore = defineStore("user", () => {
 				isAdmin.value = true;
 			}
 			user.value = userResponse;
+			console.log("last coordinates of the logged in user:", userResponse.lastCoordinates);
+			if (userResponse.lastCoordinates && userResponse.lastCoordinates[0] !== 0 && userResponse.lastCoordinates[1] !== 0) {
+				userLocation.value = userResponse.lastCoordinates;
+			}
 			userLocation.value = userResponse.lastCoordinates;
+			console.log("user location right after the user log ins", userLocation.value);
 			updateShopData(userResponse);
 		}
 		catch (error) {
