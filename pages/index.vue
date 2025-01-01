@@ -38,7 +38,25 @@ definePageMeta({
 
 const userStore = useUserStore();
 
-const showPage = computed(() => userStore.userLocation.every(value => value === 0));
+// const showPage = computed(() => userStore.userLocation.every(value => value === 0));
+
+const showPage = ref(true);
+
+//
+watch (() => userStore.userLocation, () => {
+	if (userStore.userLocation.every(value => value === 0)) {
+		showPage.value = true;
+		console.log("message from index page");
+		console.log("user location is", userStore.userLocation);
+		console.log("show page is", showPage.value);
+	}
+	else {
+		console.log("message from index page");
+		console.log("user location is", userStore.userLocation);
+		console.log("show page is", showPage.value);
+		showPage.value = false;
+	}
+});
 
 const scrollToLocationInput = () => {
 	const appComponent = document.getElementById("app");
@@ -54,7 +72,7 @@ const scrollToLocationInput = () => {
   @keyframes slide-in-down {
 	from {
 	  transform: translateY(-100%);
-	  opacity: 0;
+	opacity: 0;
 	}
 	to {
 	  transform: translateY(0);
