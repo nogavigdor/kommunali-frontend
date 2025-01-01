@@ -20,6 +20,7 @@
 			<!-- Right Side - Account Icon -->
 			<div class="relative">
 				<button @click="toggleAccountMenu">
+					{{ userStore.user?.nickname }}
 					<Icon
 						name="uil:user"
 						class="text-2xl" />
