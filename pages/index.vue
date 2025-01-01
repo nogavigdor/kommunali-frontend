@@ -38,11 +38,12 @@ definePageMeta({
 
 const userStore = useUserStore();
 
-// const showPage = computed(() => userStore.userLocation.every(value => value === 0));
+const showPage = computed(() => userStore.userLocation.every(value => value === 0));
 
-const showPage = ref(true);
+// const showPage = ref(true);
 
 //
+/*
 watch (() => userStore.userLocation, () => {
 	if (userStore.userLocation.every(value => value === 0)) {
 		showPage.value = true;
@@ -56,7 +57,7 @@ watch (() => userStore.userLocation, () => {
 		console.log("show page is", showPage.value);
 		showPage.value = false;
 	}
-});
+}); */
 
 const scrollToLocationInput = () => {
 	const appComponent = document.getElementById("app");
