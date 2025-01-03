@@ -49,21 +49,27 @@
   }
 
   .link:hover {
-    @apply text-secondary;
+    @apply text-secondary-light;
   }
 
   .link.active {
-    @apply text-secondary-dark font-bold;
+    @apply text-secondary-light font-bold;
   }
 
   /* Menu Link Styles */
   .menu-link {
-    @apply text-white font-medium hover:text-secondary active:text-secondary-dark;
+    @apply text-white font-medium hover:text-secondary-light active:text-secondary-light;
   }
 
   .menu-link.active {
-    @apply text-secondary-dark font-bold;
+    @apply text-secondary-light font-bold;
   }
+
+  .link2 {
+    @apply text-neutral-dark font-light hover:text-secondary-dark active:text-secondary-dark;
+  }
+
+
 
   /* Footer Link Styles */
   .footer-link {
