@@ -2,14 +2,14 @@
 	<UTooltip :text="tooltipText">
 		<NuxtLink
 			:to="link"
-			class=" hover:text-green-700"
+			class=" link2 "
 			aria-label="Back to Home Page">
 			<Icon
 				:name="'uil:' + icon"
 				class="
 				text-4xl
 				font-bold
-				hover:text-green-700" />
+			" />
 		</NuxtLink>
 	</UTooltip>
 </template>
