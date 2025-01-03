@@ -1,10 +1,14 @@
 <template>
-	<div class="flex gap-4">
+	<div class="flex gap-5 ml-12">
 		<NuxtLink
 			v-for="link in links"
 			:key="link.label"
 			:to="link.to"
-			class="text-white hover:text-gray-300">
+			class="menu-link"
+			active:
+			$route.path="=="
+			link.to
+			:class="{ active: $route.path === link.to }">
 			<UIcon
 				:name="link.icon"
 				class="inline-block mr-2" />
@@ -15,10 +19,10 @@
 
 <script setup lang="ts">
 const links = [
-	{ label: "Home", icon: "i-heroicons-home", to: "/" },
-	{ label: "Messages", icon: "i-heroicons-envelope", to: "/messages" },
-	{ label: "Wishlist", icon: "i-heroicons-wishlist", to: "/wishlist" },
-	{ label: "Requests", icon: "i-heroicons-clipboard-list", to: "/requests" },
-	{ label: "Shop", icon: "i-heroicons-shop", to: "/shop" },
+	{ label: "Home", icon: "uil:home", to: "/" },
+	{ label: "Messages", icon: "uil:envelope", to: "/messages" },
+	{ label: "Wishlist", icon: "uil:heart", to: "/wishlist" },
+	{ label: "Requests", icon: "uil:gift", to: "/requests" },
+	{ label: "My Shop", icon: "uil:shop", to: "/shop" },
 ];
 </script>
