@@ -79,6 +79,17 @@ export default {
           DEFAULT: "#FFB74D", // Default orange for alert messages
           dark: "#F57C00" // Darker orange for emphasis
         },
+        link: {
+          color: "#7B1FA2", // Links in brandPrimary deep purple
+          "&:hover": {
+            color: "#EC407A", // Hover state in bright magenta
+          },
+        },
+        text: {
+          DEFAULT: "#424242", // Default color for body text
+          light: "#757575", // Lighter color for secondary text
+          dark: "#212121", // Darker color for headings
+        },
       },
       
       spacing: {
@@ -116,6 +127,19 @@ export default {
     },
   },
   plugins: [
+    function ({ addComponents }) {
+      addComponents({
+        ".link": {
+          color: "#7B1FA2", // Default color
+          "&:hover": {
+            color: "#FFEB3B", // Use yellow for hover
+          },
+          "&.active": {
+            color: "#FBC02D", // Darker yellow for active
+          },
+        },
+      });
+    },
     require("@tailwindcss/typography"),
     require("@tailwindcss/forms"),
   ],
