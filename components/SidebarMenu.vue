@@ -2,9 +2,10 @@
 <template>
 	<UVerticalNavigation
 		:links="links"
-		class="absolute z-10 bg-secondary min-h-screen w-72 p-12 ">
-		<template #default="{ link }">
-			<span class="group-hover:text-primary relative">{{ link.label }}</span>
+		class="absolute z-10 bg-secondary min-h-screen w-72 p-12 pt-20 ">
+		<template
+			#default="{ link }">
+			<span class="group-hover:text-primary relative md:text-2xl">{{ link.label }}</span>
 		</template>
 	</UVerticalNavigation>
 </template>
