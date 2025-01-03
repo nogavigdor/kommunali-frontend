@@ -1,5 +1,5 @@
 <template>
-	<div class="relative flex items-center gap-3 p-3 bg-neutral-light rounded-lg shadow-soft">
+	<div class="relative flex items-center gap-3 p-3 bg-secondary-light rounded-lg shadow-soft">
 		<button
 			class="relative btn-primary flex items-center justify-center"
 			aria-label="Toggle search bar"
