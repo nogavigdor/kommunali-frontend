@@ -2,7 +2,7 @@
 <template>
 	<UHorizontalNavigation
 		:links="links"
-		class="border-b border-gray-200 dark:border-gray-800" />
+		class="fixed flex justify-center gap-12 bottom-0 bg-secondary border-b border-t border-gray-700 dark:border-gray-800 nav-label" />
 </template>
 
 <script setup lang="ts">
@@ -14,27 +14,27 @@ const userHasShop = computed(() => userStore.hasShop);
 const links = computed(() =>
 	[
 		{
-			label: "Home",
-			icon: "i-heroicons-home",
+		//	label: "Home",
+			icon: "uil:home",
 			to: "/",
 		},
 		{
-			label: "Messages",
-			icon: "i-heroicons-envelope",
+		//	label: "Messages",
+			icon: "uil:envelope",
 			to: "/messages",
 		}, {
-			label: "wishlist",
-			icon: "i-heroicons-wishlist",
+		//	label: "Wishlist",
+			icon: "uil:heart",
 			to: "/wishlist",
 		}, {
-			label: "requests",
-			icon: "i-heroicons-clipboard-list",
+		//		label: "Requests",
+			icon: "uil-gift",
 			to: "/requests",
 		},
 
 		{
 			label: userHasShop.value ? "My Shop" : "Add Shop",
-			icon: userHasShop.value ? "i-heroicons-circle" : "i-heroicons-plus-circle",
+			icon: userHasShop.value ? "uil:shop" : "uil:plus-circle",
 			to: "/shop",
 		},
 
