@@ -51,6 +51,8 @@ import { useUserStore } from "@/stores/user";
 import { useShopsStore } from "@/stores/shops";
 import type { IUser } from "@/types/user"; // Add reference to UserLocation component
 
+const userStore = useUserStore();
+const { user, userLocation, loggedIn, firebaseUserId, hasShop, shopIds } = storeToRefs(userStore);
 const isSliding = ref(false);
 
 const menuOpen = ref(false);
@@ -102,8 +104,18 @@ const goTo = (path) => {
 	router.push(path);
 };
 
-const userStore = useUserStore();
-const { user, userLocation, loggedIn, firebaseUserId, hasShop, shopIds } = storeToRefs(userStore);
+// Watch the user location and show the map if the user has a location
+watch(userLocation, (newLocation) => {
+	if (newLocation[0] !== 0 && newLocation[1] !== 0) {
+		showMap.value = true;
+	}
+	// if the user location is 0,0 and the user is not on the homepage, hide the map
+	// and navigate to the homepage
+	else {
+		showMap.value = false;
+	}
+});
+
 const changeAddressHandler = (mapboxAddressObject) => {
 	console.log("The selected address is:", mapboxAddressObject);
 	userStore.userLocation = mapboxAddressObject.features[0].geometry.coordinates;
@@ -121,9 +133,13 @@ watch(
 			showUserLocation.value = false;
 			isSliding.value = true;
 		}
-		else {
+		else if (!isMobile.value && userLocation.value[0] !== 0 && userLocation.value[1] !== 0) {
 			showMap.value = true; // Show the map if on homepage
 			showUserLocation.value = true; // Show the user location if on homepage
+		}
+		else {
+			showMap.value = false;
+			showUserLocation.value = true;
 		}
 	},
 );
@@ -139,17 +155,6 @@ onMounted(() => {
 				user.value = userResponse;
 				if (userResponse.lastCoordinates[0] !== 0 && userResponse.lastCoordinates[1] !== 0) {
 					userLocation.value = userResponse.lastCoordinates;
-				}
-
-				userStore.updateShopData(userResponse);
-				if (!userLocation.value || (userLocation.value[0] == 0 && userLocation.value[1] == 0)) {
-					useRouter().push("/");
-				}
-				else if (isMobile.value && route.path === "/") {
-					showMap.value = true;
-				}
-				else if (!isMobile.value) {
-					showMap.value = true;
 				}
 
 				// if ((userResponse.stores ?? []).length > 0) {
