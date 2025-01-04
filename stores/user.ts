@@ -57,23 +57,33 @@ export const useUserStore = defineStore("user", () => {
 			await setPersistence(auth, browserLocalPersistence);
 			const response = await signInWithEmailAndPassword(auth, credentials.email, credentials.password);
 			firebaseUserId.value = response.user.uid;
+			console.log("firebaseUserId:", firebaseUserId.value);
 			// get the user from mongodb according to the firebaseUserId
 			const userResponse: IUser = await getUser(firebaseUserId.value);
-			if (userResponse.role === UserRole.ADMIN) {
-				isAdmin.value = true;
-			}
-			user.value = userResponse;
-			console.log("last coordinates of the logged in user:", userResponse.lastCoordinates);
-			if (userResponse.lastCoordinates && userResponse.lastCoordinates[0] !== 0 && userResponse.lastCoordinates[1] !== 0) {
-				userLocation.value = userResponse.lastCoordinates;
-			}
-			userLocation.value = userResponse.lastCoordinates;
-			console.log("user location right after the user log ins", userLocation.value);
-			updateShopData(userResponse);
+			loadUser(userResponse);
 		}
 		catch (error) {
 			console.error("Error logging in user:", error);
 			throw error;
+		}
+	}
+
+	function loadUser(userResponse: IUser) {
+		if (userResponse.role === UserRole.ADMIN) {
+			isAdmin.value = true;
+		}
+		console.log("userResponse:", userResponse);
+		user.value = userResponse;
+		console.log("last coordinates of the logged in user:", userResponse.lastCoordinates);
+		if (userResponse.lastCoordinates && userResponse.lastCoordinates[0] !== 0 && userResponse.lastCoordinates[1] !== 0) {
+			userLocation.value = userResponse.lastCoordinates;
+		}
+		userLocation.value = userResponse.lastCoordinates;
+		console.log("user location right after the user log ins", userLocation.value);
+		updateShopData(userResponse);
+		if (shopsStore.userShop) {
+			console.log("user shop location:", shopsStore.userShop.location.coordinates);
+			userLocation.value = shopsStore.userShop.location.coordinates;
 		}
 	}
 
@@ -184,5 +194,6 @@ export const useUserStore = defineStore("user", () => {
 		isAdmin,
 		shopIds,
 		updateShopData,
+		loadUser,
 	};
 });
