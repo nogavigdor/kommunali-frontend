@@ -52,8 +52,11 @@ export function useCustomFirestore() {
 			return {
 				chatId: chatDoc.id,
 				customer: chatData.customer || "Unknown",
+				customerNickname: chatData.customerNickname || "Unknown",
 				shopOwner: chatData.shopOwner || "Unknown",
+				shopOwnerNickname: chatData.shopOwnerNickname || "Unknown",
 				messages: chatData.messages || [],
+				shopId,
 			};
 		}
 		catch (error) {
