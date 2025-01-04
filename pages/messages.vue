@@ -23,7 +23,7 @@
 				v-for="chat in shopChats"
 				:key="chat.lastMessageTimestamp"
 				class="flex items-center justify-between p-4 rounded-lg bg-neutral-light shadow-soft hover:bg-neutral-dark hover:text-white transition-all cursor-pointer"
-				@click="selectChat(chat)">
+				@click="selectChat(myShopId!, chat.id)">
 				<!-- Chat Summary -->
 				<div>
 					Last updated: {{ chat.messages[0].timestamp }}
@@ -46,29 +46,17 @@
 		</p>
 		<!-- Chats I've initiated with other shops -->
 		<div
-			v-if="userChats.length > 0"
+			v-if="chatsInitiated.length > 0"
 			class="mt-4 space-y-2">
 			<h2 class="text-lg font-semibold">
 				My chats with other shops:
 			</h2>
-			<div
-				v-for="chat in userChats"
-				:key="chat.message.timestamp"
-				class="flex items-center justify-between p-4 rounded-lg bg-neutral-light shadow-soft hover:bg-neutral-dark hover:text-white transition-all cursor-pointer"
-				@click="selectChat(chat)">
-				<!-- Chat Summary -->
-				<div>
-					<p class="font-semibold">
-						Me: {{ Date(chat.message.timestamp) }}
-					</p>
-					<p class="font-semibold">
-						Shop owner: {{ chat.shopOwnerNickname }}
-					</p>
-				</div>
-				<Icon
-					name="uil:angle-right"
-					class="text-lg" />
-			</div>
+			<InitiatedChatRow
+				v-for="chat in chatsInitiated"
+				:key="chat.chatFirebaseId"
+				:chat-id="chat.chatFirebaseId"
+				:shop-id="chat.shopId"
+				@click="selectChat(chat.shopId, chat.chatFirebaseId)" />
 		</div>
 		<!-- No Chats -->
 		<p
@@ -110,9 +98,11 @@ const selectedShopId = ref(""); // Current shop ID
 const selectedChatId = ref(""); // Current chat ID
 const showChatBox = ref(false); // Controls visibility of ChatBox
 // will contain chats initiated by with other shops of other users
-const userChats = ref<{ chatId: string; shopOwnerNickname: string; customerNickname: string; message: { text: string; nickname: string; senderId: string; timestamp: timestamp } }[]>([]); // Holds chats initiated by the user
+// const userChats = ref<{ chatId: string; shopOwnerNickname: string; customerNickname: string; message: { text: string; nickname: string; senderId: string; timestamp: timestamp } }[]>([]); // Holds chats initiated by the user
 // will contain all the chats that that other users have initiated with the user's shop
 const shopChats = useCollection(() => myShopId.value ? collection(db, "shopChats", myShopId.value, "chats") : null); // Holds all chats for user's shop
+
+const userChats = ref<any>([]);
 
 // fetch chats initiated by shop owner
 const fetchChatsInitiated = async () => {
@@ -125,10 +115,10 @@ const fetchChatsInitiated = async () => {
 		);
 
 		// resolve all the promises
-		const resolvedChats = await Promise.all(chatPromises);
+		userChats.value = await Promise.all(chatPromises);
 
-		console.log(resolvedChats);
-		userChats.value = resolvedChats
+		// console.log(resolvedChats);
+		/* userChats.value = resolvedChats
 			.filter(chat => chat !== null && chat.messages.length > 0)
 			.map(chat => ({
 				shopOwnerNickname: chat.shopOwnerNickname,
@@ -140,7 +130,7 @@ const fetchChatsInitiated = async () => {
 					timestamp: chat.messages[chat.messages.length - 1].timestamp,
 				},
 				timestamp: chat.messages[0].timestamp,
-			}));
+			})); */
 	}
 	catch (error) {
 		console.error("Error fetching initiated chats:", error);
@@ -152,25 +142,18 @@ const formatTimestamp = (timestamp) => {
 	return format(new Date(timestamp), "dd/MM/yyyy HH:mm");
 };
 
-// Select a chat and open ChatBox
-interface Chat {
-	lastMessageNickname: string;
-	lastMessageText: string;
-	lastMessageTimestamp: number;
-	shopId: string;
-	chatFirebaseId: string;
-}
-
-const selectChat = (chat: Chat) => {
-	console.log("Selected Chat:", chat); // Debugging log
-	selectedShopId.value = shopsStore.userShop?._id || "";
-	selectedChatId.value = chat.chatFirebaseId;
+const selectChat = (shopId: string, chatId: string) => {
+	console.log("Selected Chat:", chatId); // Debugging log
+	selectedShopId.value = shopId;
+	selectedChatId.value = chatId;
 	showChatBox.value = true;
 };
 
 // Close the ChatBox
 const closeChatBox = () => {
 	showChatBox.value = false;
+	selectedShopId.value = "";
+	selectedChatId.value = "";
 };
 
 // Fetch chats on page load
