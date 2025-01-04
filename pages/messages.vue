@@ -26,14 +26,17 @@
 				@click="selectChat(myShopId!, chat.id)">
 				<!-- Chat Summary -->
 				<div>
-					Last updated: {{ chat.messages[0].timestamp }}
+					Chat with: {{ chat.customerNickname }}
 				</div>
 				<div>
-					Chat with: {{ chat.customerNickname }}
+					Last message: {{ chat.messages[chat.messages.length-1].text }}
+				</div>
+				<div>
+					Last updated: {{ formatTimestamp(chat.messages[chat.messages.length-1].timestamp) }}
 				</div>
 
 				<Icon
-					name="iul:angle-right"
+					name="uil:angle-right"
 					class="text-lg" />
 			</div>
 		</div>
@@ -78,8 +81,7 @@
 
 <script setup lang="ts">
 import { format } from "date-fns";
-import type { Timestamp } from "firebase-admin/firestore";
-import { collection } from "firebase/firestore";
+import { collection, Timestamp } from "firebase/firestore";
 import { useCustomFirestore } from "@/composables/useChat";
 import { useShopsStore } from "@/stores/shops";
 import { useUserStore } from "@/stores/user";
@@ -137,9 +139,19 @@ const fetchChatsInitiated = async () => {
 	}
 };
 
-// Format timestamp into a readable date
-const formatTimestamp = (timestamp) => {
-	return format(new Date(timestamp), "dd/MM/yyyy HH:mm");
+// Format timestamp into a readable date and time (HH:mm - dd/MM/yyyy)
+// Ensure the timestamp is properly handled and converted to a Date
+const formatTimestamp = (timestamp?: any) => {
+	if (!timestamp) return "Invalid date"; // If timestamp is missing
+	if (timestamp instanceof Timestamp) {
+		return format(timestamp.toDate(), "HH:mm - dd/MM/yyyy");
+	}
+	if (typeof timestamp === "number" || typeof timestamp === "string") {
+		const date = new Date(timestamp);
+		if (isNaN(date.getTime())) return "Invalid date"; // Ensure valid date conversion
+		return format(date, "HH:mm - dd/MM/yyyy");
+	}
+	return "Invalid date";
 };
 
 const selectChat = (shopId: string, chatId: string) => {
