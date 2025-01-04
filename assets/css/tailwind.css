@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-
   h1,
   h2,
   h3,
@@ -69,8 +68,6 @@
     @apply text-neutral-dark font-light hover:text-secondary-dark active:text-secondary-dark;
   }
 
-
-
   /* Footer Link Styles */
   .footer-link {
     @apply text-neutral-dark font-light hover:text-secondary active:text-secondary-dark;
@@ -84,6 +81,10 @@
   /* text size for mobile nav labels */
   .nav-label {
     @apply text-[12px];
+  }
+
+  .dark-mode {
+    @apply bg-white text-text-dark;
   }
 }
 
