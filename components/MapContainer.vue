@@ -95,6 +95,10 @@ const mapRef = ref<mapboxgl.Map | null>(null);
 watch(userLocation, async (newLocation) => {
 	console.log("userLocation watcher");
 	console.log("New user location:", newLocation);
+	if (newLocation.every(value => value === 0)) {
+		console.log("User location is 0,0. Skipping...");
+		return;
+	}
 	if (mapRef.value) {
 		mapRef.value.setCenter(newLocation);
 		console.log("userLocation updated, fetching new shops");
