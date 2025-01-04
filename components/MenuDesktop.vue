@@ -5,9 +5,6 @@
 			:key="link.label"
 			:to="link.to"
 			class="menu-link"
-			active:
-			$route.path="=="
-			link.to
 			:class="{ active: $route.path === link.to }">
 			<UIcon
 				:name="link.icon"
