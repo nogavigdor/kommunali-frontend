@@ -25,11 +25,13 @@
 		<!-- Floating Animated Decorative Elements -->
 		<div class="absolute -bottom-10 -left-10 w-72 h-72 bg-accent-light opacity-30 rounded-full z-0 animate-float" />
 		<div class="absolute top-10 right-20 w-48 h-48 bg-secondary-light opacity-40 rounded-full z-0 animate-float delay-1500" />
+		<TheFooter />
 	</div>
 </template>
 
 <script lang="ts" setup>
 import { useUserStore } from "@/stores/user";
+import TheFooter from "~/components/TheFooter.vue";
 
 definePageMeta({
 	title: "home",
