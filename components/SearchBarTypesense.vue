@@ -49,7 +49,7 @@ import Typesense from "typesense";
 import { useShopsStore } from "@/stores/shops";
 
 const config = useRuntimeConfig();
-const shopStore = useShopsStore();
+const shopsStore = useShopsStore();
 
 // Configure the Typesense client
 const typesenseClient = new Typesense.Client({
@@ -79,6 +79,7 @@ async function searchProducts() {
 			q: searchQuery.value,
 			query_by: "name,description",
 			sort_by: "createdAt:desc",
+			filter_by: `storeId:!=${shopsStore.userShop._id}`,
 		});
 		searchResults.value = response.hits.map(hit => hit.document);
 	}
@@ -90,7 +91,7 @@ async function searchProducts() {
 
 function highlightShops(items) {
 	const highlightedShopIds = [...new Set(items.map(item => item.storeId))];
-	shopStore.setHighlightedShops(highlightedShopIds);
+	shopsStore.setHighlightedShops(highlightedShopIds);
 	console.log("Highlighted shops:", highlightedShopIds);
 }
 </script>
