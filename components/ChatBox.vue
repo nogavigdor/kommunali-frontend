@@ -4,7 +4,7 @@
 		<!-- Header -->
 		<div class="flex items-center justify-between border-b pb-3 mb-3 border-brandGray-200">
 			<h3 class="text-brandPrimary-500 font-heading text-lg">
-				Chat with
+				Chat with {{ incomingChat ? chatData?.customerNickname : chatData?.shopOwnerNickname }}
 			</h3>
 			<button
 				class="text-brandGray-500 hover:text-error-dark transition"
@@ -52,6 +52,7 @@ import { useCurrentUser, useFirebaseApp, useDocument } from "vuefire";
 import { doc, getFirestore } from "firebase/firestore";
 import { timestamp } from "@vueuse/core";
 import { useCustomFirestore } from "../composables/useChat";
+import { useShopsStore } from "@/stores/shops";
 
 const props = defineProps<{
 	selectedShopId: string;
@@ -59,6 +60,8 @@ const props = defineProps<{
 }>();
 
 defineEmits(["closeChat"]);
+
+const shopsStore = useShopsStore();
 
 const firebaseApp = useFirebaseApp();
 const db = getFirestore(firebaseApp);
@@ -68,7 +71,10 @@ const { value: currentUser } = useCurrentUser(); // Reactive current user
 
 const newMessage = ref("");
 
-// const incommingChat = computed
+// if the selected shop is not the user's shop, then it is an incoming chat
+const incomingChat = computed(() => {
+	return props.selectedShopId === shopsStore.userShop?._id;
+});
 // const displayName = computed(() => {
 // }
 
