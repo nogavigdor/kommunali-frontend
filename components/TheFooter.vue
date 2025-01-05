@@ -1,12 +1,12 @@
 <template>
-	<footer class="bg-brandPrimary-500 text-white py-8">
-		<div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+	<footer class="fixed bottom-0 w-full bg-brandPrimary-500 text-white py-8">
+		<div class="mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
 			<!-- Logo and Address Section -->
 			<div class="text-center md:text-left mb-4 md:mb-0">
 				<h1 class="text-xl font-heading">
 					Kommunali
 				</h1>
-				<p class="mt-2 text-text">
+				<p class="mt-2 text-brandGray-100">
 					Kløvervej 35, 4.th, 6000 Kolding
 				</p>
 			</div>
@@ -45,7 +45,7 @@
 			<!-- Navigation Links Section -->
 			<nav class="flex flex-wrap justify-center space-x-4 text-center md:text-right">
 				<NuxtLink
-					to="/"
+					to="#"
 					class="hover:text-secondary">
 					Home
 				</NuxtLink>
@@ -69,7 +69,7 @@
 
 		<!-- Bottom Bar -->
 		<div class="text-center text-sm mt-6 border-t border-brandGray-700 pt-4">
-			<p class="text-text">
+			<p class="text-brandGray-100">
 				&copy; {{ new Date().getFullYear() }} Kommunali. All Rights Reserved.
 			</p>
 		</div>
