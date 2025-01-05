@@ -1,10 +1,10 @@
 <template>
-	<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-brandPrimary-500 to-brandPrimary-800 text-white py-12 px-6 lg:px-8">
-		<div class="max-w-md w-full bg-white text-gray-900 rounded-lg shadow-lg p-8 space-y-6">
+	<div class="">
+		<div class="max-w-md w-full bg-secondary-light text-gray-900 rounded-lg shadow-lg p-4 space-y-12">
 			<h2 class="text-center text-3xl font-extrabold">
 				Create Your Account
 			</h2>
-			<p class="text-center text-sm text-gray-600">
+			<p class="text-center text-xl text-gray-900">
 				Do you already have an account?
 				<a
 					class="font-medium text-brandPrimary-500 hover:text-brandPrimary-700 cursor-pointer"
@@ -72,7 +72,7 @@
 				<div class="pt-4">
 					<UButton
 						type="submit"
-						class="btn-primary w-full">
+						class="flex justify-center text-xl btn-primary w-full">
 						Register
 					</UButton>
 				</div>
