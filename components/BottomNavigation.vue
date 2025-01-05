@@ -9,34 +9,36 @@
 import { useUserStore } from "@/stores/user";
 
 const userStore = useUserStore();
-const userHasShop = computed(() => userStore.hasShop);
 
-const links = computed(() =>
-	[
+// Define `links` with reactivity in mind
+const links = computed(() => {
+	return [
 		{
-		//	label: "Home",
-			icon: "uil:home",
-			to: "/",
-		},
-		{
-		//	label: "Messages",
-			icon: "uil:envelope",
-			to: "/messages",
-		}, {
-		//	label: "Wishlist",
-			icon: "uil:heart",
-			to: "/wishlist",
-		}, {
-		//		label: "Requests",
-			icon: "uil-gift",
-			to: "/requests",
-		},
-
-		{
-			label: userHasShop.value ? "My Shop" : "Add Shop",
-			icon: userHasShop.value ? "uil:shop" : "uil:plus-circle",
+			label: userStore.hasShop ? "My Shop" : "Add Shop",
+			icon: userStore.hasShop ? "uil:shop" : "uil:plus-circle",
 			to: "/shop",
 		},
-
-	]);
+		// Show other links only when the user is logged in
+		...(userStore.loggedIn
+			? [
+					{
+						icon: "uil:home",
+						to: "/",
+					},
+					{
+						icon: "uil:envelope",
+						to: "/messages",
+					},
+					{
+						icon: "uil:heart",
+						to: "/wishlist",
+					},
+					{
+						icon: "uil:gift",
+						to: "/requests",
+					},
+			  ]
+			: []), // Empty array if not logged in
+	];
+});
 </script>
