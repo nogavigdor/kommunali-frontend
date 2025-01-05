@@ -3,6 +3,7 @@
 		<!-- Top Navbar -->
 		<TopNavBar
 			:open="menuOpen"
+			@navbar-height="updateNavbarHeight"
 			@toggle-menu="toggleMenu" />
 		<!-- @highlight-shops="mapRef?.value?.highlightMarkers && mapRef.value.highlightMarkers()" / -->
 
@@ -27,7 +28,37 @@
 				@change-address="changeAddressHandler" />
 		</client-only>
 		<!-- Sliding Page Content -->
-		<NuxtPage />
+		<!-- Page Content and Tip Section -->
+		<div
+			class="flex-grow flex transition-all duration-500"
+			:style="{ paddingTop: navbarHeight }">
+			<!-- Main Page Content (50% Width) -->
+			<div class="w-1/2 flex-grow">
+				<NuxtPage />
+			</div>
+
+			<!-- Tip Section (Conditional) -->
+
+			<!-- Tip Section (More Prominent with Blinking Arrow) -->
+			<transition
+				name="fade-slide"
+				mode="out-in">
+				<div
+					v-if="!isMobile && !showMap && route.path !== '/'"
+					class="w-1/2 flex flex-col justify-center items-center bg-accent-dark text-black relative p-12 border-l-4 border-secondary-dark">
+					<!-- Tip Box with Enlarged Text -->
+					<div class="tip-box relative p-10 bg-white rounded-2xl shadow-2xl border-2 border-secondary text-center">
+						<i class="fas fa-lightbulb text-6xl text-yellow-400 animate-bounce mb-6" />
+						<p class="text-2xl font-bold text-secondary-dark">
+							💡 Tip for this page:
+						</p>
+						<p class="mt-4 text-xl font-semibold text-gray-700 leading-relaxed">
+							{{ pageTip }}
+						</p>
+					</div>
+				</div>
+			</transition>
+		</div>
 		<!-- Map Container -->
 		<MapContainer
 			ref="map"
@@ -54,12 +85,13 @@ import type { IUser } from "@/types/user"; // Add reference to UserLocation comp
 const userStore = useUserStore();
 const { user, userLocation, loggedIn, firebaseUserId, hasShop, shopIds } = storeToRefs(userStore);
 const isSliding = ref(false);
+const pageTip = ref("");
 
 const menuOpen = ref(false);
 const toggleMenu = () => {
 	menuOpen.value = !menuOpen.value;
 };
-
+const navbarHeight = ref("0px");
 const shopsStore = useShopsStore();
 
 const { shops } = storeToRefs(shopsStore);
@@ -143,6 +175,51 @@ watch(
 		}
 	},
 );
+
+// Captures emitted navbar height
+const updateNavbarHeight = (height: string) => {
+	navbarHeight.value = height;
+};
+
+// Dynamically set page-specific tips
+const updatePageTip = () => {
+	switch (route.path) {
+		case "/about":
+			pageTip.value = "Discover our mission to promote sustainability and community connection.";
+			break;
+		case "/shop":
+			pageTip.value = "Click on 'Add Shop', Choose your shop title, add a short description, and most importantly, enter your shop location. Once you're done, you'll be able to see your shop - marked as a red house on the map - and start adding products.!";
+			break;
+		case "/faq":
+			pageTip.value = "Check out our FAQ for help with using Kommunali. If you don't find what you need, feel free to contact us!";
+			break;
+		case "/messages":
+			pageTip.value = "Here you can see all the messages from other users who have visited your shop, as well as all the messages that you have sent to other shop owners.";
+			break;
+		case "/wishlist":
+			pageTip.value = "This page is under construction. Stay tuned for updates!";
+			break;
+		case "/requests":
+			pageTip.value = "This page is under construction. Stay tuned for updates!";
+			break;
+		case "/profile":
+			pageTip.value = "This page is under construction. Stay tuned for updates!";
+			break;
+		default:
+			pageTip.value = "Explore second-hand treasures while staying connected with your community!";
+	}
+};
+
+// Watch for route changes and update the tip accordingly
+watch(
+	() => route.path,
+	() => {
+		updatePageTip();
+	},
+);
+
+// Initialize the tip on component mount
+updatePageTip();
 onMounted(() => {
 	// check if user still is logged in firbase authentication and update the user store accordingly
 	onAuthStateChanged(auth, async (firebaseUser) => {
@@ -180,5 +257,54 @@ onMounted(() => {
 }
 .page-enter-from, .page-leave-to {
 	transform: translateX(-100%);
+}
+
+/* Fade Slide Animation */
+.fade-slide-enter-active, .fade-slide-leave-active {
+    transition: all 0.5s ease-in-out;
+}
+.fade-slide-enter-from, .fade-slide-leave-to {
+    opacity: 0;
+    transform: translateX(100%);
+}
+.fade-slide-enter-to, .fade-slide-leave-from {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Blinking Arrow Animation */
+.blinking-arrow {
+    animation: blinkArrow 1.2s ease-in-out infinite;
+}
+@keyframes blinkArrow {
+    0%, 100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    50% {
+        opacity: 0.5;
+        transform: translateX(-10px);
+    }
+}
+
+/* Lightbulb Bounce Effect */
+.animate-bounce {
+    animation: bounce 1.5s infinite;
+}
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Tip Box Styling */
+.tip-box {
+    max-width: 500px;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 </style>
