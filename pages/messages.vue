@@ -13,33 +13,39 @@
 
 		<!-- My shop Chat List -->
 
-		<div
+		<section
 			v-if="shopChats.length > 0"
 			class="mt-4 space-y-2">
 			<h2 class="text-lg font-semibold">
 				My shop chats:
 			</h2>
+			<div class="grid grid-cols-[1fr_2fr_2fr_0.5fr] font-bold p-3 bg-gray-200 rounded-lg border-b border-gray-300">
+				<p>Chat with</p>
+				<p>Last Message</p>
+				<p>Last Updated</p>
+				<p />
+			</div>
 			<div
 				v-for="chat in shopChats"
 				:key="chat.lastMessageTimestamp"
-				class="flex items-center justify-between p-4 rounded-lg bg-neutral-light shadow-soft hover:bg-neutral-dark hover:text-white transition-all cursor-pointer"
+				class="grid grid-cols-[1fr_2fr_2fr_0.5fr] items-center p-4 rounded-lg bg-neutral-light shadow-soft border-b border-gray-300 hover:bg-neutral-dark hover:text-white transition-all cursor-pointer"
 				@click="selectChat(myShopId!, chat.id)">
 				<!-- Chat Summary -->
 				<div>
-					Chat with: {{ chat.customerNickname }}
+					{{ chat.customerNickname }}
 				</div>
 				<div>
-					Last message: {{ chat.messages[chat.messages.length-1].text }}
+					{{ chat.messages[chat.messages.length-1].text }}
 				</div>
 				<div>
-					Last updated: {{ formatTimestamp(chat.messages[chat.messages.length-1].timestamp) }}
+					{{ formatTimestamp(chat.messages[chat.messages.length-1].timestamp) }}
 				</div>
 
 				<Icon
 					name="uil:angle-right"
 					class="text-lg" />
 			</div>
-		</div>
+		</section>
 
 		<!-- No Chats -->
 		<p
@@ -48,19 +54,27 @@
 			No chats available.
 		</p>
 		<!-- Chats I've initiated with other shops -->
-		<div
+		<section
 			v-if="chatsInitiated.length > 0"
-			class="mt-4 space-y-2">
+			class="mt-8 space-y-4">
 			<h2 class="text-lg font-semibold">
 				My chats with other shops:
 			</h2>
+			<!-- Table Headers for Initiated Chats -->
+			<div class="grid grid-cols-4 font-bold p-2 bg-gray-200 rounded-lg">
+				<p>Chat with</p>
+				<p>Last Message</p>
+				<p>Last Updated</p>
+				<p />
+			</div>
 			<InitiatedChatRow
 				v-for="chat in chatsInitiated"
 				:key="chat.chatFirebaseId"
 				:chat-id="chat.chatFirebaseId"
 				:shop-id="chat.shopId"
+				class="grid grid-cols-4 items-center p-4 rounded-lg bg-neutral-light shadow-soft hover:bg-neutral-dark hover:text-white transition-all cursor-pointer"
 				@click="selectChat(chat.shopId, chat.chatFirebaseId)" />
-		</div>
+		</section>
 		<!-- No Chats -->
 		<p
 			v-else
@@ -179,4 +193,22 @@ onMounted(async () => {
   .cursor-pointer {
 	cursor: pointer;
   }
+
+  .grid-cols-[1fr_2fr_2fr_0.5fr] {
+	display: grid;
+	grid-template-columns: 1fr 2fr 2fr 0.5fr;
+	gap: 1rem;
+}
+
+/* Prevent text overflow while still allowing it to be visible on hover */
+.truncate {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	max-width: 100%;
+}
+
+p {
+	margin: 0;
+}
   </style>

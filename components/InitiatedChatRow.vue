@@ -1,16 +1,20 @@
 <template>
 	<div
-		class="flex items-center justify-between p-4 rounded-lg bg-neutral-light shadow-soft hover:bg-neutral-dark hover:text-white transition-all cursor-pointer"
+		class="grid grid-cols_1fr_2fr_2fr_0_5fr items-center p-4 rounded-lg bg-neutral-light shadow-soft border-b border-gray-300 hover:bg-neutral-dark hover:text-white transition-all cursor-pointer"
 		@click="$emit('click')">
 		<!-- Chat Summary -->
-		<p class="font-semibold">
-			Shop owner: {{ chatDoc?.shopOwnerNickname }}
-		</p>
-		<p class="font-semibold">
-			Last message {{ chatDoc?.messages[chatDoc.messages.length - 1].text }}
-		</p>
+		<div class="truncate">
+			<p>
+				{{ chatDoc?.shopOwnerNickname }}
+			</p>
+		</div>
+		<div class="truncate">
+			<p>
+				{{ chatDoc?.messages[chatDoc.messages.length - 1].text }}
+			</p>
+		</div>
 		<div>
-			<p class="font-semibold">
+			<p>
 				{{ formatTimestamp(chatDoc?.messages[chatDoc.messages.length - 1].timestamp) }}
 			</p>
 		</div>
@@ -46,3 +50,22 @@ const formatTimestamp = (timestamp?: any) => {
 	return "Invalid date";
 };
 </script>
+
+<style scoped>
+/* Grid Structure for Consistency */
+.grid-cols_1fr_2fr_2fr_0_5fr {
+	display: grid;
+	grid-template-columns: 1fr 2fr 2fr 0.5fr;
+	gap: 1rem;
+}
+
+/* Handle Long Text */
+.truncate {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+p {
+	margin: 0;
+}
+</style>
