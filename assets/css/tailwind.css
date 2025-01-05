@@ -89,6 +89,6 @@
 }
 
 .page-transition {
-  @apply p-6 lg:min-h-screen bg-white w-full lg:absolute lg:z-50 lg:left-0 lg:w-1/2;
+  @apply p-6 lg:min-h-screen bg-white w-full lg:absolute lg:z-20 lg:left-0 lg:w-1/2;
   min-height: 85vh;
 }
