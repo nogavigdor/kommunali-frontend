@@ -16,7 +16,7 @@
 		v-show="!isHidden"
 		id="map"
 		style="width: 100%; min-height: 70vh;"
-		class="relative flex-grow h-full w-full" />
+		class="relative flex-grow w-full" />
 </template>
 
 <script setup lang="ts">
