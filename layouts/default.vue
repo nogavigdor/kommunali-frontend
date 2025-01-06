@@ -3,7 +3,6 @@
 		<!-- Top Navbar -->
 		<TopNavBar
 			:open="menuOpen"
-			@navbar-height="updateNavbarHeight"
 			@toggle-menu="toggleMenu" />
 		<!-- @highlight-shops="mapRef?.value?.highlightMarkers && mapRef.value.highlightMarkers()" / -->
 
@@ -30,10 +29,9 @@
 		<!-- Sliding Page Content -->
 		<!-- Page Content and Tip Section -->
 		<div
-			class="flex-grow flex transition-all duration-500"
-			:style="{ paddingTop: navbarHeight }">
+			class="flex transition-all duration-500">
 			<!-- Main Page Content (50% Width) -->
-			<div class="w-1/2 flex-grow">
+			<div class="flex-grow">
 				<NuxtPage />
 			</div>
 
@@ -67,6 +65,7 @@
 		<!-- Bottom Navigation -->
 		<BottomNavigation
 			v-if="isMobile"
+			:fixed="!showMap"
 			@go-to="goTo" />
 	</div>
 </template>
@@ -91,7 +90,7 @@ const menuOpen = ref(false);
 const toggleMenu = () => {
 	menuOpen.value = !menuOpen.value;
 };
-const navbarHeight = ref("0px");
+
 const shopsStore = useShopsStore();
 
 const { shops } = storeToRefs(shopsStore);
@@ -165,7 +164,7 @@ watch(
 			showUserLocation.value = false;
 			isSliding.value = true;
 		}
-		else if (!isMobile.value && userLocation.value[0] !== 0 && userLocation.value[1] !== 0) {
+		else if (userLocation.value[0] !== 0 && userLocation.value[1] !== 0) {
 			showMap.value = true; // Show the map if on homepage
 			showUserLocation.value = true; // Show the user location if on homepage
 		}
@@ -175,11 +174,6 @@ watch(
 		}
 	},
 );
-
-// Captures emitted navbar height
-const updateNavbarHeight = (height: string) => {
-	navbarHeight.value = height;
-};
 
 // Dynamically set page-specific tips
 const updatePageTip = () => {
