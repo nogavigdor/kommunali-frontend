@@ -188,7 +188,7 @@ const updatePageTip = () => {
 			pageTip.value = "Discover our mission to promote sustainability and community connection.";
 			break;
 		case "/shop":
-			pageTip.value = "Click on 'Add Shop', Choose your shop title, add a short description, and most importantly, enter your shop location. Once you're done, you'll be able to see your shop - marked as a red house on the map - and start adding products.!";
+			pageTip.value = "Click on 'Add Shop', Choose your shop title, add a short description, and most importantly, enter your shop location. Once you're done, you'll be able to see your shop - marked as a red house on the map. You are welcome to start adding products!";
 			break;
 		case "/faq":
 			pageTip.value = "Check out our FAQ for help with using Kommunali. If you don't find what you need, feel free to contact us!";
