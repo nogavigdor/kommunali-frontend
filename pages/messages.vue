@@ -95,7 +95,7 @@
 
 <script setup lang="ts">
 import { format } from "date-fns";
-import { collection, Timestamp } from "firebase/firestore";
+import { collection, query, where, Timestamp } from "firebase/firestore";
 import { useCustomFirestore } from "@/composables/useChat";
 import { useShopsStore } from "@/stores/shops";
 import { useUserStore } from "@/stores/user";
@@ -116,7 +116,7 @@ const showChatBox = ref(false); // Controls visibility of ChatBox
 // will contain chats initiated by with other shops of other users
 // const userChats = ref<{ chatId: string; shopOwnerNickname: string; customerNickname: string; message: { text: string; nickname: string; senderId: string; timestamp: timestamp } }[]>([]); // Holds chats initiated by the user
 // will contain all the chats that that other users have initiated with the user's shop
-const shopChats = useCollection(() => myShopId.value ? collection(db, "shopChats", myShopId.value, "chats") : null); // Holds all chats for user's shop
+const shopChats = useCollection(() => myShopId.value ? query(collection(db, "shopChats", myShopId.value, "chats"), where("shopOwner", "==", userStore.firebaseUserId)) : null); // Holds all chats for user's shop
 
 const userChats = ref<any>([]);
 
