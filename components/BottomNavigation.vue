@@ -2,7 +2,9 @@
 <template>
 	<UHorizontalNavigation
 		:links="links"
-		class="fixed flex justify-center gap-12 bottom-0 bg-secondary border-b border-t border-gray-700 dark:border-gray-800 nav-label" />
+		:class="{ fixed }"
+		:ui="{ container: 'gap-6' }"
+		class="flex justify-center bottom-0 bg-secondary border-b border-t border-gray-700 dark:border-gray-800 nav-label" />
 </template>
 
 <script setup lang="ts">
@@ -10,14 +12,14 @@ import { useUserStore } from "@/stores/user";
 
 const userStore = useUserStore();
 
+defineProps<{
+	fixed?: boolean;
+}>();
+
 // Define `links` with reactivity in mind
 const links = computed(() => {
 	return [
-		{
-			label: userStore.hasShop ? "My Shop" : "Add Shop",
-			icon: userStore.hasShop ? "uil:shop" : "uil:plus-circle",
-			to: "/shop",
-		},
+
 		// Show other links only when the user is logged in
 		...(userStore.loggedIn
 			? [
@@ -37,8 +39,12 @@ const links = computed(() => {
 						icon: "uil:gift",
 						to: "/requests",
 					},
-			  ]
+				]
 			: []), // Empty array if not logged in
+		{
+			icon: userStore.hasShop ? "uil:shop" : "uil:plus-circle",
+			to: "/shop",
+		},
 	];
 });
 </script>
