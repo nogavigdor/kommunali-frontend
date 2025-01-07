@@ -6,8 +6,7 @@
 				type="text"
 				name="address"
 				placeholder="Please enter an address"
-				autocomplete="street-address"
-				>
+				autocomplete="street-address">
 			<!-- input
 				type="text"
 				name="houseNumber"
@@ -29,7 +28,7 @@
 			<button
 				v-if="!autoEmit && showMapButton"
 				class="btn-primary"
-				@click.prevent="$emit('change-address', addressData)">
+				@click.prevent="handleAddressUpdate">
 				Update Address
 			</button>
 		</form>
@@ -38,11 +37,11 @@
 
 <script setup lang="ts">
 import { MapboxAddressAutofill } from "@mapbox/search-js-web";
+import { set } from "date-fns";
 import type { IShop } from "@/types/shop";
 import { useShopsStore } from "@/stores/shops";
 import type { AutofillData } from "@/types/autofillData";
 import type { AddressData } from "@/types/addressData";
-import { set } from "date-fns";
 
 const emit = defineEmits(["change-address"]);
 
@@ -115,13 +114,30 @@ const setUpAutoFill = () => {
 
 			console.log("Selected Address Data: ", autofillData);
 			console.log("Full Address Line: ", fullAddressLine.value);
+			// when this component is integrated within the NewShop component
+			// the autoEmit props is defined as true and therefore the address is emitted
+			// if its within the ShopEdit context, the address is not emitted
 			if (props.autoEmit) {
 				emit("change-address", addressData.value);
 			}
+			// will occur when the in ShopEdit context
+			// when we want to address to be updated on button click
 			else {
 				showMapButton.value = true;
 			}
 		});
+	}
+};
+// Emit the address data to the parent component
+const handleAddressUpdate = () => {
+	try {
+		emit("change-address", addressData.value);
+		showMapButton.value = false; // Only set to false if no errors occur
+		console.log("Address successfully emitted!");
+	}
+	catch (error) {
+		console.error("Failed to emit address:", error);
+		alert("An error occurred while updating the address. Please try again.");
 	}
 };
 </script>
