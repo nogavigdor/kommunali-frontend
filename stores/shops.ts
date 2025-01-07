@@ -142,6 +142,7 @@ export const useShopsStore = defineStore("shops", () => {
 			const index = shops.value.findIndex(shop => shop._id === (response as IShop)._id);
 			shops.value[index] = response as IShop;
 			userShop.value = response as IShop;
+			useUserStore().userLocation = userShop.value?.location.coordinates;
 		}
 		catch (error) {
 			console.error("Failed to update shop:", error);
