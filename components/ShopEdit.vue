@@ -24,30 +24,17 @@
 					@update-field="updateShopField" />
 			</div>
 			<client-only>
-				<ShopAddressEdit @change-address="prepareAddressUpdate" />
+				<ShopAddressEdit
+					v-show="showShopAddressEdit"
+					@change-address="prepareAddressUpdate" />
 			</client-only>
 			<div>
 				<label><strong>Address:</strong></label>
-				<EditField
-					field-type="text"
-					:field-value="userShop?.address.street"
-					field-name="address.street"
-					@update-field="updateShopField" />
-				<EditField
-					field-type="text"
-					:field-value="userShop?.address.houseNumber"
-					field-name="address.houseNumber"
-					@update-field="updateShopField" />
-				<EditField
-					field-type="text"
-					:field-value="userShop?.address.city"
-					field-name="address.city"
-					@update-field="updateShopField" />
-				<EditField
-					field-type="text"
-					:field-value="userShop?.address.postalCode"
-					field-name="address.postalCode"
-					@update-field="updateShopField" />
+				<p>{{ userShop?.address.street }}, {{ userShop?.address.houseNumber }}, {{ userShop?.address.postalCode }} {{ userShop?.address.city }}</p>
+				<Icon
+					class="text-xl cursor-pointer"
+					name="uil:pen"
+					@click="showShopAddressEdit = !showShopAddressEdit" />
 			</div>
 		</div>
 	</div>
@@ -62,6 +49,7 @@ import type { IShop } from "~/types/shop";
 
 const shopsStore = useShopsStore();
 const userShop = computed(() => shopsStore.userShop);
+const showShopAddressEdit = ref(false);
 
 const prepareAddressUpdate = async (addressData: AddressData) => {
 	try {
@@ -99,6 +87,7 @@ async function updateShopField({ fieldName, fieldValue }: { fieldName: keyof ISh
 		try {
 			await shopsStore.updateShop(updatedData);
 			console.log("Shop updated successfully");
+			showShopAddressEdit.value = false;
 		}
 		catch (error) {
 			console.error("Error updating shop:", error);
@@ -108,5 +97,5 @@ async function updateShopField({ fieldName, fieldValue }: { fieldName: keyof ISh
 </script>
 
   <style scoped>
-    /* Add any required styles here */
+
   </style>
