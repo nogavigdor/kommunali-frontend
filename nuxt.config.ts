@@ -97,6 +97,7 @@ export default defineNuxtConfig({
 		},
 		auth: {
 			enabled: true,
+			sessionCookie: true,
 		},
 	},
 });
