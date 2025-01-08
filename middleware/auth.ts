@@ -4,10 +4,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 	const userStore = useUserStore();
 	const user = await getCurrentUser();
 
-	// uncommented since cant user the loggedIn value since userStore state are not
-	// yet updated with the loggedIn value
-	// const userStore = useUserStore();
-
 	// If the user is not logged in and the route requires user authentication,
 	// redirect to the login page
 	if (!user && to.meta.requiresUserAuth) {
