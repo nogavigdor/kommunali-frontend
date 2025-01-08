@@ -3,7 +3,9 @@
 	<UModal
 		v-model="showAddModal"
 		title="Edit Product">
-		<form @submit.prevent="addProduct">
+		<form
+			class="p-8"
+			@submit.prevent="addProduct">
 			<Icon
 				name="uil:times"
 				class="absolute top-2 right-2 cursor-pointer"
