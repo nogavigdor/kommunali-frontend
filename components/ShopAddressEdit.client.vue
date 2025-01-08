@@ -114,6 +114,9 @@ const setUpAutoFill = () => {
 
 			console.log("Selected Address Data: ", autofillData);
 			console.log("Full Address Line: ", fullAddressLine.value);
+			setTimeout(() => {
+				inputElement.value = fullAddressLine.value;
+			}, 1);
 			// when this component is integrated within the NewShop component
 			// the autoEmit props is defined as true and therefore the address is emitted
 			// if its within the ShopEdit context, the address is not emitted
