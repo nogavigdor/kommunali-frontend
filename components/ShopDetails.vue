@@ -83,7 +83,9 @@ import "swiper/swiper-bundle.css"; // Import Swiper styles;
 import { useUserStore } from "@/stores/user";
 import { useShopsStore } from "@/stores/shops";
 import type { IShop } from "@/types/shop";
+import { useFeedbackStore } from "@/stores/feedback";
 
+const feedbackStore = useFeedbackStore();
 const userStore = useUserStore();
 const shopsStore = useShopsStore();
 
@@ -115,6 +117,10 @@ const chatId = computed(() => {
 const showChat = ref(false);
 
 const openChat = (chatId: string) => {
+	if (!userStore.loggedIn) {
+		feedbackStore.setFeedback("Please login in order to contact a shop owner", "alert");
+		return;
+	}
 	showChat.value = !showChat.value;
 	currentChatId.value = chatId;
 
