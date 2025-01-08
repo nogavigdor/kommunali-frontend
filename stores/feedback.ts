@@ -10,6 +10,11 @@ export const useFeedbackStore = defineStore("feedback", () => {
 
 	function setFeedback(message: string, type: FeedbackType) {
 		feedback.value = { message, type };
+
+		// Clear feedback after 5 seconds
+		setTimeout(() => {
+			feedback.value = null;
+		}, 5000);
 	}
 
 	function clearFeedback() {

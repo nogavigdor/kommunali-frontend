@@ -6,20 +6,20 @@
 		<div class="flex items-center gap-3">
 			<!-- Feedback Icon -->
 			<Icon
-				:class="['w-6 h-6', iconClass]"
+				:class="['w-10 h-10', iconClass]"
 				:name="iconName" />
-			<span class="text-sm font-medium">
+			<span class="text-2xl font-medium">
 				{{ currentFeedback?.message }}
 			</span>
 		</div>
 		<!-- Dismiss Button -->
 		<button
-			class="text-brandGray-600 hover:text-brandGray-800 transition duration-200"
+			class="text-brandGray-800 hover:text-brandGray-800 transition duration-200"
 			aria-label="Dismiss Feedback"
 			@click="clearFeedback">
 			<Icon
-				name="uil:times"
-				class="w-5 h-5" />
+				name="uil:times-circle"
+				class="w-10 h-10 text-brandPrimary-950" />
 		</button>
 	</div>
 </template>
@@ -36,12 +36,12 @@ const currentFeedback = computed(() => feedbackStore.currentFeedback);
 const feedbackClass = computed(() => {
 	switch (currentFeedback.value?.type) {
 		case "success":
-			return "bg-success-dark text-success-light border-l-4 border-success";
+			return "bg-success-dark text-brandGray-800 border-l-4 border-success";
 		case "alert":
-			return "bg-alert-dark text-alert-light border-l-4 border-alert";
+			return "bg-alert-light text-text-dark border-l-4 border-alert";
 		case "error":
 		default:
-			return "bg-error-dark text-error-light border-l-4 border-error";
+			return "bg-error-dark text-brandGray-100 border-l-4 border-error";
 	}
 });
 
