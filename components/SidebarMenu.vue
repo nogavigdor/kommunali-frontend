@@ -36,7 +36,7 @@ const profile = {
 };
 
 const faq = {
-	label: "faq",
+	label: "FAQ",
 	icon: "i-heroicons-help-circle",
 	to: "/faq",
 	click,
