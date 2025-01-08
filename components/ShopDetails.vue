@@ -1,7 +1,7 @@
 <!-- ShopDetails.vue -->
 <template>
 	<div
-		class="absolute bottom-0 left-0 w-96 h-96 bg-white p-4 shadow-medium rounded-2xl z-20"
+		class="absolute bottom-0 w-96 shop-height bg-white p-4 shadow-medium rounded-2xl z-20"
 		:style="style">
 		<div class="flex items-center justify-between">
 			<h2 class="text-2xl font-heading text-brandPrimary-700">
@@ -164,5 +164,9 @@ const isEditable = computed(() => {
     .overflow-x-auto {
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch; /* Enables smooth scrolling on iOS devices */
+}
+
+.shop-height {
+	  height: 430px;
 }
   </style>
