@@ -23,8 +23,8 @@
 		<client-only>
 			<UserLocation
 				v-if="showUserLocation"
-				ref="userLocationRef"
-				@change-address="changeAddressHandler" />
+				ref="userLocationRef" />
+			<FindMe v-if="showUserLocation" />
 		</client-only>
 		<!-- Sliding Page Content -->
 		<!-- Page Content and Tip Section -->
@@ -146,13 +146,6 @@ watch(userLocation, (newLocation) => {
 		showMap.value = false;
 	}
 });
-
-const changeAddressHandler = (mapboxAddressObject) => {
-	console.log("The selected address is:", mapboxAddressObject);
-	userStore.userLocation = mapboxAddressObject.features[0].geometry.coordinates;
-	console.log("The user location is:", userStore.userLocation);
-	showMap.value = true; // Trigger the map to be displayed
-};
 
 // Watch the route to determine if it's the homepage or another page
 watch(

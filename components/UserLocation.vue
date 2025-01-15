@@ -1,16 +1,13 @@
 <template>
 	<div class="flex max-w-md mx-auto  p-4">
-		<form class="flex flex-row-reverse gap-x-4">
-			<input
-				id="address-input"
-				type="text"
-				name="address"
-				placeholder="Please enter an address"
-				autocomplete="street-address">
+		<form
+			id="address-form"
+			class="flex flex-row-reverse gap-x-4"
+			@submit.prevent>
 			<button
 				v-if="showMapButton"
 				class="btn-primary"
-				@click.prevent="$emit('change-address', autofillData)">
+				@click.prevent="handleAddressUpdate">
 				Find your community
 			</button>
 		</form>
@@ -29,9 +26,10 @@
 </template>
 
 <script setup lang="ts">
-import { MapboxAddressAutofill } from "@mapbox/search-js-web";
+import { MapboxGeocoder } from "@mapbox/search-js-web";
 import type { IShop } from "@/types/shop";
 import { useShopsStore } from "@/stores/shops";
+import { useUserStore } from "~/stores/user";
 
 defineEmits(["change-address"]);
 
@@ -41,27 +39,9 @@ const config = useRuntimeConfig();
 const savedAddresses = ref<string[]>([]);
 const showMapButton = ref(false);
 const shopsStore = useShopsStore();
-const addressData = ref({
-	street: "",
-	houseNumber: "",
-	city: "",
-	postalCode: "",
-	country: "",
-});
-const fullAddressLine = ref("");
-interface AutofillData {
-	features: Array<{
-		properties: {
-			street: string; // street name
-			address_number: string; // house number
-			address_level2: string; // city
-			postcode: string; // postal code
-			country: string; // country
-		};
-	}>;
-}
+const userStore = useUserStore();
 
-const autofillData = ref<AutofillData>({ features: [] });
+const coordinates = ref<[number, number] | null>(null);
 
 const isLoggedIn = ref(false);
 
@@ -74,55 +54,35 @@ onMounted(async () => {
 	}
 });
 
-// Scroll method to bring input into focus
-const scrollToInput = () => {
-	const inputElement = document.getElementById("address-input");
-	if (inputElement) {
-		inputElement.scrollIntoView({ behavior: "smooth" });
-		inputElement.focus(); // Optional: To focus on the input field
-	}
-};
-
 // Fetch address suggestions from Mapbox
 const setUpAutoFill = () => {
-	const autofillElement = new MapboxAddressAutofill();
+	const autofillElement = new MapboxGeocoder();
 	autofillElement.accessToken = config.public.mapboxApiKey;
-	autofillElement.browserAutofillEnabled = false;
 	autofillElement.options.country = "dk";
+	autofillElement.placeholder = "Enter your address";
 
-	const inputElement = document.getElementById("address-input") as HTMLInputElement;
-	const formElement = inputElement.parentElement as HTMLFormElement;
+	const formElement = document.getElementById("address-form") as HTMLFormElement;
 
-	if (inputElement) {
+	if (formElement) {
 		// Attach autofill functionality to the input
-		autofillElement.appendChild(inputElement);
 		formElement.appendChild(autofillElement);
 
 		autofillElement.addEventListener("retrieve", (event: Event) => {
 			console.log("Retrieve event");
+			console.log(event);
 			const customEvent = event as CustomEvent;
-			autofillData.value = customEvent.detail;
+			const feature = customEvent.detail;
 
-			// capturing all address properties
-			addressData.value = {
-				street: autofillData.value.features[0].properties.street,
-				houseNumber: autofillData.value.features[0].properties.address_number,
-				city: autofillData.value.features[0].properties.address_level2,
-				postalCode: autofillData.value.features[0].properties.postcode,
-				country: autofillData.value.features[0].properties.country,
-			};
+			coordinates.value = feature.geometry.coordinates;
 
-			fullAddressLine.value = `${addressData.value.street} ${addressData.value.houseNumber}, `
-			+ `${addressData.value.postalCode} ${addressData.value.city}`;
-
-			setTimeout(() => {
-				(document.getElementById("address-input")! as HTMLInputElement).value = fullAddressLine.value;
-			}, 1);
-
-			console.log("Selected Address Data: ", autofillData);
-			console.log("Full Address Line: ", fullAddressLine.value);
 			showMapButton.value = true;
 		});
+	}
+};
+
+const handleAddressUpdate = () => {
+	if (coordinates.value) {
+		userStore.userLocation = coordinates.value;
 	}
 };
 </script>
