@@ -10,6 +10,8 @@
 					:slides-per-view="1.5"
 					space-between="10"
 					:grab-cursor="true"
+					:modules="[Pagination]"
+					:pagination="{ clickable: true }"
 					:breakpoints="{
 						640: { slidesPerView: 1.2, spaceBetween: 8 }, // Small screens
 						768: { slidesPerView: 2.5, spaceBetween: 10 }, // Medium screens
@@ -39,11 +41,12 @@
 </template>
 
 <script setup lang="ts">
+import { Pagination } from "swiper/modules";
 import { ref, computed } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { useUserStore } from "@/stores/user";
 import { useShopsStore } from "@/stores/shops";
-import "swiper/swiper-bundle.css"; // Import Swiper styles;
+import "swiper/swiper-bundle.css"; // Import Swiper styles
 
 const userStore = useUserStore();
 const shopsStore = useShopsStore();
