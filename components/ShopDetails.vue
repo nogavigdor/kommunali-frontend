@@ -22,6 +22,8 @@
 		<swiper
 			:slides-per-view="1.5"
 			space-between="10"
+			:modules="[Pagination]"
+			:pagination="{ clickable: true }"
 			:grab-cursor="true"
 			class="mt-4 pb-4">
 			<swiper-slide
@@ -79,6 +81,7 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
+import { Pagination } from "swiper/modules";
 import "swiper/swiper-bundle.css"; // Import Swiper styles;
 import { useUserStore } from "@/stores/user";
 import { useShopsStore } from "@/stores/shops";
