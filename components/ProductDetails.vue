@@ -46,16 +46,21 @@
 				@click="addProductRequest(product._id || '', 'request')">
 				{{ requestType }}
 			</button>
-			<div v-show="totalNumberInQueue > 0">
+			<div v-if="totalNumberInQueue > 0">
 				<p
 					v-if="userNumberInQueue>0"
 					class="text-neutral-dark">
-					You are number {{ userNumberInQueue }} in the queue.
+					You are number {{ userNumberInQueue }} in queue.
 				</p>
 				<p
 					v-else
 					class="text-neutral-dark">
-					{{ totalNumberInQueue }} people in the queue.
+					{{ totalNumberInQueue }} in queue.
+				</p>
+			</div>
+			<div v-else>
+				<p class="text-neutral-dark">
+					No one in queue.
 				</p>
 			</div>
 			<button
