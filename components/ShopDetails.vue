@@ -161,6 +161,18 @@ const _emit = defineEmits(["close"]);
 const isEditable = computed(() => {
 	return userStore.user && userStore.shopIds.includes(props.selectedShopId);
 });
+
+onMounted(() => {
+	const paginationElement = document.querySelector(".swiper-pagination");
+	if (paginationElement instanceof HTMLElement) {
+		// Ensure the selected element is an HTML element
+		paginationElement.style.position = "relative";
+		paginationElement.style.paddingTop = "10px"; // Add padding above bullets
+	}
+	else {
+		console.warn(".swiper-pagination element not found or not an HTML element");
+	}
+});
 </script>
 
   <style scoped>
@@ -172,4 +184,4 @@ const isEditable = computed(() => {
 .shop-height {
 	  height: 430px;
 }
-  </style>
+</style>

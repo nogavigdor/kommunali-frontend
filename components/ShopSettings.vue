@@ -63,6 +63,18 @@ const isEditable = computed(() => !!(userStore.loggedIn && shop.value?._id
 const addProduct = () => {
 	openModal.value = !openModal.value;
 };
+
+onMounted(() => {
+	const paginationElement = document.querySelector(".swiper-pagination");
+	if (paginationElement instanceof HTMLElement) {
+		// Ensure the selected element is an HTML element
+		paginationElement.style.position = "relative";
+		paginationElement.style.paddingTop = "10px"; // Add padding above bullets
+	}
+	else {
+		console.warn(".swiper-pagination element not found or not an HTML element");
+	}
+});
 </script>
 
   <style scoped>
