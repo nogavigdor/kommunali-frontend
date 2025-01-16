@@ -55,7 +55,12 @@
 						{{ validationErrors.password }}
 					</p>
 				</UFormGroup>
-
+				<!-- Forgot Password -->
+				<div class="text-center">
+					<a
+						class="text-brandPrimary-500 hover:text-brandPrimary-700 cursor-pointer"
+						@click="resetPassword">Forgot Password?</a>
+				</div>
 				<!-- Login Button -->
 				<div class="pt-4">
 					<UButton
@@ -64,6 +69,8 @@
 						Login
 					</UButton>
 				</div>
+				<!-- Social Login -->
+				<SocialLogin />>
 			</UForm>
 		</div>
 	</div>
@@ -75,7 +82,6 @@ import { useRouter } from "vue-router";
 import type { FormSubmitEvent } from "#ui/types";
 import { useUserStore } from "@/stores/user";
 import { useFeedbackStore } from "@/stores/feedback";
-import FeedbackMessage from "@/components/FeedbackMessage.vue";
 
 const feedbackStore = useFeedbackStore();
 
@@ -89,8 +95,17 @@ const state = reactive({
 
 const passwordVisible = ref(false);
 const validationErrors = reactive<{ email?: string; password?: string }>({});
-const feedbackMessage = ref<string | null>(null);
-const feedbackType = ref<"success" | "error" | "alert">("error");
+// const feedbackMessage = ref<string | null>(null);
+// const feedbackType = ref<"success" | "error" | "alert">("error");
+
+async function resetPassword() {
+	if (!state.email) {
+		feedbackStore.setFeedback("Please enter your email first.", "error");
+		return;
+	}
+	await userStore.forgotPassword(state.email);
+	feedbackStore.setFeedback("Password reset link sent.", "success");
+}
 
 function togglePasswordVisibility() {
 	passwordVisible.value = !passwordVisible.value;

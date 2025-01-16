@@ -77,6 +77,7 @@
 					</UButton>
 				</div>
 			</UForm>
+			<SocialLogin />
 		</div>
 	</div>
 </template>

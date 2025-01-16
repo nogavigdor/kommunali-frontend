@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 import { useFirebaseAuth } from "vuefire";
-import { signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, sendPasswordResetEmail } from "firebase/auth";
 import { useLocalStorage } from "@vueuse/core";
 import { useShopsStore } from "./shops";
 import type { IUser, RequestedProduct, IRegisterUser } from "@/types/user";
@@ -68,6 +68,102 @@ export const useUserStore = defineStore("user", () => {
 		}
 	}
 
+	async function loginWithGoogle() {
+		try {
+			const provider = new GoogleAuthProvider();
+			const response = await signInWithPopup(auth, provider);
+			firebaseUserId.value = response.user.uid;
+
+			// Check if the user exists in MongoDB
+			const userResponse = await checkIfUserExists(firebaseUserId.value);
+
+			if (!userResponse) {
+				return {
+					isNewUser: true,
+					email: response.user.email || "",
+					firebaseUserId: firebaseUserId.value,
+				};
+			}
+
+			// If user exists, load user data
+			loadUser(userResponse);
+		}
+		catch (error) {
+			console.error("Error logging in with Google:", error);
+			throw error;
+		}
+	}
+
+	async function loginWithFacebook() {
+		try {
+			const provider = new FacebookAuthProvider();
+			const response = await signInWithPopup(auth, provider);
+			firebaseUserId.value = response.user.uid;
+
+			// Check if the user exists in MongoDB
+			const userResponse = await checkIfUserExists(firebaseUserId.value);
+
+			if (!userResponse) {
+				return {
+					isNewUser: true,
+					email: response.user.email || "",
+					firebaseUserId: firebaseUserId.value,
+				};
+			}
+
+			// If user exists, load user data
+			loadUser(userResponse);
+		}
+		catch (error) {
+			console.error("Error logging in with Facebook:", error);
+			throw error;
+		}
+	}
+
+	async function checkIfUserExists(firebaseUserId: string): Promise<IUser | null> {
+		try {
+			const token = await auth.currentUser?.getIdToken();
+
+			const response = await $fetch<IUser | null>(`${config.public.apiBaseUrl}/api/users/${firebaseUserId}`, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${token}`,
+				},
+			});
+
+			return response;
+		}
+		catch {
+			// User not found
+			return null;
+		}
+	}
+
+	async function registerSocialUser(nickname: string, email: string, firebaseUserId: string) {
+		try {
+			const newUser = {
+				nickname,
+				email,
+				firebaseUserId, // Send the Firebase UID to the backend
+			};
+
+			const response = await $fetch<IUser>(`${config.public.apiBaseUrl}/api/users/register`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(newUser),
+			});
+
+			loadUser(response);
+		}
+		catch (error) {
+			console.error("Error registering social user:", error);
+			throw error;
+		}
+	}
+
 	function loadUser(userResponse: IUser) {
 		if (userResponse.role === UserRole.ADMIN) {
 			isAdmin.value = true;
@@ -104,6 +200,17 @@ export const useUserStore = defineStore("user", () => {
 		});
 
 		return response;
+	}
+
+	async function forgotPassword(email: string) {
+		try {
+			await sendPasswordResetEmail(auth, email);
+			console.log("Password reset email sent.");
+		}
+		catch (error) {
+			console.error("Error sending password reset email:", error);
+			throw error;
+		}
 	}
 
 	async function logOutUser() {
@@ -184,7 +291,11 @@ export const useUserStore = defineStore("user", () => {
 		loggedIn,
 		logOutUser,
 		registerUser,
+		registerSocialUser,
 		loginUser,
+		loginWithGoogle,
+		loginWithFacebook,
+		forgotPassword,
 		updateUser,
 		addRequestedProduct,
 		firebaseUserId,
