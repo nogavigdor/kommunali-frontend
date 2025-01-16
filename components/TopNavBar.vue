@@ -64,6 +64,11 @@
 			</div>
 		</div>
 	</nav>
+	<client-only>
+		<UserLocation
+			v-if="showUserLocation"
+			ref="userLocationRef" />
+	</client-only>
 </template>
 
 <script setup lang="ts">
@@ -73,6 +78,7 @@ import { useUserStore } from "@/stores/user";
 
 defineProps({
 	open: Boolean,
+	showUserLocation: Boolean,
 });
 
 const showAccountMenu = ref(false);

@@ -1,8 +1,9 @@
 <template>
-	<div class="flex max-w-md mx-auto  p-4">
+	<div class="relative flex max-w-md mx-auto  p-4">
+		<FindMe />
 		<form
 			id="address-form"
-			class="flex flex-row-reverse gap-x-4"
+			class="flex flex-col-reverse md:flex-row-reverse gap-x-4"
 			@submit.prevent>
 			<button
 				v-if="showMapButton"

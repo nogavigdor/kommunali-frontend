@@ -3,6 +3,7 @@
 		<!-- Top Navbar -->
 		<TopNavBar
 			:open="menuOpen"
+			:show-user-location="showUserLocation"
 			@toggle-menu="toggleMenu" />
 		<!-- @highlight-shops="mapRef?.value?.highlightMarkers && mapRef.value.highlightMarkers()" / -->
 
@@ -20,12 +21,7 @@
 		</transition>
 		<!-- General Feedback Message Component -->
 		<FeedbackMessage />
-		<client-only>
-			<UserLocation
-				v-if="showUserLocation"
-				ref="userLocationRef" />
-			<FindMe v-if="showUserLocation" />
-		</client-only>
+
 		<!-- Sliding Page Content -->
 		<!-- Page Content and Tip Section -->
 		<div
