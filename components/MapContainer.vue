@@ -362,7 +362,7 @@ defineExpose({ centerMap });
 .position-search {
 	position: absolute;
 	right:20px;
-	top:150px;
+	top:170px;
 	z-index:5;
 }
 </style>
