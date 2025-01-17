@@ -1,17 +1,10 @@
 <template>
 	<div class="relative flex max-w-md mx-auto  p-4">
-		<FindMe />
 		<form
 			id="address-form"
 			class="flex flex-col-reverse md:flex-row-reverse gap-x-4"
-			@submit.prevent>
-			<button
-				v-if="showMapButton"
-				class="btn-primary"
-				@click.prevent="handleAddressUpdate">
-				Find your community
-			</button>
-		</form>
+			@submit.prevent />
+		<FindMe />
 		<!-- ul
 			v-if="suggestions.length"
 			class="mt-2 border border-secondary-light rounded-md shadow bg-white max-h-40 overflow-y-auto">
@@ -42,9 +35,26 @@ const showMapButton = ref(false);
 const shopsStore = useShopsStore();
 const userStore = useUserStore();
 
+const inputRef = ref(null);
+
 const coordinates = ref<[number, number] | null>(null);
 
 const isLoggedIn = ref(false);
+
+const scrollToInput = () => {
+	if (inputRef.value) {
+		// Scroll the input into view
+		inputRef.value.scrollIntoView({ behavior: "smooth", block: "center" });
+
+		// Highlight the input
+		inputRef.value.classList.add("highlight");
+
+		// Remove highlight after a short delay
+		setTimeout(() => {
+			inputRef.value.classList.remove("highlight");
+		}, 2000);
+	}
+};
 
 onMounted(async () => {
 	setUpAutoFill();
@@ -76,7 +86,7 @@ const setUpAutoFill = () => {
 
 			coordinates.value = feature.geometry.coordinates;
 
-			showMapButton.value = true;
+			handleAddressUpdate();
 		});
 	}
 };
@@ -87,3 +97,10 @@ const handleAddressUpdate = () => {
 	}
 };
 </script>
+
+<style scoped>
+.highlight {
+	outline: 2px solid #00f;
+	box-shadow: 0 0 10px rgba(0, 0, 255, 0.8);
+}
+</style>
