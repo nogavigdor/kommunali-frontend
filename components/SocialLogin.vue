@@ -3,15 +3,15 @@
 		<UButton
 			class="w-full flex justify-center bg-red-500 text-white"
 			@click="handleGoogleLogin">
-			<UIcon
-				name="i-heroicons-google"
+			<Icon
+				name="uil:google"
 				class="mr-2" /> Sign in with Google
 		</UButton>
 		<UButton
 			class="w-full flex justify-center bg-blue-600 text-white"
 			@click="handleFacebookLogin">
-			<UIcon
-				name="i-heroicons-facebook"
+			<Icon
+				name="uil:facebook-f"
 				class="mr-2" /> Sign in with Facebook
 		</UButton>
 
