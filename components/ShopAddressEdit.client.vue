@@ -7,21 +7,6 @@
 				name="address"
 				placeholder="Please enter an address"
 				autocomplete="street-address">
-			<!-- input
-				type="text"
-				name="houseNumber"
-				placeholder="House Number"
-				autocomplete="address-line2">
-			<input
-				type="text"
-				name="city"
-				placeholder="City"
-				autocomplete="address-level2">
-			<input
-				type="text"
-				name="postalCode"
-				placeholder="Postal Code"
-				autocomplete="postal-code" -->
 			<p v-if="fullAddressLine">
 				{{ fullAddressLine }}
 			</p>
