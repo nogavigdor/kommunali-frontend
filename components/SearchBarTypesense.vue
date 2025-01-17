@@ -75,12 +75,17 @@ async function searchProducts() {
 	}
 
 	try {
-		const response = await typesenseClient.collections(collectionName).documents().search({
+		const searchParams = {
 			q: searchQuery.value,
 			query_by: "name,description",
 			sort_by: "createdAt:desc",
-			filter_by: `storeId:!=${shopsStore.userShop._id}`,
-		});
+		};
+
+		if (shopsStore.userShop && shopsStore.userShop._id) {
+			searchParams.filter_by = `storeId:!=${shopsStore.userShop._id}`;
+		}
+
+		const response = await typesenseClient.collections(collectionName).documents().search(searchParams);
 		searchResults.value = response.hits.map(hit => hit.document);
 	}
 	catch (error) {
