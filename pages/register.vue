@@ -1,6 +1,17 @@
 <template>
-	<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-brandPrimary-500 to-brandPrimary-800 text-white py-12 px-6 lg:px-8">
-		<RegistrationForm />
+	<div class="min-h-screen flex bg-gradient-to-br from-brandPrimary-500 to-brandPrimary-800 text-white">
+		<!-- Left Column -->
+		<div class="flex-1 flex items-center justify-center bg-white text-gray-900 px-8 py-12 rounded-lg shadow-lg">
+			<RegistrationForm />
+		</div>
+
+		<!-- Right Column -->
+		<div class="hidden md:flex flex-1 items-center justify-center">
+			<img
+				src="@/assets/images/img1.jpg"
+				alt="Branding"
+				class="max-w-full h-auto rounded-lg shadow-lg">
+		</div>
 	</div>
 </template>
 
