@@ -1,13 +1,14 @@
 <template>
 	<div
 		v-show="showPage"
-		class="relative min-h-screen flex flex-col items-center pt-[350px] bg-gradient-to-br from-brandPrimary-500 to-brandPrimary-800 text-white overflow-hidden">
+		class="relative min-h-screen flex flex-col items-center  md:pt-[100px] bg-gradient-to-br from-brandPrimary-500 to-brandPrimary-800 text-white overflow-hidden">
 		<!-- Main Content -->
+
 		<div class="relative z-10 text-center px-6 max-w-2xl animate-slide-in-down">
-			<h1 class="text-6xl font-heading mb-6">
+			<h1 class="text-2xl md:text-6xl font-heading mb-6">
 				Welcome to <span class="text-brandGray-50">Kommunali</span>
 			</h1>
-			<p class="text-2xl font-semibold mb-4 animate-fade-in">
+			<p class="hidden text-1xl md:text-2xl font-semibold mb-4 animate-fade-in">
 				Find the nearest shops, discover great deals, and connect with your community.
 			</p>
 			<p class="text-lg text-brandGray-50 mb-8 animate-fade-in">
@@ -18,7 +19,7 @@
 			<button
 				class="btn-primary"
 				@click="scrollToLocationInput">
-				Start by Finding Your Location
+				Find Your Community
 			</button>
 		</div>
 
@@ -70,6 +71,21 @@ const scrollToLocationInput = () => {
 </script>
 
   <style scoped>
+  /* Logo Slide-In Animation
+@keyframes slide-in-left {
+	from {
+		transform: translateX(-100%) scale(0.8);
+		opacity: 0;
+	}
+	to {
+		transform: translateX(0) scale(1);
+		opacity: 1;
+	}
+}
+
+.animate-slide-in-left {
+	animation: slide-in-left 1.5s ease-out forwards;
+}*/
   /* Animation Styles */
   @keyframes slide-in-down {
 	from {
