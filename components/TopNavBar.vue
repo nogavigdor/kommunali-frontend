@@ -1,6 +1,14 @@
 <!-- TopNavbar.vue -->
 <template>
 	<nav class="bg-primary text-white relative">
+		<NuxtLink
+			to="/"
+			class="w-32 top-4 left-24  md:w-48  absolute md:top-16 md:left-10">
+			<img
+				src="/assets/images/logo.png"
+				alt="Kommunali Logo"
+				class="w-32 md:w-48">
+		</NuxtLink>
 		<div class="flex justify-between items-center w-full px-4 pr-5 pl-5 pt-5">
 			<!-- Left Side - Menu Icon -->
 			<button
