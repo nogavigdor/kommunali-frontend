@@ -1,15 +1,15 @@
 <template>
 	<button
 		v-if="geoLocationIsSupported"
-		class="absolute right-16 z-1 w-8 h-8 bg-yellow-400 text-gray-800 rounded-full flex items-center justify-center shadow-lg hover:bg-yellow-500"
+		class="absolute right-[-2rem] bottom-[1rem] md:bottom-2 md:right-[-8rem] z-1 btn-primary  text-gray-800 rounded-2px p-2 md:p-3 justify-center shadow-lg hover:bg-yellow-500"
 		@click="getLocation">
 		<UTooltip text="Find Me">
-			<span class="flex items-center">
+			<span class="flex items-center gap-1">
 				<Icon
 					name="uil:location-point"
-					class="w-12 h-12" />
+					class="w-6 h-6" />
 				<!-- Text only appears on medium screens and above -->
-				<span class="hidden md:inline ml-2 text-sm font-medium">
+				<span class="hidden md:inline ml-2 text-xl font-bold ">
 					Find Me
 				</span>
 			</span>
