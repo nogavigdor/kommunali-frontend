@@ -1,6 +1,6 @@
 <template>
 	<div class="">
-		<div class="max-w-md w-full bg-secondary-light text-gray-900 rounded-lg shadow-lg p-4 space-y-12">
+		<div class=" w-full bg-secondary-light text-gray-900 rounded-lg shadow-lg p-4 space-y-12">
 			<h2 class="text-center text-3xl font-extrabold">
 				Please Login
 			</h2>
