@@ -62,11 +62,10 @@ watch (() => userStore.userLocation, () => {
 }); */
 
 const scrollToLocationInput = () => {
-	const appComponent = document.getElementById("app");
-	if (appComponent) {
-		const scrollEvent = new CustomEvent("scrollToInput");
-		appComponent.dispatchEvent(scrollEvent);
-	}
+	const inputElement = document.getElementById("geolocation");
+	if (!inputElement) return;
+	inputElement.scrollIntoView({ block: "center", behavior: "smooth" });
+	inputElement.focus({ preventScroll: true });
 };
 </script>
 
