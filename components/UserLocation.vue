@@ -78,6 +78,7 @@ const setUpAutoFill = () => {
 		// Attach autofill functionality to the input
 		formElement.appendChild(autofillElement);
 		autofillElement.input.id = "geolocation";
+		autofillElement.input.style.paddingRight = "0rem";
 		autofillElement.addEventListener("retrieve", (event: Event) => {
 			console.log("Retrieve event");
 			console.log(event);
