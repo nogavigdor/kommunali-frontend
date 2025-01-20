@@ -16,6 +16,15 @@
 				placeholder="Search for a product"
 				class="w-full px-4 py-2 bg-white text-gray-800 rounded-lg border border-brandGray-300 focus:outline-none focus:ring-2 focus:ring-brandPrimary-500 transition-all"
 				@input="searchProducts">
+			<Icon
+				v-if="searchQuery"
+				name="uil:times"
+				type="button"
+				class="btn-secondary absolute right-2 top-2 "
+				@click="clearSearch">
+				Clear
+			</Icon>
+
 			<div
 				v-if="searchResults.length > 0"
 				class="absolute z-16 w-full">
@@ -92,6 +101,16 @@ async function searchProducts() {
 		console.error("Error searching products in Typesense:", error);
 		searchResults.value = [];
 	}
+}
+function clearSearch() {
+	// Clear the search query
+	searchQuery.value = "";
+
+	// Reset search results
+	searchResults.value = [];
+
+	// Clear highlighted shops
+	shopsStore.setHighlightedShops([]);
 }
 
 function highlightShops(items) {
