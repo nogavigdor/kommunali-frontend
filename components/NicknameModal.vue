@@ -1,9 +1,10 @@
 <template>
 	<UModal
 		v-model="show"
+		prevent-close
 		class="flex items-center justify-center"
 		@close="emit('update:show', false)">
-		<div class="max-w-md w-full bg-secondary-light text-gray-900 rounded-lg shadow-lg p-6 space-y-6">
+		<div class="w-full bg-secondary-light text-gray-900 rounded-lg shadow-lg p-6 space-y-6">
 			<h2 class="text-center text-2xl font-bold text-brandPrimary-500">
 				Choose a Nickname
 			</h2>
@@ -31,7 +32,7 @@
 				<div class="flex justify-center pt-4">
 					<UButton
 						type="submit"
-						class="w-full text-xl btn-primary">
+						class="flex justify-center w-full text-xl btn-primary">
 						Save
 					</UButton>
 				</div>
