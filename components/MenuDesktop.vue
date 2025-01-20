@@ -19,7 +19,9 @@
 import { useRouter } from "vue-router";
 import { computed } from "vue";
 import { useUserStore } from "@/stores/user";
+import { useFeedbackStore } from "@/stores/feedback";
 
+const userFeedback = useFeedbackStore();
 const userStore = useUserStore();
 const router = useRouter();
 
@@ -45,7 +47,11 @@ const links = computed(() => {
 // Redirects to login if the user is not logged in and clicks "Add Your Shop"
 const handleLinkClick = (link) => {
 	if (link.to === "/shop" && !userStore.loggedIn) {
-		alert("You need to log in to add your shop!");
+		userFeedback.setFeedback(
+			"You need to be logged in to add your shop.",
+			"alert",
+
+		);
 		router.push("/login");
 	}
 	else {
