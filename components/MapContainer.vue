@@ -1,4 +1,4 @@
-<!-- MapContainer.vue -->
+	<!-- MapContainer.vue -->
 <template>
 	<SearchBarTypesense
 		v-show="isIndexPage && !isHidden"
@@ -9,7 +9,7 @@
 		v-if="showShopDetails"
 		v-show="!isHidden"
 		:selected-shop-id="selectedShopId || ''"
-		:style="shopDetailsStyle || {}"
+
 		@close="
 			closeShopDetails" />
 	<div
@@ -155,27 +155,27 @@ function updateMarkers(shops: IShop[]) {
 
 		// Apply the styles using Object.assign
 		/*
-		el.className = "marker mapbox-marker";
-		el.style.backgroundColor = "#7B1FA2";
-		el.style.width = "50px";
-		el.style.height = "50px";
-		el.style.borderRadius = "50%";
-		el.style.cursor = "pointer";
-		el.style.border = "2px solid black";
-		el.style.zIndex = "9999";
-		const markerStyle = {
-			backgroundImage: `url(${markerImage})`,
-			backgroundSize: "cover",
-			//	backgroundColor: "#7B1FA2",
-			width: "30px",
-			height: "30px",
-			// borderRadius: "50%",
-			cursor: "pointer",
-			// border: "2px solid black",
-			zIndex: "9999",
-		};
-		// applying the marker styles to the marker element
-		Object.assign(el.style, markerStyle); */
+			el.className = "marker mapbox-marker";
+			el.style.backgroundColor = "#7B1FA2";
+			el.style.width = "50px";
+			el.style.height = "50px";
+			el.style.borderRadius = "50%";
+			el.style.cursor = "pointer";
+			el.style.border = "2px solid black";
+			el.style.zIndex = "9999";
+			const markerStyle = {
+				backgroundImage: `url(${markerImage})`,
+				backgroundSize: "cover",
+				//	backgroundColor: "#7B1FA2",
+				width: "30px",
+				height: "30px",
+				// borderRadius: "50%",
+				cursor: "pointer",
+				// border: "2px solid black",
+				zIndex: "9999",
+			};
+			// applying the marker styles to the marker element
+			Object.assign(el.style, markerStyle); */
 
 		// Handle marker click event
 		el.addEventListener("click", () => {
@@ -198,9 +198,9 @@ function updateMarkers(shops: IShop[]) {
 		// Create a marker for each shop
 		const marker = new mapboxgl.Marker(el)
 			.setLngLat(shop.location.coordinates)
-			// .setPopup(popup) // Attach popup to marker
+		// .setPopup(popup) // Attach popup to marker
 			.addTo(mapRef.value as mapboxgl.Map);
-		//	el.className = "marker mapbox-marker";
+			//	el.className = "marker mapbox-marker";
 		console.log("Created marker:", marker);
 
 		currentMarkers.push(marker); // Keep track of the markers
@@ -252,7 +252,7 @@ const initializeMap = () => {
 		style: "mapbox://styles/mapbox/light-v11",
 		center: userLocation.value || userStore.user.lastCoordinates, // Default location
 		zoom: 12,
-		minZoom: 12, // Prevent zooming out too much (adjust to suit your needs)
+		minZoom: 8, // Prevent zooming out too much (adjust to suit your needs)
 		maxZoom: 18, // Allow zooming in closely
 		maxBounds: [
 			[7.5, 54.5], // Southwest corner of Denmark
@@ -291,8 +291,8 @@ const setupMapListeners = () => {
 		});
 
 		// Attach event listeners to keep shop details aligned with marker position
-		mapRef.value.on("move", updateShopDetailsPosition);
-		mapRef.value.on("zoom", updateShopDetailsPosition);
+		// mapRef.value.on("move", updateShopDetailsPosition);
+		// mapRef.value.on("zoom", updateShopDetailsPosition);
 	}
 };
 
@@ -309,18 +309,18 @@ watch(() => props.isHidden, async (newIsHidden) => {
 	else {
 		// mapRef.value.resize();
 	}
-});
+}, { immediate: true });
 
-// Function to keep the ShopDetails window updated with marker position
-const updateShopDetailsPosition = () => {
-	if (!showShopDetails.value || !selectedShopId.value) return;
+// // Function to keep the ShopDetails window updated with marker position
+// const updateShopDetailsPosition = () => {
+// 	if (!showShopDetails.value || !selectedShopId.value) return;
 
-	const shop = shops.value.find(shop => shop._id === selectedShopId.value);
+// 	const shop = shops.value.find(shop => shop._id === selectedShopId.value);
 
-	if (shop) {
-		updateShopDisplayStyle(shop);
-	}
-};
+// 	if (shop) {
+// 		updateShopDisplayStyle(shop);
+// 	}
+// };
 
 // Close shop details
 const closeShopDetails = () => {
@@ -349,20 +349,20 @@ function centerMap(coordinates: [number, number]) {
 defineExpose({ centerMap });
 </script>
 
-<style>
-.marker.mapboxgl-marker {
-	background-image: url('@/assets/images/hus.svg');
-  background-size: cover;
-  width: 30px;
-  height: 30px;
-  cursor: pointer;
-	z-index: 3;
-}
+	<style>
+	.marker.mapboxgl-marker {
+		background-image: url('@/assets/images/hus.svg');
+	background-size: cover;
+	width: 30px;
+	height: 30px;
+	cursor: pointer;
+		z-index: 3;
+	}
 
-.position-search {
-	position: absolute;
-	right:20px;
-	top:170px;
-	z-index:5;
-}
-</style>
+	.position-search {
+		position: absolute;
+		right:20px;
+		top:144px;
+		z-index:5;
+	}
+	</style>

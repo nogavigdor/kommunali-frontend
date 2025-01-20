@@ -1,8 +1,7 @@
 <!-- ShopDetails.vue -->
 <template>
 	<div
-		class="absolute bottom-0 w-96 shop-height bg-white p-4 shadow-medium rounded-2xl z-20"
-		:style="style">
+		class="absolute bottom-0 w-full h-full top-0 left-0 md:w-96 md:h-fit md:min-h-fit md:top-[150px] md:left-[calc(50vw-12rem)] bg-white p-4 shadow-medium rounded-2xl z-20">
 		<div class="flex items-center justify-between">
 			<h2 class="text-2xl font-heading text-brandPrimary-700">
 				{{ shop?.name }}
@@ -107,10 +106,7 @@ const props = defineProps({
 		type: String,
 		required: true,
 	},
-	style: {
-		type: Object,
-		required: true,
-	},
+
 });
 
 const chatId = computed(() => {
@@ -179,9 +175,5 @@ onMounted(() => {
     .overflow-x-auto {
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch; /* Enables smooth scrolling on iOS devices */
-}
-
-.shop-height {
-	  height: 430px;
 }
 </style>
