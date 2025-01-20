@@ -162,6 +162,7 @@ watch(
 			showUserLocation.value = true;
 		}
 	},
+	{ immediate: true },
 );
 
 // Dynamically set page-specific tips
