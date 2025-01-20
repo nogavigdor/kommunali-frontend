@@ -57,6 +57,14 @@ const imageUrl = ref<string | null>(null);
 const errorMessage = ref<string | null>(null);
 const emit = defineEmits(["image-uploaded", "uploading"]);
 
+const props = defineProps<{
+	currentImageUrl?: string;
+}>();
+
+onMounted(() => {
+	imageUrl.value = props.currentImageUrl || null;
+});
+
 // Firebase storage reference
 const storage = getStorage();
 
