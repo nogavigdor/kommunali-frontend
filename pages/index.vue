@@ -1,17 +1,21 @@
 <template>
 	<div
 		v-show="showPage"
-		class="relative min-h-screen flex flex-col items-center  md:pt-[100px] bg-gradient-to-br from-brandPrimary-500 to-brandPrimary-800 text-white overflow-hidden">
-		<!-- Main Content -->
-
+		class="relative z-20 min-h-screen flex flex-col items-center md:pt-[100px] bg-gradient-to-br from-brandPrimary-500 to-brandPrimary-800 text-white overflow-hidden bg-top md:bg-cover md:bg-center"
+		:style="{
+			backgroundImage: `url(${bgImage})`,
+			backgroundSize: isDesktop ? '55%' : 'contain',
+			backgroundRepeat: 'no-repeat',
+		}">
+		<div class="absolute inset-0 bg-black/50" />
 		<div class="relative z-10 text-center px-6 max-w-2xl animate-slide-in-down">
-			<h1 class="text-2xl md:text-6xl font-heading mb-6">
-				Welcome to <span class="text-brandGray-50">Kommunali</span>
+			<h1 class="text-2xl md:text-6xl font-heading mb-6 text-accent-light">
+				Welcome to <span class="text-accent-">Kommunali</span>
 			</h1>
-			<p class="hidden text-1xl md:text-2xl font-semibold mb-4 animate-fade-in">
-				Find the nearest shops, discover great deals, and connect with your community.
+			<p class="hidden text-1xl md:block md:text-2xl font-semibold mb-4 animate-fade-in">
+				Discover great second-hand deals near you and enjoy sustainable shopping within your community!
 			</p>
-			<p class="text-lg text-brandGray-50 mb-8 animate-fade-in">
+			<p class="hidden text-lg text-secondary-light font-bold mb-8 animate-fade-in">
 				Experience the joy of sustainable second-hand shopping!
 			</p>
 
@@ -31,13 +35,18 @@
 </template>
 
 <script lang="ts" setup>
+import { useMediaQuery } from "@vueuse/core";
 import { useUserStore } from "@/stores/user";
 import TheFooter from "~/components/TheFooter.vue";
+import bgImage from "@/assets/images/IMG3.webp"; // Import the image file
 
 definePageMeta({
 	title: "home",
 	layout: "default",
 });
+
+// Detect screen width to apply different background sizes
+const isDesktop = useMediaQuery("(min-width: 768px)");
 
 const userStore = useUserStore();
 
@@ -71,7 +80,6 @@ const scrollToLocationInput = () => {
 </script>
 
   <style scoped>
-  /* Logo Slide-In Animation
 @keyframes slide-in-left {
 	from {
 		transform: translateX(-100%) scale(0.8);
@@ -85,7 +93,7 @@ const scrollToLocationInput = () => {
 
 .animate-slide-in-left {
 	animation: slide-in-left 1.5s ease-out forwards;
-}*/
+}
   /* Animation Styles */
   @keyframes slide-in-down {
 	from {
