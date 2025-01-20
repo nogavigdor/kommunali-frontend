@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer base {
+
   h1,
   h2,
   h3,
@@ -88,7 +89,13 @@
   }
 }
 
+:root {
+  --topnav-height: 135px;
+}
+
 .page-transition {
   @apply p-6 lg:min-h-screen bg-white w-full lg:absolute lg:z-20 lg:left-0 lg:w-1/2;
-  min-height: 85vh;
+  min-height: calc(100vh - var(--topnav-height));
+  max-height: calc(100vh - var(--topnav-height));
+  overflow-y: scroll;
 }
