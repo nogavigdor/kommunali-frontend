@@ -38,21 +38,29 @@
 			</div>
 			<div class="mb-2">
 				<label
-					for="edit-product-image-url"
-					class="block text-sm font-medium text-neutral-dark">Image URL</label>
-				<input
-					id="edit-product-image-url"
-					v-model="editProductData.imageUrl"
-					type="text"
-					class="mt-1 block w-full border border-neutral-300 rounded-md shadow-sm focus:ring-brandPrimary-500 focus:border-brandPrimary-500 sm:text-sm">
+					for="edit-product-image"
+					class="block text-sm font-medium text-neutral-dark">Image </label>
+				<ImageUpload
+					:current-image-url="editProductData.imageUrl"
+					@image-uploaded="setImageUrl"
+					@uploading="handleSaveButton" />
 			</div>
 			<button
 				type="submit"
+				:disabled="isImageUploading"
 				class="w-full bg-brandPrimary-500 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium hover:bg-brandPrimary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brandPrimary-500">
-				<HeroIcon
-					name="check-circle"
-					class="w-5 h-5 inline-block mr-2" />
-				Update Product
+				<span v-if="isImageUploading">
+					<Icon
+						name="uil:spinner"
+						class="animate-spin text-xl mr-2" />
+					Image is uploading...
+				</span>
+				<span v-else>
+					<HeroIcon
+						name="check-circle"
+						class="w-5 h-5 inline-block mr-2" />
+					Update Product
+				</span>
 			</button>
 		</form>
 	</UModal>
@@ -63,6 +71,8 @@ import type { IProduct } from "@/types/product";
 import { useShopsStore } from "@/stores/shops";
 
 const showEditModal = defineModel<boolean>();
+
+const isImageUploading = ref(false);
 
 const props = defineProps<{
 	product: IProduct;
@@ -77,14 +87,23 @@ const editProductData = ref<IProduct>({
 	price: props.product.price,
 	imageUrl: props.product.imageUrl,
 	status: props.product.status,
-	reservedFor: null,
-	reservedExpiration: null,
-	soldTo: undefined,
+	requestQueue: [],
 });
 
 onMounted(() => {
 	editProductData.value = { ...props.product };
 });
+
+// Set the uploaded image URL
+const setImageUrl = (url: string) => {
+	editProductData.value.imageUrl = url;
+};
+
+const handleSaveButton = (uploading: boolean) => {
+	// Disable the save button while image uploading
+	// uploading can be true or false - emmited from ImageUpload component
+	isImageUploading.value = uploading;
+};
 
 const updateProduct = async () => {
 	try {
