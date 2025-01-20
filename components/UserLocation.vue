@@ -1,8 +1,8 @@
 <template>
-	<div class="relative flex max-w-md mx-auto  p-4">
+	<div class="relative flex  ">
 		<form
 			id="address-form"
-			class="flex flex-col-reverse md:flex-row-reverse gap-x-4"
+			class="flex flex-col-reverse md:flex-row-reverse gap-x-4 mr-4"
 			@submit.prevent />
 		<FindMe />
 		<!-- ul

@@ -1,7 +1,7 @@
 <template>
 	<button
 		v-if="geoLocationIsSupported"
-		class="absolute right-[-2rem] bottom-[1rem] md:bottom-2 md:right-[-8rem] z-1 btn-primary  text-gray-800 rounded-2px p-2 md:p-3 justify-center shadow-lg hover:bg-yellow-500"
+		class=" btn-primary  text-gray-800 rounded-2px p-2 md:p-2 md:align-middle justify-center shadow-lg hover:bg-yellow-500"
 		@click="getLocation">
 		<UTooltip text="Find Me">
 			<span class="flex items-center gap-1">
