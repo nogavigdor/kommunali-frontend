@@ -7,9 +7,9 @@
 			<span class="flex items-center gap-1">
 				<Icon
 					name="uil:location-point"
-					class="w-6 h-6" />
+					class="w-6 h-6 text-secondary-light" />
 				<!-- Text only appears on medium screens and above -->
-				<span class="hidden md:inline ml-2 text-xl font-bold ">
+				<span class="hidden md:inline ml-2 text-xl text-white font-bold ">
 					Find Me
 				</span>
 			</span>
